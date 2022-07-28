@@ -33,10 +33,6 @@ setupKgp(
   explicitApiMode = ExplicitApiMode.Strict
 )
 
-kotlin {
-  explicitApi()
-}
-
 detekt {
   source.from("build.gradle.kts")
 
