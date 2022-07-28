@@ -11,7 +11,7 @@ public fun RepositoryHandler.githubPackagesPublishing(
     with(maven) {
       name = "githubPackages"
 
-      url = URI("https://maven.pkg.github.com/isapp/$owner/$repo")
+      url = URI("https://maven.pkg.github.com/$owner/$repo")
 
       credentials { creds ->
         with(creds) {
