@@ -1,6 +1,18 @@
+import com.eygraber.gradle.Env
+import com.eygraber.gradle.kotlin.setupKgp
 import com.vanniktech.maven.publish.SonatypeHost
 import io.gitlab.arturbosch.detekt.Detekt
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+buildscript {
+  repositories {
+    mavenCentral()
+    maven("https://s01.oss.sonatype.org/content/repositories/snapshots")
+  }
+
+  dependencies {
+    classpath("com.eygraber:gradle-utils:0.0.3-SNAPSHOT")
+  }
+}
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
@@ -15,20 +27,12 @@ tasks.withType<JavaCompile> {
   targetCompatibility = libs.versions.jdk.get()
 }
 
+setupKgp(
+  jdkVersion = libs.versions.jdk.get()
+)
+
 kotlin {
   explicitApi()
-
-  jvmToolchain {
-    languageVersion.set(JavaLanguageVersion.of(libs.versions.jdk.get()))
-    vendor.set(JvmVendorSpec.AZUL)
-  }
-}
-
-tasks.withType<KotlinCompile>().configureEach {
-  kotlinOptions {
-    allWarningsAsErrors = true
-    jvmTarget = libs.versions.jdk.get()
-  }
 }
 
 detekt {
@@ -60,7 +64,7 @@ dependencies {
   detektPlugins(libs.detektEygraber.style)
 }
 
-if(System.getenv("CI") == "true") {
+if(Env.isCI) {
   @Suppress("UnstableApiUsage")
   mavenPublishing {
     publishToMavenCentral(SonatypeHost.S01)
