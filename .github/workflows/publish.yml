@@ -1,0 +1,98 @@
+name: Publish a release
+
+on:
+  push:
+    branches:
+      - release
+
+env:
+  VERSION_FILE: gradle.properties
+  VERSION_EXTRACT_PATTERN: '(?<=VERSION_NAME=).+'
+  GH_USER_NAME: github.actor
+  GRADLE_OPTS: -Dorg.gradle.daemon=false -Dkotlin.incremental=false -Dorg.gradle.jvmargs="-Xmx4g -Xms512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8 -XX:MaxMetaspaceSize=1024m"
+
+jobs:
+  publish_release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
+
+      - name: Generate versions
+        uses: HardNorth/github-version-generate@3a10d963bbc3646bcbe28de8778e330b61133b88
+        with:
+          version-source: file
+          version-file: ${{ env.VERSION_FILE }}
+          version-file-extraction-pattern: ${{ env.VERSION_EXTRACT_PATTERN }}
+
+      - uses: actions/setup-java@2c7a4878f5d120bd643426d54ae1209b29cc01a3
+        with:
+          distribution: 'zulu'
+          java-version: 17
+
+      - uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@cd3cedc781988c804f626f4cd2dc51d0bdf02a12
+        with:
+          gradle-version: wrapper
+
+      - name: Publish the artifacts
+        env:
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.ARTIFACT_SIGNING_PRIVATE_KEY }}
+        run: ./gradlew publish -PVERSION_NAME=${{ env.RELEASE_VERSION }}
+
+      - name: Import GPG Key
+        uses: crazy-max/ghaction-import-gpg@c8bb57c57e8df1be8c73ff3d59deab1dbc00e0d1
+        with:
+          gpg_private_key: ${{ secrets.GIT_SIGNING_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GIT_SIGNING_PRIVATE_KEY_PASSWORD }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+          git_tag_gpgsign: true
+
+      - name: Create tag
+        id: create_tag
+        uses: actions/github-script@7a5c598405937d486b0331594b5da2b14db670da
+        with:
+          script: |
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: "refs/tags/${{ env.RELEASE_VERSION }}",
+              sha: context.sha
+            })
+
+      - name: Build changelog
+        id: build_changelog
+        uses: mikepenz/release-changelog-builder-action@f3776883ea2e511b41298ec5853017efecd7c2ee
+        with:
+          configuration: "changelog_config.json"
+          toTag: ${{ env.RELEASE_VERSION }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create release
+        id: create_release
+        uses: ncipollo/release-action@58ae73b360456532aafd58ee170c045abbeaee37
+        with:
+          body: ${{ steps.build_changelog.outputs.changelog }}
+          commit: release
+          name: Release ${{ env.RELEASE_VERSION }}
+          tag: ${{ env.RELEASE_VERSION }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
+        with:
+          ref: 'master'
+
+      - name: Prepare next dev version
+        run: |
+          git config user.name eygraber
+          git config user.email eygraber@users.noreply.github.com
+          sed -i -e 's/${{ env.CURRENT_VERSION }}/${{ env.NEXT_VERSION }}/g' gradle.properties
+          git add gradle.properties
+          git commit -m "Prepare next dev version (${{ env.NEXT_VERSION }})"
+          git push origin master

@@ -1,0 +1,18 @@
+*~
+.DS_Store
+.idea
+# Make an exception for the code style
+!.idea/codeStyles/
+.gradle
+*.iml
+/build
+*/build
+local.properties
+tmp
+/captures
+.externalNativeBuild
+.cxx
+test-sd-card.img
+node_modules
+ejson/*
+ci/*
