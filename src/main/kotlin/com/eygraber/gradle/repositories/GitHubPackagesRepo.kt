@@ -7,15 +7,17 @@ import kotlinx.serialization.json.jsonPrimitive
 import org.gradle.api.Action
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
+import org.gradle.internal.Actions
 import java.io.File
 import java.net.URI
 
+@JvmOverloads
 public fun RepositoryHandler.gitHubPackages(
   owner: String,
   repo: String,
   username: String,
   password: String,
-  action: Action<MavenArtifactRepository>? = null
+  action: Action<MavenArtifactRepository> = Actions.doNothing()
 ) {
   maven { maven ->
     with(maven) {
@@ -25,12 +27,13 @@ public fun RepositoryHandler.gitHubPackages(
         creds.username = username
         creds.password = password
       }
-
-      action?.execute(this)
     }
+
+    action.execute(maven)
   }
 }
 
+@JvmOverloads
 public fun RepositoryHandler.gitHubPackages(
   owner: String,
   repo: String,
@@ -39,7 +42,7 @@ public fun RepositoryHandler.gitHubPackages(
   ejsonJsonKey: String = "github_packages_pat",
   ejsonPrivateKey: String? = null,
   ejsonPrivateKeyEnvVar: String = "EJSON_PRIVATE_KEY",
-  action: Action<MavenArtifactRepository>? = null
+  action: Action<MavenArtifactRepository> = Actions.doNothing()
 ) {
   gitHubPackages(
     owner = owner,
