@@ -2,6 +2,7 @@ import com.eygraber.gradle.Env
 import com.eygraber.gradle.kotlin.setupKgp
 import com.vanniktech.maven.publish.SonatypeHost
 import io.gitlab.arturbosch.detekt.Detekt
+import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 
 buildscript {
   repositories {
@@ -10,7 +11,7 @@ buildscript {
   }
 
   dependencies {
-    classpath("com.eygraber:gradle-utils:0.0.3-SNAPSHOT")
+    classpath(libs.buildscript.utils)
   }
 }
 
@@ -28,7 +29,8 @@ tasks.withType<JavaCompile> {
 }
 
 setupKgp(
-  jdkVersion = libs.versions.jdk.get()
+  jdkVersion = libs.versions.jdk.get(),
+  explicitApiMode = ExplicitApiMode.Strict
 )
 
 kotlin {
