@@ -1,15 +1,3 @@
-
-
-// buildscript {
-//   repositories {
-//     mavenLocal()
-//   }
-//
-//   dependencies {
-//     classpath(libs.buildscript.utils.kotlin)
-//   }
-// }
-
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
   `kotlin-dsl`
@@ -17,11 +5,6 @@ plugins {
   id("com.eygraber.kotlin")
   id("com.eygraber.publish")
 }
-
-// configureKgp(
-//   jdkVersion = libs.versions.jdk,
-//   explicitApiMode = ExplicitApiMode.Strict
-// )
 
 dependencies {
   api(project(":utils-base"))

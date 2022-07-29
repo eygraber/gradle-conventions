@@ -1,16 +1,3 @@
-
-
-// buildscript {
-//   repositories {
-//     mavenCentral()
-//     maven("https://s01.oss.sonatype.org/content/repositories/snapshots")
-//   }
-//
-//   dependencies {
-//     classpath(libs.buildscript.utils)
-//   }
-// }
-
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
   `kotlin-dsl`
@@ -18,11 +5,6 @@ plugins {
   id("com.eygraber.kotlin")
   id("com.eygraber.publish")
 }
-
-// configureKgp(
-//   jdkVersion = libs.versions.jdk,
-//   explicitApiMode = ExplicitApiMode.Strict
-// )
 
 dependencies {
   api(project(":utils-base"))
