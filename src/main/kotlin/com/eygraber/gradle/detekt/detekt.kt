@@ -43,5 +43,8 @@ public fun Project.configureDetekt(
   }
 }
 
+internal val Project.detekt: DetektExtension
+  get() = extensions.getByType(DetektExtension::class.java)
+
 private fun Project.detekt(configure: DetektExtension.() -> Unit) =
   (this as ExtensionAware).extensions.configure("detekt", configure)
