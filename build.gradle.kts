@@ -1,5 +1,5 @@
 import com.eygraber.gradle.Env
-import com.eygraber.gradle.kotlin.setupKgp
+import com.eygraber.gradle.kotlin.configureKgp
 import com.vanniktech.maven.publish.SonatypeHost
 import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 buildscript {
   repositories {
     mavenCentral()
+    maven("https://s01.oss.sonatype.org/content/repositories/snapshots")
   }
 
   dependencies {
@@ -22,12 +23,7 @@ plugins {
   alias(libs.plugins.publish)
 }
 
-tasks.withType<JavaCompile> {
-  sourceCompatibility = libs.versions.jdk.get()
-  targetCompatibility = libs.versions.jdk.get()
-}
-
-setupKgp(
+configureKgp(
   jdkVersion = libs.versions.jdk.get(),
   explicitApiMode = ExplicitApiMode.Strict
 )
@@ -51,6 +47,7 @@ tasks.withType<Detekt>().configureEach {
 dependencies {
   implementation(gradleApi())
 
+  implementation(libs.buildscript.detekt)
   implementation(libs.buildscript.ejson)
   implementation(libs.buildscript.kotlin)
 
