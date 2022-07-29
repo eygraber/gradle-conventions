@@ -1,5 +1,4 @@
 import com.eygraber.gradle.Env
-import com.eygraber.gradle.detekt.configureDetekt
 import com.eygraber.gradle.kotlin.configureKgp
 import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
@@ -28,9 +27,21 @@ configureKgp(
   explicitApiMode = ExplicitApiMode.Strict
 )
 
-configureDetekt(
-  jdkVersion = libs.versions.jdk
-)
+detekt {
+  source.from("build.gradle.kts")
+
+  autoCorrect = true
+  parallel = true
+
+  buildUponDefaultConfig = true
+
+  config = project.files("${project.rootDir}/detekt.yml")
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+  // Target version of the generated JVM bytecode. It is used for type resolution.
+  jvmTarget = libs.versions.jdk.get()
+}
 
 dependencies {
   implementation(gradleApi())
