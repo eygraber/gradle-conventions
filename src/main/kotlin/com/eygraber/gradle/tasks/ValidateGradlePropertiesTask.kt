@@ -35,10 +35,10 @@ public fun Project.registerValidateGradlePropertiesTask(
         task.outputs.files.first().delete()
         throw GradleException(
           """
-        |Gradle properties don't match
-        |  wrapperPropertiesMatch = $wrapperPropertiesMatch
-        |  propertiesMatch = $propertiesMatch
-        """.trimMargin()
+          |Gradle properties don't match
+          |  wrapperPropertiesMatch = $wrapperPropertiesMatch
+          |  propertiesMatch = $propertiesMatch
+          """.trimMargin()
         )
       }
     }
