@@ -24,12 +24,14 @@ buildscript-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", versio
 buildscript-ejson = { module = "com.eygraber:ejson-gradle", version.ref = "ejson" }
 buildscript-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 buildscript-publish = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "publish" }
-buildscript-utils = { module = "com.eygraber:gradle-utils", version = "0.0.6-SNAPSHOT" }
+buildscript-utils-base = { module = "com.eygraber:gradle-utils", version = "0.0.7-SNAPSHOT" }
+buildscript-utils-detekt = { module = "com.eygraber:gradle-utils-detekt", version = "0.0.7" }
+buildscript-utils-kotlin = { module = "com.eygraber:gradle-utils-kotlin", version = "0.0.7" }
 
 detekt = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 detektEygraber-formatting = { module = "com.eygraber.detekt.rules:formatting", version.ref = "detektEygraber" }
 detektEygraber-style = { module = "com.eygraber.detekt.rules:style", version.ref = "detektEygraber" }
 
-kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2"
+kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3"
 
 kotlinDurationExtensions = "com.eygraber:kotlin-duration-extensions:1.1.1"

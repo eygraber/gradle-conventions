@@ -37,6 +37,10 @@ plugins {
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
+include("utils-base")
+include("utils-detekt")
+include("utils-kotlin")
+
 gradleEnterprise {
   buildScan {
     termsOfServiceUrl = "https://gradle.com/terms-of-service"
