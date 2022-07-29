@@ -1,13 +1,16 @@
 package com.eygraber.gradle.detekt
 
 import com.eygraber.gradle.kotlin.kmpSourceSets
+import com.eygraber.gradle.tasks.dependsOn
 import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 import io.gitlab.arturbosch.detekt.extensions.DetektReport
 import io.gitlab.arturbosch.detekt.extensions.DetektReports
 import org.gradle.api.Project
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import java.io.File
 import java.util.Locale
 
@@ -28,7 +31,7 @@ public fun Project.registerDetektKmpIntermediateTask(
       sourceSet = sourceSets.getByName("${intermediateName}Test")
     )
 
-    targets.map { it.name.capitalize(Locale.US) }.forEach { name ->
+    targets.map { it.name.capitalize() }.forEach { name ->
       mainDetektTask.dependsOn("detekt${name}Main")
       testDetektTask.dependsOn("detekt${name}Test")
     }
@@ -36,9 +39,11 @@ public fun Project.registerDetektKmpIntermediateTask(
 }
 
 public fun Project.registerSourceSetDetektTask(
-  val sourceSetName: String,
+  sourceSetName: String,
   vararg dependsOnSourceSetNames: String
 ) {
+  val sourceSets = kmpSourceSets
+
   val mainDetektTask = registerDetektTask(
     name = "${sourceSetName}Main",
     sourceSet = sourceSets.getByName("${sourceSetName}Main")
@@ -50,7 +55,7 @@ public fun Project.registerSourceSetDetektTask(
   )
 
   for(dependsOnSourceSetName in dependsOnSourceSetNames) {
-    val capitalizedName = dependsOnSourceSetName.capitalize(Locale.US)
+    val capitalizedName = dependsOnSourceSetName.capitalize()
     if(sourceSets.findByName("${dependsOnSourceSetName}Main") != null) {
       mainDetektTask.dependsOn("detekt${capitalizedName}Main")
       testDetektTask.dependsOn("detekt${capitalizedName}Test")
@@ -63,24 +68,26 @@ public fun Project.registerSourceSetDetektTask(
 public fun Project.registerDetektTask(
   name: String,
   sourceSet: KotlinSourceSet
-) = tasks.register("detekt${name.capitalize(Locale.US)}", Detekt::class.java) {
+): TaskProvider<Detekt> = tasks.register("detekt${name.capitalize()}", Detekt::class.java) { task ->
   val detekt = detekt
 
-  debug = detekt.debug
-  parallel = detekt.parallel
-  disableDefaultRuleSets = detekt.disableDefaultRuleSets
-  buildUponDefaultConfig = detekt.buildUponDefaultConfig
-  @Suppress("DEPRECATION")
-  failFast = detekt.failFast
-  autoCorrect = detekt.autoCorrect
-  config.setFrom(detekt.config)
-  ignoreFailures = detekt.ignoreFailures
-  detekt.basePath?.let { basePath = it }
-  allRules = detekt.allRules
+  with(task) {
+    debug = detekt.debug
+    parallel = detekt.parallel
+    disableDefaultRuleSets = detekt.disableDefaultRuleSets
+    buildUponDefaultConfig = detekt.buildUponDefaultConfig
+    @Suppress("DEPRECATION")
+    failFast = detekt.failFast
+    autoCorrect = detekt.autoCorrect
+    config.setFrom(detekt.config)
+    ignoreFailures = detekt.ignoreFailures
+    detekt.basePath?.let { basePath = it }
+    allRules = detekt.allRules
 
-  setSource(sourceSet.kotlin.sourceDirectories)
-  setReportOutputConventions(reports, detekt, name)
-  description = "Run detekt analysis for source set $name"
+    setSource(sourceSet.kotlin.sourceDirectories)
+    setReportOutputConventions(reports, detekt, name)
+    description = "Run detekt analysis for source set $name"
+  }
 }
 
 private fun Project.setReportOutputConventions(reports: DetektReports, detekt: DetektExtension, name: String) {
@@ -105,3 +112,6 @@ private fun Project.setReportOutputConvention(
     )
   )
 }
+
+private fun String.capitalize(): String =
+  replaceFirstChar { if(it.isLowerCase()) it.titlecase(Locale.US) else it.toString() }
