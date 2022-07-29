@@ -58,6 +58,9 @@ dependencies {
   implementation(libs.buildscript.kotlin)
   implementation(libs.buildscript.publish)
 
+  implementation(libs.buildscript.utils.kotlin)
+  implementation(libs.buildscript.utils.detekt)
+
   detektPlugins(libs.detekt)
   detektPlugins(libs.detektEygraber.formatting)
   detektPlugins(libs.detektEygraber.style)
