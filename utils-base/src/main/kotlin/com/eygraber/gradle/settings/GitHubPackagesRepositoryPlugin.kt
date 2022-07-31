@@ -7,7 +7,6 @@ import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.initialization.Settings
 import org.gradle.internal.Actions
-import org.gradle.kotlin.dsl.getByName
 import java.io.File
 
 public abstract class GitHubPackagesRepositoryPlugin : Plugin<Settings> {
@@ -72,14 +71,4 @@ public abstract class GitHubPackagesRepositoryPlugin : Plugin<Settings> {
   override fun apply(target: Settings) {
     target.extensions.create("gitHubPackagesRepository", Extension::class.java)
   }
-}
-
-public fun Settings.gitHubPackagesRepository(
-  action: Action<GitHubPackagesRepositoryPlugin.Extension>
-) {
-  action.execute(
-    extensions.getByName<GitHubPackagesRepositoryPlugin.Extension>(
-      "gitHubPackagesRepository"
-    )
-  )
 }
