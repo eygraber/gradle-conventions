@@ -15,6 +15,7 @@ public fun Project.configureKgp(
   allWarningsAsErrors: Boolean = true,
   explicitApiMode: ExplicitApiMode = ExplicitApiMode.Disabled,
   configureJavaCompatibility: Boolean = true,
+  freeCompilerArgs: List<String> = emptyList(),
   vararg optIns: String
 ) {
   configureKgp(
@@ -22,6 +23,7 @@ public fun Project.configureKgp(
     allWarningsAsErrors,
     explicitApiMode,
     configureJavaCompatibility,
+    freeCompilerArgs,
     *optIns
   )
 }
@@ -31,6 +33,7 @@ public fun Project.configureKgp(
   allWarningsAsErrors: Boolean = true,
   explicitApiMode: ExplicitApiMode = ExplicitApiMode.Disabled,
   configureJavaCompatibility: Boolean = true,
+  freeCompilerArgs: List<String> = emptyList(),
   vararg optIns: String
 ) {
   if(configureJavaCompatibility) {
@@ -63,6 +66,7 @@ public fun Project.configureKgp(
     tasks.withType(KotlinCompile::class.java).configureEach {
       kotlinOptions.allWarningsAsErrors = allWarningsAsErrors
       kotlinOptions.jvmTarget = jdkVersion
+      kotlinOptions.freeCompilerArgs = kotlinOptions.freeCompilerArgs + freeCompilerArgs
     }
   }
 }
