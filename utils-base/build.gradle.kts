@@ -6,6 +6,15 @@ plugins {
   id("com.eygraber.publish")
 }
 
+gradlePlugin {
+  plugins {
+    create("githubPackagesRepository") {
+      id = "com.eygraber.github.packages.repository"
+      implementationClass = "com.eygraber.gradle.settings.GitHubPackagesRepositoryPlugin"
+    }
+  }
+}
+
 dependencies {
   implementation(libs.buildscript.ejson)
   implementation(libs.kotlinx.serialization.json)
