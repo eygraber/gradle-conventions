@@ -24,9 +24,9 @@ buildscript-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", versio
 buildscript-ejson = { module = "com.eygraber:ejson-gradle", version.ref = "ejson" }
 buildscript-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 buildscript-publish = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "publish" }
-buildscript-utils-base = { module = "com.eygraber:gradle-utils", version = "0.0.11" }
-buildscript-utils-detekt = { module = "com.eygraber:gradle-utils-detekt", version = "0.0.11" }
-buildscript-utils-kotlin = { module = "com.eygraber:gradle-utils-kotlin", version = "0.0.11" }
+buildscript-utils-base = { module = "com.eygraber:gradle-utils", version = "0.0.12" }
+buildscript-utils-detekt = { module = "com.eygraber:gradle-utils-detekt", version = "0.0.12" }
+buildscript-utils-kotlin = { module = "com.eygraber:gradle-utils-kotlin", version = "0.0.12" }
 
 detekt = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 detektEygraber-formatting = { module = "com.eygraber.detekt.rules:formatting", version.ref = "detektEygraber" }
