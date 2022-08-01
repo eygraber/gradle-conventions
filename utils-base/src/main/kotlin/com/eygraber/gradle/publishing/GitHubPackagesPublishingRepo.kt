@@ -1,16 +1,10 @@
 package com.eygraber.gradle.publishing
 
 import org.gradle.api.Action
-import org.gradle.api.Plugin
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
-import org.gradle.api.initialization.Settings
 import org.gradle.internal.Actions
 import java.net.URI
-
-public abstract class GitHubPackagesPublishingRepoPlugin : Plugin<Settings> {
-  override fun apply(target: Settings) {}
-}
 
 @JvmOverloads
 public fun RepositoryHandler.githubPackagesPublishing(
