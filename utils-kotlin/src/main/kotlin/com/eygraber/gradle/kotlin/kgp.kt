@@ -52,7 +52,7 @@ public fun Project.configureKgp(
       }
 
       jvmToolchain {
-        languageVersion.set(JavaLanguageVersion.of(jdkVersion))
+        languageVersion.set(JavaLanguageVersion.of(jdkVersion.removePrefix("1.")))
         vendor.set(JvmVendorSpec.AZUL)
       }
 
