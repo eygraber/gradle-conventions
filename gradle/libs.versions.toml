@@ -6,7 +6,7 @@ dokka = "1.7.10"
 
 ejson = "1.0.5"
 
-gradleUtils = "0.0.12"
+gradleUtils = "0.0.15"
 
 jdk = "17"
 
@@ -17,6 +17,7 @@ publish = "0.21.0"
 [plugins]
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+gradleUtils = { id = "com.eygraber.gradle.utils", version.ref = "gradleUtils" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 publish = { id = "com.vanniktech.maven.publish", version.ref = "publish" }
 
