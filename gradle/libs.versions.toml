@@ -6,7 +6,7 @@ dokka = "1.7.10"
 
 ejson = "1.0.5"
 
-gradleUtils = "0.0.12"
+gradleUtils = "0.0.13"
 
 jdk = "17"
 
