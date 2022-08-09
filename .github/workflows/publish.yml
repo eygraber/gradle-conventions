@@ -43,10 +43,10 @@ jobs:
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.ARTIFACT_SIGNING_PRIVATE_KEY }}
         run: |
-          ./gradlew :utils-base:publish :utils-base:closeAndReleaseRepository -PVERSION_NAME=${{ env.RELEASE_VERSION }} &&
-          ./gradlew :utils-kotlin:publish :utils-kotlin:closeAndReleaseRepository -PVERSION_NAME=${{ env.RELEASE_VERSION }} &&
-          ./gradlew :utils-detekt:publish :utils-detekt:closeAndReleaseRepository -PVERSION_NAME=${{ env.RELEASE_VERSION }} &&
-          ./gradlew :utils-plugin:publish :utils-plugin:closeAndReleaseRepository -PVERSION_NAME=${{ env.RELEASE_VERSION }}
+          ./gradlew :utils-base:publish closeAndReleaseRepository -PVERSION_NAME=${{ env.RELEASE_VERSION }} &&
+          ./gradlew :utils-kotlin:publish closeAndReleaseRepository -PVERSION_NAME=${{ env.RELEASE_VERSION }} &&
+          ./gradlew :utils-detekt:publish closeAndReleaseRepository -PVERSION_NAME=${{ env.RELEASE_VERSION }} &&
+          ./gradlew :utils-plugin:publish closeAndReleaseRepository -PVERSION_NAME=${{ env.RELEASE_VERSION }}
 
       - name: Import GPG Key
         uses: crazy-max/ghaction-import-gpg@c8bb57c57e8df1be8c73ff3d59deab1dbc00e0d1
