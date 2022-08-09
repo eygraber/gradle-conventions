@@ -9,9 +9,9 @@ import org.gradle.api.initialization.Settings
 import org.gradle.internal.Actions
 import java.io.File
 
-public abstract class GitHubPackagesRepositoryPlugin : Plugin<Settings> {
+public abstract class GradleUtilsSettingsPlugin : Plugin<Settings> {
   public abstract class Extension {
-    public fun Settings.addTo(
+    public fun Settings.repo(
       pluginManagement: Boolean,
       dependencyResolutionManagement: Boolean,
       owner: String,
@@ -36,7 +36,7 @@ public abstract class GitHubPackagesRepositoryPlugin : Plugin<Settings> {
       }
     }
 
-    public fun Settings.addTo(
+    public fun Settings.repo(
       pluginManagement: Boolean,
       dependencyResolutionManagement: Boolean,
       owner: String,
