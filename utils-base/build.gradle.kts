@@ -6,6 +6,11 @@ plugins {
   id("com.eygraber.publish")
 }
 
+kotlinDslPluginOptions {
+  // need to override this because of ejson
+  jvmTarget.set(libs.versions.jdk)
+}
+
 gradlePlugin {
   plugins {
     create("githubPackagesRepository") {
