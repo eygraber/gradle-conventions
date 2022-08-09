@@ -1,4 +1,3 @@
-@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
   `kotlin-dsl`
   id("com.eygraber.detekt")
@@ -13,9 +12,14 @@ kotlinDslPluginOptions {
 
 gradlePlugin {
   plugins {
-    create("githubPackagesRepository") {
-      id = "com.eygraber.github.packages.repository"
-      implementationClass = "com.eygraber.gradle.settings.GitHubPackagesRepositoryPlugin"
+    create("gradleUtilsBase") {
+      id = "com.eygraber.gradle.utils.base"
+      implementationClass = "com.eygraber.gradle.GradleUtilsBasePlugin"
+    }
+
+    create("gradleUtilsSettings") {
+      id = "com.eygraber.gradle.utils.settings"
+      implementationClass = "com.eygraber.gradle.settings.GradleUtilsSettingsPlugin"
     }
   }
 }

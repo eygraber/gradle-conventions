@@ -1,13 +1,13 @@
-import com.eygraber.gradle.settings.GitHubPackagesRepositoryPlugin
+import com.eygraber.gradle.settings.GradleUtilsSettingsPlugin
 import org.gradle.api.Action
 import org.gradle.api.initialization.Settings
 import org.gradle.kotlin.dsl.getByName
 
 public fun Settings.gitHubPackagesRepository(
-  action: Action<GitHubPackagesRepositoryPlugin.Extension>
+  action: Action<GradleUtilsSettingsPlugin.Extension>
 ) {
   action.execute(
-    extensions.getByName<GitHubPackagesRepositoryPlugin.Extension>(
+    extensions.getByName<GradleUtilsSettingsPlugin.Extension>(
       "gitHubPackagesRepository"
     )
   )

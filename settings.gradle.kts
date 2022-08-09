@@ -40,6 +40,7 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 include("utils-base")
 include("utils-detekt")
 include("utils-kotlin")
+include("utils-plugin")
 
 gradleEnterprise {
   buildScan {
