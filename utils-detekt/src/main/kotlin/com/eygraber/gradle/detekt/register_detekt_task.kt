@@ -1,6 +1,6 @@
 package com.eygraber.gradle.detekt
 
-import com.eygraber.gradle.kotlin.kmpSourceSets
+import com.eygraber.gradle.kotlin.kmp.kmpSourceSets
 import com.eygraber.gradle.tasks.dependsOn
 import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.extensions.DetektExtension

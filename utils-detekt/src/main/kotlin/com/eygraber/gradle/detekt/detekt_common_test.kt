@@ -1,6 +1,6 @@
 package com.eygraber.gradle.detekt
 
-import com.eygraber.gradle.kotlin.kmpSourceSets
+import com.eygraber.gradle.kotlin.kmp.kmpSourceSets
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
 
