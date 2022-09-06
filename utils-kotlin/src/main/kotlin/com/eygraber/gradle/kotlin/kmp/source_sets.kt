@@ -5,7 +5,6 @@ import com.eygraber.gradle.tasks.dependsOn
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
-import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -39,9 +38,9 @@ public fun KotlinMultiplatformExtension.createSharedSourceSet(
   project.configurePublishingRepositories {
     val repoNameForTasks = this.name.capitalize(Locale.US)
     project.tasks.register(
-      "publish${sourceSetNameForTasks}PublicationTo${repoNameForTasks}Repository",
-      PublishToMavenRepository::class.java
+      "publish${sourceSetNameForTasks}PublicationTo${repoNameForTasks}Repository"
     ) {
+      group = "Publishing"
       description =
         "Publishes all Maven 'apple' publications produced by this project to the githubPackages repository."
     }
@@ -75,9 +74,9 @@ public fun <T : KotlinTarget> KotlinMultiplatformExtension.createNestedSharedSou
     project.configurePublishingRepositories {
       val repoNameForTasks = this.name.capitalize(Locale.US)
       val publishTask = project.tasks.register(
-        "publish${sourceSetNameForTasks}PublicationTo${repoNameForTasks}Repository",
-        PublishToMavenRepository::class.java
+        "publish${sourceSetNameForTasks}PublicationTo${repoNameForTasks}Repository"
       ) {
+        group = "Publishing"
         description =
           "Publishes all Maven '$name' publications produced by this project to the githubPackages repository."
       }
