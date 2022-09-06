@@ -5,6 +5,7 @@ import com.eygraber.gradle.tasks.dependsOn
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
+import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -36,8 +37,11 @@ public fun KotlinMultiplatformExtension.createSharedSourceSet(
   val sourceSetNameForTasks = name.capitalize(Locale.US)
 
   project.configurePublishingRepositories {
-    val repoNameForTasks = name.capitalize(Locale.US)
-    project.tasks.register("publish${sourceSetNameForTasks}PublicationTo${repoNameForTasks}Repository")
+    val repoNameForTasks = this.name.capitalize(Locale.US)
+    project.tasks.register(
+      "publish${sourceSetNameForTasks}PublicationTo${repoNameForTasks}Repository",
+      PublishToMavenRepository::class.java
+    )
   }
 }
 
@@ -66,9 +70,10 @@ public fun <T : KotlinTarget> KotlinMultiplatformExtension.createNestedSharedSou
 
   if(createIntermediatePublishingTasks) {
     project.configurePublishingRepositories {
-      val repoNameForTasks = name.capitalize(Locale.US)
+      val repoNameForTasks = this.name.capitalize(Locale.US)
       val publishTask = project.tasks.register(
-        "publish${nameForTasks}PublicationTo${repoNameForTasks}Repository"
+        "publish${nameForTasks}PublicationTo${repoNameForTasks}Repository",
+        PublishToMavenRepository::class.java
       )
 
       project.tasks.named(
@@ -88,7 +93,7 @@ public fun <T : KotlinTarget> KotlinMultiplatformExtension.createNestedSharedSou
 
     if(createIntermediatePublishingTasks) {
       project.configurePublishingRepositories {
-        val repoNameForTasks = name.capitalize(Locale.US)
+        val repoNameForTasks = this.name.capitalize(Locale.US)
 
         project.tasks.named(
           "publish${nameForTasks}PublicationTo${repoNameForTasks}Repository"
