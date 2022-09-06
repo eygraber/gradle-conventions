@@ -41,7 +41,10 @@ public fun KotlinMultiplatformExtension.createSharedSourceSet(
     project.tasks.register(
       "publish${sourceSetNameForTasks}PublicationTo${repoNameForTasks}Repository",
       PublishToMavenRepository::class.java
-    )
+    ) {
+      description =
+        "Publishes all Maven 'apple' publications produced by this project to the githubPackages repository."
+    }
   }
 }
 
@@ -65,16 +68,19 @@ public fun <T : KotlinTarget> KotlinMultiplatformExtension.createNestedSharedSou
     main to test
   }
 
-  val nameForTasks = name.capitalize(Locale.US)
+  val sourceSetNameForTasks = name.capitalize(Locale.US)
   val parentSourceSetNameForTasks = parentSourceSetName.capitalize(Locale.US)
 
   if(createIntermediatePublishingTasks) {
     project.configurePublishingRepositories {
       val repoNameForTasks = this.name.capitalize(Locale.US)
       val publishTask = project.tasks.register(
-        "publish${nameForTasks}PublicationTo${repoNameForTasks}Repository",
+        "publish${sourceSetNameForTasks}PublicationTo${repoNameForTasks}Repository",
         PublishToMavenRepository::class.java
-      )
+      ) {
+        description =
+          "Publishes all Maven '$name' publications produced by this project to the githubPackages repository."
+      }
 
       project.tasks.named(
         "publish${parentSourceSetNameForTasks}PublicationTo${repoNameForTasks}Repository"
@@ -85,7 +91,7 @@ public fun <T : KotlinTarget> KotlinMultiplatformExtension.createNestedSharedSou
   targets.forEach { target ->
     configureTarget(target)
 
-    val targetNameForTasks = name.capitalize(Locale.US)
+    val targetNameForTasks = target.name.capitalize(Locale.US)
 
     val (targetMainSourceSet, targetTestSourceSet) = target.mainAndTestSourceSets()
     targetMainSourceSet.dependsOn(nestedMainSourceSet)
@@ -96,7 +102,7 @@ public fun <T : KotlinTarget> KotlinMultiplatformExtension.createNestedSharedSou
         val repoNameForTasks = this.name.capitalize(Locale.US)
 
         project.tasks.named(
-          "publish${nameForTasks}PublicationTo${repoNameForTasks}Repository"
+          "publish${sourceSetNameForTasks}PublicationTo${repoNameForTasks}Repository"
         ).dependsOn(
           "publish${targetNameForTasks}PublicationTo${repoNameForTasks}Repository"
         )
