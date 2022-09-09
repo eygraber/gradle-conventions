@@ -12,7 +12,7 @@ jdk = "17"
 
 kotlin = "1.7.10"
 
-publish = "0.21.0"
+publish = "0.22.0"
 
 [plugins]
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
