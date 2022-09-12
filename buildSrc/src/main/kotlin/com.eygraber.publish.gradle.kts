@@ -8,7 +8,7 @@ plugins {
 if(System.getenv("CI") == "true") {
   @Suppress("UnstableApiUsage")
   mavenPublishing {
-    publishToMavenCentral(SonatypeHost.S01)
+    publishToMavenCentral(SonatypeHost.S01, automaticRelease = true)
 
     signAllPublications()
   }
