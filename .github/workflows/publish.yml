@@ -55,7 +55,7 @@ jobs:
 
       - name: Create tag
         id: create_tag
-        uses: actions/github-script@c713e510dbd7d213d92d41b7a7805a986f4c5c66
+        uses: actions/github-script@d4560e157075e2d93aa3022b5b51a42a880f1f93
         with:
           script: |
             github.rest.git.createRef({
