@@ -21,7 +21,8 @@ public fun KotlinTarget.mainAndTestSourceSets(): Pair<KotlinSourceSet, KotlinSou
 
 public fun KotlinMultiplatformExtension.createSharedSourceSet(
   project: Project,
-  name: String
+  name: String,
+  enableTasks: Boolean = true
 ) {
   with(sourceSets) {
     create("${name}Main") {
@@ -43,6 +44,7 @@ public fun KotlinMultiplatformExtension.createSharedSourceSet(
       group = "Publishing"
       description =
         "Publishes all Maven 'apple' publications produced by this project to the githubPackages repository."
+      enabled = enableTasks
     }
   }
 }
@@ -53,6 +55,7 @@ public fun <T : KotlinTarget> KotlinMultiplatformExtension.createNestedSharedSou
   targets: List<T>,
   parentSourceSetName: String,
   createIntermediatePublishingTasks: Boolean = true,
+  enableTasks: Boolean = true,
   configureTarget: (T) -> Unit
 ) {
   val (nestedMainSourceSet, nestedTestSourceSet) = with(sourceSets) {
@@ -79,6 +82,7 @@ public fun <T : KotlinTarget> KotlinMultiplatformExtension.createNestedSharedSou
         group = "Publishing"
         description =
           "Publishes all Maven '$name' publications produced by this project to the githubPackages repository."
+        enabled = enableTasks
       }
 
       project.tasks.named(
