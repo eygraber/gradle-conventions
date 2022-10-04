@@ -10,7 +10,7 @@ gradleUtils = "0.0.19"
 
 jdk = "17"
 
-kotlin = "1.7.10"
+kotlin = "1.7.20"
 
 publish = "0.22.0"
 
