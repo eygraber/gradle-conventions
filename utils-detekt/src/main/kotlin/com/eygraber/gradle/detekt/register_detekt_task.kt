@@ -31,7 +31,7 @@ public fun Project.registerDetektKmpIntermediateTask(
       sourceSet = sourceSets.getByName("${intermediateName}Test")
     )
 
-    targets.map { it.name.capitalize() }.forEach { name ->
+    targets.map { target -> target.name.capitalize() }.forEach { name ->
       mainDetektTask.dependsOn("detekt${name}Main")
       testDetektTask.dependsOn("detekt${name}Test")
     }
@@ -75,12 +75,10 @@ public fun Project.registerDetektTask(
   parallel = detekt.parallel
   disableDefaultRuleSets = detekt.disableDefaultRuleSets
   buildUponDefaultConfig = detekt.buildUponDefaultConfig
-  @Suppress("DEPRECATION")
-  failFast = detekt.failFast
   autoCorrect = detekt.autoCorrect
   config.setFrom(detekt.config)
   ignoreFailures = detekt.ignoreFailures
-  detekt.basePath?.let { basePath = it }
+  detekt.basePath?.let { detektBasePath -> basePath = detektBasePath }
   allRules = detekt.allRules
 
   setSource(sourceSet.kotlin.sourceDirectories)
@@ -111,4 +109,5 @@ private fun Project.setReportOutputConvention(
   )
 }
 
+@Suppress("Deprecation")
 private fun String.capitalize(): String = capitalize(Locale.US)

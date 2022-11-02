@@ -54,7 +54,7 @@ internal fun Project.registerPublishDebugSpm(
 
     onlyIf { HostManager.hostIsMac }
 
-    val xcFrameworkDir = assembleXCFrameworkDebugTask.map { it.outputs.files.first() }
+    val xcFrameworkDir = assembleXCFrameworkDebugTask.map { task -> task.outputs.files.first() }
     inputs.files(xcFrameworkDir)
 
     outputs.files(packageDotSwiftFile)
@@ -114,8 +114,8 @@ internal fun Project.registerPublishReleaseSpm(
 
     dependsOn(publishTask)
 
-    val publishedUrl = publishTask.flatMap { it.publishedUrl }
-    val zipFile = zipTask.flatMap { it.archiveFile }
+    val publishedUrl = publishTask.flatMap { task -> task.publishedUrl }
+    val zipFile = zipTask.flatMap { task -> task.archiveFile }
 
     inputs.property("publishedUrl", publishedUrl)
     inputs.files(zipFile)

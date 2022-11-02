@@ -1,5 +1,6 @@
 package com.eygraber.gradle.kotlin.kmp.spm
 
+import com.eygraber.gradle.capitalize
 import com.eygraber.gradle.kotlin.kotlinMultiplatform
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
@@ -29,9 +30,9 @@ public fun Project.registerAssembleXCFrameworkTasksFromFrameworks(
     kotlinMultiplatform
       .targets
       .withType(KotlinNativeTarget::class.java)
-      .filter { it.konanTarget.family.isAppleFamily }
+      .filter { target -> target.konanTarget.family.isAppleFamily }
       .filter(targetPredicate)
-      .flatMap { it.binaries.filterIsInstance<Framework>() }
+      .flatMap { target -> target.binaries.filterIsInstance<Framework>() }
       .forEach { framework ->
         xcFrameworkConfig.add(framework)
       }
@@ -55,7 +56,7 @@ public fun Project.registerZipXCFrameworkTask(
 
     dependsOn(assembleXCFrameworkReleaseTask)
 
-    from(assembleXCFrameworkReleaseTask.map { it.outputs.files.first() })
+    from(assembleXCFrameworkReleaseTask.map { task -> task.outputs.files.first() })
 
     destinationDirectory.set(outputDirectory)
     archiveFileName.set("$frameworkName.xcframework.zip")
@@ -65,6 +66,7 @@ private fun Project.findXCFrameworkAssembleTask(
   frameworkName: String,
   buildType: NativeBuildType
 ): TaskProvider<XCFrameworkTask> {
+  @Suppress("Deprecation")
   val buildTypeString = buildType.name.toLowerCase(Locale.US).capitalize()
 
   val taskName = when(project.name) {
