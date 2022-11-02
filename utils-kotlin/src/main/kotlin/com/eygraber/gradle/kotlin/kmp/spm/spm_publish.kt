@@ -20,7 +20,7 @@ public fun Project.registerPublishSpm(
   publisherFactory: (TaskProvider<Zip>) -> ReleaseSpmPublisher,
   targetPredicate: (KotlinNativeTarget) -> Boolean = { true }
 ) {
-  val assembleTaskHolder = registerAssembleFatXCFrameworkTask(frameworkName, targetPredicate)
+  val assembleTaskHolder = registerAssembleXCFrameworkTasksFromFrameworks(frameworkName, targetPredicate)
   val packageDotSwiftFile = rootProject.file("Package.swift")
 
   registerPublishDebugSpm(
@@ -95,7 +95,7 @@ internal fun Project.registerPublishReleaseSpm(
   publisherFactory: (TaskProvider<Zip>) -> ReleaseSpmPublisher,
   zipOutputDirectory: Provider<Directory>
 ) {
-  val zipTask = registerZipFatXCFrameworkTask(
+  val zipTask = registerZipXCFrameworkTask(
     frameworkName = frameworkName,
     assembleXCFrameworkReleaseTask = assembleXCFrameworkReleaseTask,
     outputDirectory = zipOutputDirectory

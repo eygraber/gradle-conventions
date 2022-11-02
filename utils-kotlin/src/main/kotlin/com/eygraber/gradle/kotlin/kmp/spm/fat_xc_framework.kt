@@ -14,15 +14,15 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFrameworkTask
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.util.Locale
 
-public class AssembleFatXCFrameworkTaskHolder(
+public class AssembleXCFrameworkTaskHolder(
   public val debug: TaskProvider<XCFrameworkTask>,
   public val release: TaskProvider<XCFrameworkTask>
 )
 
-public fun Project.registerAssembleFatXCFrameworkTask(
+public fun Project.registerAssembleXCFrameworkTasksFromFrameworks(
   frameworkName: String,
   targetPredicate: (KotlinNativeTarget) -> Boolean = { true }
-): AssembleFatXCFrameworkTaskHolder {
+): AssembleXCFrameworkTaskHolder {
   plugins.withId("org.jetbrains.kotlin.multiplatform") {
     val xcFrameworkConfig = XCFramework(frameworkName)
 
@@ -37,13 +37,13 @@ public fun Project.registerAssembleFatXCFrameworkTask(
       }
   }
 
-  return AssembleFatXCFrameworkTaskHolder(
+  return AssembleXCFrameworkTaskHolder(
     debug = findXCFrameworkAssembleTask(frameworkName, NativeBuildType.DEBUG),
     release = findXCFrameworkAssembleTask(frameworkName, NativeBuildType.RELEASE)
   )
 }
 
-public fun Project.registerZipFatXCFrameworkTask(
+public fun Project.registerZipXCFrameworkTask(
   frameworkName: String,
   assembleXCFrameworkReleaseTask: TaskProvider<XCFrameworkTask>,
   outputDirectory: Provider<Directory>
