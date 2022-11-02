@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import java.util.Locale
+import taskName
 
 public val Project.kmpSourceSets: NamedDomainObjectContainer<KotlinSourceSet>
   get() = extensions.getByType(KotlinMultiplatformExtension::class.java).sourceSets
@@ -34,10 +34,10 @@ public fun KotlinMultiplatformExtension.createSharedSourceSet(
     }
   }
 
-  val sourceSetNameForTasks = name.capitalize(Locale.US)
+  val sourceSetNameForTasks = name.taskName()
 
   project.configurePublishingRepositories {
-    val repoNameForTasks = this.name.capitalize(Locale.US)
+    val repoNameForTasks = this.name.taskName()
     project.tasks.register(
       "publish${sourceSetNameForTasks}PublicationTo${repoNameForTasks}Repository"
     ) {
@@ -70,12 +70,12 @@ public fun <T : KotlinTarget> KotlinMultiplatformExtension.createNestedSharedSou
     main to test
   }
 
-  val sourceSetNameForTasks = name.capitalize(Locale.US)
-  val parentSourceSetNameForTasks = parentSourceSetName.capitalize(Locale.US)
+  val sourceSetNameForTasks = name.taskName()
+  val parentSourceSetNameForTasks = parentSourceSetName.taskName()
 
   if(createIntermediatePublishingTasks) {
     project.configurePublishingRepositories {
-      val repoNameForTasks = this.name.capitalize(Locale.US)
+      val repoNameForTasks = this.name.taskName()
       val publishTask = project.tasks.register(
         "publish${sourceSetNameForTasks}PublicationTo${repoNameForTasks}Repository"
       ) {
@@ -94,7 +94,7 @@ public fun <T : KotlinTarget> KotlinMultiplatformExtension.createNestedSharedSou
   targets.forEach { target ->
     configureTarget(target)
 
-    val targetNameForTasks = target.name.capitalize(Locale.US)
+    val targetNameForTasks = target.name.taskName()
 
     val (targetMainSourceSet, targetTestSourceSet) = target.mainAndTestSourceSets()
     targetMainSourceSet.dependsOn(nestedMainSourceSet)
@@ -102,7 +102,7 @@ public fun <T : KotlinTarget> KotlinMultiplatformExtension.createNestedSharedSou
 
     if(createIntermediatePublishingTasks) {
       project.configurePublishingRepositories {
-        val repoNameForTasks = this.name.capitalize(Locale.US)
+        val repoNameForTasks = this.name.taskName()
 
         project.tasks.named(
           "publish${sourceSetNameForTasks}PublicationTo${repoNameForTasks}Repository"

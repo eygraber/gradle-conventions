@@ -1,5 +1,6 @@
 package com.eygraber.gradle.kotlin.kmp.spm
 
+import com.eygraber.gradle.capitalize
 import org.gradle.api.Project
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.file.Directory
@@ -36,8 +37,8 @@ public fun Project.registerPublishSpmToMavenTasks(
         dependsOn(publishTask)
 
         publishedUrl.set(
-          publishTask.map {
-            "${it.repository.url}/${rootProject.name}/$artifactName/$artifactVersion/$artifactName-$artifactVersion.zip"
+          publishTask.map { t ->
+            "${t.repository.url}/${rootProject.name}/$artifactName/$artifactVersion/$artifactName-$artifactVersion.zip"
           }
         )
       }
@@ -58,7 +59,7 @@ internal fun Project.createXCFrameworkMavenPublication(
     publications.create(publicationName, MavenPublication::class.java) {
       version = artifactVersion
       artifactId = artifactName
-      artifact(zipTask.flatMap { it.archiveFile })
+      artifact(zipTask.flatMap { task -> task.archiveFile })
     }
 
     repositories
@@ -79,8 +80,8 @@ internal fun Project.createXCFrameworkMavenPublication(
 
   return requireNotNull(publishTasks.firstOrNull()) {
     "There are no publishing tasks for $publicationName; do you have any remote Maven repositories defined?"
-  }.also {
-    it.configure {
+  }.also { task ->
+    task.configure {
       onlyIf { HostManager.hostIsMac }
     }
   }
