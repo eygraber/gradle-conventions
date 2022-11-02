@@ -1,0 +1,51 @@
+package com.eygraber.gradle.kotlin.kmp.spm
+
+import org.gradle.api.Project
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository
+import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.bundling.Zip
+import org.jetbrains.kotlin.com.google.common.base.CaseFormat
+import org.jetbrains.kotlin.konan.target.HostManager
+
+public fun Project.createFatXCFrameworkMavenPublication(
+  frameworkName: String,
+  artifactVersion: String,
+  zipTask: TaskProvider<Zip>
+): TaskProvider<PublishToMavenRepository> {
+  val publicationName = "${frameworkName.capitalize()}ReleaseXCFramework"
+  val artifactName = "${CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, frameworkName)}-${project.name}"
+
+  val publishTasks = with(extensions.getByType(PublishingExtension::class.java)) {
+    publications.create(publicationName, MavenPublication::class.java) {
+      version = artifactVersion
+      artifactId = artifactName
+      artifact(zipTask.flatMap { it.archiveFile })
+    }
+
+    repositories
+      .filterIsInstance<MavenArtifactRepository>()
+      .mapNotNull { repo ->
+        runCatching {
+          tasks.named(
+            "publish${publicationName}PublicationTo${repo.name.capitalize()}Repository",
+            PublishToMavenRepository::class.java
+          )
+        }.getOrNull()
+      }
+  }
+
+  require(publishTasks.size == 1) {
+    "There are too many publishing tasks for $publicationName; you may have too many Maven repositories defined."
+  }
+
+  return requireNotNull(publishTasks.firstOrNull()) {
+    "There are no publishing tasks for $publicationName; do you have any remote Maven repositories defined?"
+  }.also {
+    it.configure {
+      onlyIf { HostManager.hostIsMac }
+    }
+  }
+}
