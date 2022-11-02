@@ -2,7 +2,7 @@
 detekt = "1.21.0"
 detektEygraber = "1.0.11"
 
-dokka = "1.7.10"
+dokka = "1.7.20"
 
 ejson = "1.0.5"
 
