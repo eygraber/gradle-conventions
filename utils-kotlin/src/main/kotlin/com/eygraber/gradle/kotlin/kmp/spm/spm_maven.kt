@@ -24,7 +24,7 @@ public fun Project.registerPublishSpmToMavenTasks(
     zipOutputDirectory = zipOutputDirectory,
     publisherFactory = { zipTask ->
       object : ReleaseSpmPublisher {
-        private val publishTask = createFatXCFrameworkMavenPublication(
+        private val publishTask = createXCFrameworkMavenPublication(
           frameworkName = frameworkName,
           artifactVersion = artifactVersion,
           zipTask = zipTask
@@ -42,7 +42,7 @@ public fun Project.registerPublishSpmToMavenTasks(
   )
 }
 
-internal fun Project.createFatXCFrameworkMavenPublication(
+internal fun Project.createXCFrameworkMavenPublication(
   frameworkName: String,
   artifactVersion: String,
   zipTask: TaskProvider<Zip>
