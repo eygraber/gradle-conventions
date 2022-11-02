@@ -22,20 +22,22 @@ public fun Project.registerPublishSpmToMavenTasks(
   registerPublishSpm(
     frameworkName = frameworkName,
     zipOutputDirectory = zipOutputDirectory,
-    publisherFactory = { zipTask ->
-      object : ReleaseSpmPublisher {
-        private val publishTask = createXCFrameworkMavenPublication(
-          frameworkName = frameworkName,
-          artifactVersion = artifactVersion,
-          zipTask = zipTask
+    publishTaskFactory = { zipTask ->
+      val publishTask = createXCFrameworkMavenPublication(
+        frameworkName = frameworkName,
+        artifactVersion = artifactVersion,
+        zipTask = zipTask
+      )
+
+      val artifactName =
+        "${CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, frameworkName)}-${project.name}"
+
+      tasks.register("", PublishXCFrameworkTask::class.java) {
+        publishedUrl.set(
+          publishTask.map {
+            "${it.repository.url}/${rootProject.name}/$artifactName/$artifactVersion/$artifactName-$artifactVersion.zip"
+          }
         )
-
-        private val artifactName =
-          "${CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, frameworkName)}-${project.name}"
-
-        override val publishedUrl = publishTask.map {
-          "${it.repository.url}/${rootProject.name}/$artifactName/$artifactVersion/$artifactName-$artifactVersion.zip"
-        }
       }
     },
     targetPredicate = targetPredicate
