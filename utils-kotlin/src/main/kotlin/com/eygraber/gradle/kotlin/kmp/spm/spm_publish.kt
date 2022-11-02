@@ -112,6 +112,8 @@ internal fun Project.registerPublishReleaseSpm(
 
     onlyIf { HostManager.hostIsMac }
 
+    dependsOn(publishTask)
+
     val publishedUrl = publishTask.flatMap { it.publishedUrl }
     val zipFile = zipTask.flatMap { it.archiveFile }
 
