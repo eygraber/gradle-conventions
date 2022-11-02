@@ -2,15 +2,47 @@ package com.eygraber.gradle.kotlin.kmp.spm
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
+import org.gradle.api.file.Directory
+import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.com.google.common.base.CaseFormat
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.HostManager
 
-public fun Project.createFatXCFrameworkMavenPublication(
+public fun Project.registerPublishSpmToMavenTasks(
+  frameworkName: String,
+  artifactVersion: String,
+  zipOutputDirectory: Provider<Directory> = layout.buildDirectory.dir("outputs/spm/release"),
+  targetPredicate: (KotlinNativeTarget) -> Boolean = { true }
+) {
+  registerPublishSpm(
+    frameworkName = frameworkName,
+    zipOutputDirectory = zipOutputDirectory,
+    publisherFactory = { zipTask ->
+      object : ReleaseSpmPublisher {
+        private val publishTask = createFatXCFrameworkMavenPublication(
+          frameworkName = frameworkName,
+          artifactVersion = artifactVersion,
+          zipTask = zipTask
+        )
+
+        private val artifactName =
+          "${CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, frameworkName)}-${project.name}"
+
+        override val publishedUrl = publishTask.map {
+          "${it.repository.url}/${rootProject.name}/$artifactName/$artifactVersion/$artifactName-$artifactVersion.zip"
+        }
+      }
+    },
+    targetPredicate = targetPredicate
+  )
+}
+
+internal fun Project.createFatXCFrameworkMavenPublication(
   frameworkName: String,
   artifactVersion: String,
   zipTask: TaskProvider<Zip>
