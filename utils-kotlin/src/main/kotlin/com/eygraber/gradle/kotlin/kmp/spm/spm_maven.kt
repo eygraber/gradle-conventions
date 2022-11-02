@@ -33,6 +33,8 @@ public fun Project.registerPublishSpmToMavenTasks(
         "${CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, frameworkName)}-${project.name}"
 
       tasks.register("publish${frameworkName}ToMaven", PublishXCFrameworkTask::class.java) {
+        dependsOn(publishTask)
+
         publishedUrl.set(
           publishTask.map {
             "${it.repository.url}/${rootProject.name}/$artifactName/$artifactVersion/$artifactName-$artifactVersion.zip"
