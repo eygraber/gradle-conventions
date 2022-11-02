@@ -6,6 +6,7 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JvmVendorSpec
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -70,3 +71,6 @@ public fun Project.configureKgp(
     }
   }
 }
+
+public val Project.kotlinMultiplatform: KotlinMultiplatformExtension
+  get() = extensions.getByType(KotlinMultiplatformExtension::class.java)
