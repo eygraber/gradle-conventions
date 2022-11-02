@@ -1,8 +1,11 @@
 package com.eygraber.gradle.kotlin.kmp.spm
 
+import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -10,14 +13,15 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFrameworkTask
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 
-public interface ReleaseSpmPublisher {
-  public val publishedUrl: Provider<String>
+public abstract class PublishXCFrameworkTask : DefaultTask() {
+  @get:Internal
+  public abstract val publishedUrl: Property<String>
 }
 
 public fun Project.registerPublishSpm(
   frameworkName: String,
   zipOutputDirectory: Provider<Directory> = layout.buildDirectory.dir("outputs/spm/release"),
-  publisherFactory: (TaskProvider<Zip>) -> ReleaseSpmPublisher,
+  publishTaskFactory: (TaskProvider<Zip>) -> TaskProvider<PublishXCFrameworkTask>,
   targetPredicate: (KotlinNativeTarget) -> Boolean = { true }
 ) {
   val assembleTaskHolder = registerAssembleXCFrameworkTasksFromFrameworks(frameworkName, targetPredicate)
@@ -33,7 +37,7 @@ public fun Project.registerPublishSpm(
     frameworkName = frameworkName,
     packageDotSwiftFile = packageDotSwiftFile,
     assembleXCFrameworkReleaseTask = assembleTaskHolder.release,
-    publisherFactory = publisherFactory,
+    publishTaskFactory = publishTaskFactory,
     zipOutputDirectory = zipOutputDirectory
   )
 }
@@ -92,7 +96,7 @@ internal fun Project.registerPublishReleaseSpm(
   frameworkName: String,
   packageDotSwiftFile: File,
   assembleXCFrameworkReleaseTask: TaskProvider<XCFrameworkTask>,
-  publisherFactory: (TaskProvider<Zip>) -> ReleaseSpmPublisher,
+  publishTaskFactory: (TaskProvider<Zip>) -> TaskProvider<PublishXCFrameworkTask>,
   zipOutputDirectory: Provider<Directory>
 ) {
   val zipTask = registerZipXCFrameworkTask(
@@ -101,21 +105,26 @@ internal fun Project.registerPublishReleaseSpm(
     outputDirectory = zipOutputDirectory
   )
 
-  val publisher = publisherFactory(zipTask)
+  val publishTask = publishTaskFactory(zipTask)
 
   tasks.register("publish${frameworkName}ReleaseSPM") {
     group = "spm"
 
     onlyIf { HostManager.hostIsMac }
 
+    val publishedUrl = publishTask.flatMap { it.publishedUrl }
     val zipFile = zipTask.flatMap { it.archiveFile }
 
-    inputs.property("publishedUrl", publisher.publishedUrl)
+    inputs.property("publishedUrl", publishedUrl)
     inputs.files(zipFile)
 
     outputs.files(packageDotSwiftFile)
 
     doLast {
+      require(publishedUrl.isPresent) {
+        "The PublishXCFrameworkTask did not populate the publishedUrl property"
+      }
+
       packageDotSwiftFile.writeText(
         """
         |// swift-tools-version:5.3
@@ -137,7 +146,7 @@ internal fun Project.registerPublishReleaseSpm(
         |    targets: [
         |        .binaryTarget(
         |            name: packageName,
-        |            url: "${publisher.publishedUrl.get()}",
+        |            url: "${publishedUrl.get()}",
         |            checksum: "${findSpmChecksum(zipFile.get().asFile)}"
         |        )
         |        ,
