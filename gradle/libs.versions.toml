@@ -34,6 +34,6 @@ detekt = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref
 detektEygraber-formatting = { module = "com.eygraber.detekt.rules:formatting", version.ref = "detektEygraber" }
 detektEygraber-style = { module = "com.eygraber.detekt.rules:style", version.ref = "detektEygraber" }
 
-kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0"
+kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1"
 
 kotlinDurationExtensions = "com.eygraber:kotlin-duration-extensions:1.1.1"
