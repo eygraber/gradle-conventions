@@ -1,5 +1,5 @@
 [versions]
-detekt = "1.22.0-RC2"
+detekt = "1.22.0-RC3"
 detektEygraber = "1.0.11"
 
 dokka = "1.7.20"
