@@ -56,7 +56,7 @@ public fun Project.registerZipXCFrameworkTask(
 
     dependsOn(assembleXCFrameworkReleaseTask)
 
-    from(assembleXCFrameworkReleaseTask.map { task -> task.outputs.files.first() })
+    from(assembleXCFrameworkReleaseTask.map { task -> task.outputs.files })
 
     destinationDirectory.set(outputDirectory)
     archiveFileName.set("$frameworkName.xcframework.zip")
