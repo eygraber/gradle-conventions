@@ -15,7 +15,7 @@ public fun Project.deleteRootBuildDirWhenCleaning() {
 
   tasks.named("clean").configure {
     doFirst {
-      delete(buildDir)
+      buildDir.deleteRecursively()
     }
   }
 }
