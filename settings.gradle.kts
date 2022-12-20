@@ -32,7 +32,7 @@ dependencyResolutionManagement {
 rootProject.name = "gradle-utils"
 
 plugins {
-  id("com.gradle.enterprise") version "3.12"
+  id("com.gradle.enterprise") version "3.12.1"
 }
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
