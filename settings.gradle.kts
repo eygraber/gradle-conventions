@@ -34,7 +34,7 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "gradle-utils"
+rootProject.name = "gradle-conventions"
 
 plugins {
   id("com.gradle.enterprise") version "3.12.1"
@@ -42,10 +42,10 @@ plugins {
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
-include("utils-base")
-include("utils-detekt")
-include("utils-kotlin")
-include("utils-plugin")
+include("conventions-base")
+include("conventions-detekt")
+include("conventions-kotlin")
+include("conventions-plugin")
 
 gradleEnterprise {
   buildScan {

@@ -1,1 +1,1 @@
-# gradle-utils
+# gradle-conventions

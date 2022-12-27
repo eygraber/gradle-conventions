@@ -62,7 +62,7 @@ jobs:
           gradle-version: wrapper
 
       - name: Ensure project builds
-        run: ./gradlew :utils-base:detektMain :utils-detekt:detektMain :utils-kotlin:detektMain
+        run: ./gradlew :conventions-base:detektMain :conventions-detekt:detektMain :conventions-kotlin:detektMain
 
 
 env:
