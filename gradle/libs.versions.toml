@@ -1,4 +1,10 @@
 [versions]
+android-cacheFix = "2.6.0"
+
+android-plugin = "8.0.0-alpha10"
+
+compose-jetbrains = "1.2.2"
+
 detekt = "1.22.0"
 detektEygraber = "1.0.11"
 
@@ -22,9 +28,13 @@ kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 publish = { id = "com.vanniktech.maven.publish", version.ref = "publish" }
 
 [libraries]
+buildscript-android = { module = "com.android.tools.build:gradle", version.ref = "android-plugin" }
+buildscript-androidCacheFix = { module = "gradle.plugin.org.gradle.android:android-cache-fix-gradle-plugin", version.ref = "android-cacheFix" }
+buildscript-compose-jetbrains = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "compose-jetbrains" }
 buildscript-detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 buildscript-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 buildscript-ejson = { module = "com.eygraber:ejson-gradle", version.ref = "ejson" }
+buildscript-foojay = "org.gradle.toolchains:foojay-resolver:0.4.0"
 buildscript-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 buildscript-publish = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "publish" }
 buildscript-utils-detekt = { module = "com.eygraber:gradle-utils-detekt", version.ref = "gradleUtils" }
