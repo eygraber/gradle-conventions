@@ -1,8 +1,8 @@
 plugins {
   `kotlin-dsl`
-  id("com.eygraber.detekt")
-  id("com.eygraber.kotlin")
-  id("com.eygraber.publish")
+  id("com.eygraber.conventions-kotlin-library")
+  id("com.eygraber.conventions-detekt")
+  id("com.eygraber.conventions-publish-maven-central")
 }
 
 kotlinDslPluginOptions {

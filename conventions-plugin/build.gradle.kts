@@ -1,15 +1,9 @@
-import com.eygraber.gradle.kotlin.configureKgp
-
 plugins {
   `kotlin-dsl`
-  id("com.eygraber.detekt")
-  id("com.eygraber.publish")
+  id("com.eygraber.conventions-kotlin-library")
+  id("com.eygraber.conventions-detekt")
+  id("com.eygraber.conventions-publish-maven-central")
 }
-
-configureKgp(
-  jdkVersion = libs.versions.jdk,
-  optIns = arrayOf("kotlin.RequiresOptIn")
-)
 
 gradlePlugin {
   plugins {
