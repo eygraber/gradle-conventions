@@ -34,7 +34,6 @@ buildscript-compose-jetbrains = { module = "org.jetbrains.compose:compose-gradle
 buildscript-detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 buildscript-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 buildscript-ejson = { module = "com.eygraber:ejson-gradle", version.ref = "ejson" }
-buildscript-foojay = "org.gradle.toolchains:foojay-resolver:0.4.0"
 buildscript-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 buildscript-publish = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "publish" }
 buildscript-utils-detekt = { module = "com.eygraber:gradle-utils-detekt", version.ref = "gradleUtils" }
