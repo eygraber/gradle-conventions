@@ -25,8 +25,6 @@ internal interface GradleConventionsConfigurableListener {
 abstract class GradleConventionsPluginExtension {
   private val configureListeners = CopyOnWriteArrayList<GradleConventionsConfigurableListener>()
 
-  var applyFoojayToolchainResolver = true
-
   internal fun awaitAndroidConfigured(
     configure: GradleConventionsAndroid.(isConfigured: Boolean) -> Unit
   ) {
