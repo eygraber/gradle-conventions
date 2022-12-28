@@ -12,6 +12,10 @@ public fun RepositoryHandler.mavenCentralSnapshots(
   maven {
     setUrl("https://oss.sonatype.org/content/repositories/snapshots")
 
+    mavenContent {
+      snapshotsOnly()
+    }
+
     action.execute(this)
   }
 }
@@ -22,6 +26,10 @@ public fun RepositoryHandler.mavenCentralSnapshotsS01(
 ) {
   maven {
     setUrl("https://s01.oss.sonatype.org/content/repositories/snapshots")
+
+    mavenContent {
+      snapshotsOnly()
+    }
 
     action.execute(this)
   }
