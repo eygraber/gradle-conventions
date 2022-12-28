@@ -12,7 +12,7 @@ dokka = "1.7.20"
 
 ejson = "1.0.5"
 
-gradleUtils = "0.0.23"
+gradleConventions = "0.0.26"
 
 jdk = "17"
 
@@ -23,7 +23,7 @@ publish = "0.22.0"
 [plugins]
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
-gradleUtils = { id = "com.eygraber.gradle.utils", version.ref = "gradleUtils" }
+gradleConventions = { id = "com.eygraber.conventions", version.ref = "gradleConventions" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 publish = { id = "com.vanniktech.maven.publish", version.ref = "publish" }
 
@@ -36,8 +36,6 @@ buildscript-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", versio
 buildscript-ejson = { module = "com.eygraber:ejson-gradle", version.ref = "ejson" }
 buildscript-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 buildscript-publish = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "publish" }
-buildscript-utils-detekt = { module = "com.eygraber:gradle-utils-detekt", version.ref = "gradleUtils" }
-buildscript-utils-kotlin = { module = "com.eygraber:gradle-utils-kotlin", version.ref = "gradleUtils" }
 
 detekt = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 detektEygraber-formatting = { module = "com.eygraber.detekt.rules:formatting", version.ref = "detektEygraber" }
