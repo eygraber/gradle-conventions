@@ -16,7 +16,7 @@ gradleConventions = "0.0.26"
 
 jdk = "17"
 
-kotlin = "1.7.21"
+kotlin = "1.8.0"
 
 publish = "0.22.0"
 
