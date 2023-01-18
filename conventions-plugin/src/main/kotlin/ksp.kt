@@ -1,4 +1,5 @@
 import com.eygraber.conventions.capitalize
+import io.gitlab.arturbosch.detekt.Detekt
 import org.gradle.kotlin.dsl.dependencies
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
@@ -72,6 +73,14 @@ fun KotlinMultiplatformExtension.commonMainKspDependencies(block: KspDependencie
   project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
     if(name != "kspCommonMainKotlinMetadata") {
       dependsOn("kspCommonMainKotlinMetadata")
+    }
+  }
+
+  project.plugins.withId("io.gitlab.arturbosch.detekt") {
+    project.tasks.withType(Detekt::class.java).configureEach {
+      if(name != "detekt") {
+        dependsOn("kspCommonMainKotlinMetadata")
+      }
     }
   }
 }
