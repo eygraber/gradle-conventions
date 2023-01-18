@@ -7,6 +7,7 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JvmVendorSpec
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
@@ -80,6 +81,17 @@ public fun Project.configureKgp(
     }
 
     tasks.withType(KotlinCompile::class.java).configureEach {
+      compilerOptions.allWarningsAsErrors.set(allWarningsAsErrors)
+      compilerOptions.jvmTarget.set(JvmTarget.valueOf(jdkVersion))
+      compilerOptions.useK2.set(useK2)
+      compilerOptions.freeCompilerArgs.set(
+        compilerOptions.freeCompilerArgs.get() + freeCompilerArgs.map { freeCompilerArg -> freeCompilerArg.value }
+      )
+      if(!isKmp) {
+        compilerOptions.freeCompilerArgs.set(
+          compilerOptions.freeCompilerArgs.get() + optIns.map { optIn -> "-opt-in=${optIn.value}" }
+        )
+      }
       kotlinOptions.allWarningsAsErrors = allWarningsAsErrors
       kotlinOptions.jvmTarget = jdkVersion
       kotlinOptions.useK2 = useK2

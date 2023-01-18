@@ -87,7 +87,7 @@ ext.awaitKotlinConfigured { isKotlinUserConfigured ->
         }
       }
 
-      packagingOptions {
+      packaging {
         resources.pickFirsts += "META-INF/*"
       }
 
