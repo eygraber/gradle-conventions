@@ -3,7 +3,7 @@
 import com.eygraber.conventions.gradleConventionsDefaultsService
 import com.eygraber.conventions.gradleConventionsExtension
 import com.eygraber.conventions.kotlin.doOnFirstMatchingIncomingDependencyBeforeResolution
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
   id("com.android.library")
@@ -167,10 +167,10 @@ ext.awaitKotlinConfigured { isKotlinUserConfigured ->
             configurationName = "${variant.name}RuntimeClasspath",
             dependencyPredicate = dependencyPredicate
           ) {
-            tasks.withType(KotlinCompile::class.java).configureEach {
-              kotlinOptions {
+            tasks.withType(KotlinCompilationTask::class.java).configureEach {
+              compilerOptions {
                 for(optIn in optIns) {
-                  freeCompilerArgs = freeCompilerArgs + "-opt-in=${optIn.value}"
+                  freeCompilerArgs.addAll("-opt-in=${optIn.value}")
                 }
               }
             }
