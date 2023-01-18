@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
 import org.jetbrains.kotlin.gradle.kpm.external.project
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 interface KspDependencies {
   fun ksp(dependencyNotation: Any)
@@ -69,7 +69,7 @@ fun KotlinMultiplatformExtension.commonMainKspDependencies(block: KspDependencie
     kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
   }
 
-  project.tasks.withType(KotlinCompile::class.java).configureEach {
+  project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
     if(name != "kspCommonMainKotlinMetadata") {
       dependsOn("kspCommonMainKotlinMetadata")
     }

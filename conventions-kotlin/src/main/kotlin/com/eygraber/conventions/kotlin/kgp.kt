@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 public fun Project.configureKgp(
   jdkVersion: Provider<String>,
@@ -80,23 +81,20 @@ public fun Project.configureKgp(
       }
     }
 
-    tasks.withType(KotlinCompile::class.java).configureEach {
+    tasks.withType(KotlinCompilationTask::class.java).configureEach {
       compilerOptions.allWarningsAsErrors.set(allWarningsAsErrors)
-      compilerOptions.jvmTarget.set(JvmTarget.valueOf(jdkVersion))
+      if(this is KotlinJvmCompile) {
+        compilerOptions.jvmTarget.set(JvmTarget.valueOf(jdkVersion))
+      }
       compilerOptions.useK2.set(useK2)
-      compilerOptions.freeCompilerArgs.set(
-        compilerOptions.freeCompilerArgs.get() + freeCompilerArgs.map { freeCompilerArg -> freeCompilerArg.value }
+      compilerOptions.freeCompilerArgs.addAll(
+        freeCompilerArgs.map { freeCompilerArg -> freeCompilerArg.value }
       )
       if(!isKmp) {
-        compilerOptions.freeCompilerArgs.set(
-          compilerOptions.freeCompilerArgs.get() + optIns.map { optIn -> "-opt-in=${optIn.value}" }
+        compilerOptions.freeCompilerArgs.addAll(
+          optIns.map { optIn -> "-opt-in=${optIn.value}" }
         )
       }
-      kotlinOptions.allWarningsAsErrors = allWarningsAsErrors
-      kotlinOptions.jvmTarget = jdkVersion
-      kotlinOptions.useK2 = useK2
-      kotlinOptions.freeCompilerArgs += freeCompilerArgs.map { freeCompilerArg -> freeCompilerArg.value }
-      if(!isKmp) kotlinOptions.freeCompilerArgs += optIns.map { optIn -> "-opt-in=${optIn.value}" }
     }
   }
 }

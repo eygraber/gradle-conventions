@@ -95,9 +95,9 @@ private fun KotlinMultiplatformExtension.createNestedAppleSharedSourceSet(
     parentSourceSetName = "apple"
   ) { target ->
     target.compilations.all {
-      kotlinOptions {
-        freeCompilerArgs = freeCompilerArgs + listOf("-linker-options", "-application_extension")
-      }
+      compilerOptions.options.freeCompilerArgs.addAll(
+        listOf("-linker-options", "-application_extension")
+      )
     }
   }
 
