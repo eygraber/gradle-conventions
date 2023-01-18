@@ -5,11 +5,6 @@ plugins {
   id("com.eygraber.conventions-publish-maven-central")
 }
 
-kotlinDslPluginOptions {
-  // need to override this because of ejson
-  jvmTarget.set(libs.versions.jdk)
-}
-
 gradlePlugin {
   plugins {
     create("gradleConventionsSettings") {
