@@ -127,6 +127,19 @@ public val NamedDomainObjectContainer<KotlinSourceSet>.androidTest: NamedDomainO
   get() = named<KotlinSourceSet>("androidTest")
 
 /**
+ * Provides the existing [androidUnitTest][KotlinSourceSet] element.
+ */
+public val NamedDomainObjectContainer<KotlinSourceSet>.androidUnitTest: NamedDomainObjectProvider<KotlinSourceSet>
+  get() = named<KotlinSourceSet>("androidUnitTest")
+
+/**
+ * Provides the existing [androidInstrumentedTest][KotlinSourceSet] element.
+ */
+@Suppress("MaxLineLength")
+public val NamedDomainObjectContainer<KotlinSourceSet>.androidInstrumentedTest: NamedDomainObjectProvider<KotlinSourceSet>
+  get() = named<KotlinSourceSet>("androidInstrumentedTest")
+
+/**
  * Provides the existing [appleMain][KotlinSourceSet] element.
  */
 public val NamedDomainObjectContainer<KotlinSourceSet>.appleMain: NamedDomainObjectProvider<KotlinSourceSet>
