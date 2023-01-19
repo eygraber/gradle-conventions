@@ -85,8 +85,8 @@ public fun Project.configureKgp(
       compilerOptions.allWarningsAsErrors.set(allWarningsAsErrors)
       if(this is KotlinJvmCompile) {
         compilerOptions.jvmTarget.set(JvmTarget.fromTarget(jdkVersion))
+        compilerOptions.useK2.set(useK2)
       }
-      compilerOptions.useK2.set(useK2)
       compilerOptions.freeCompilerArgs.addAll(
         freeCompilerArgs.map { freeCompilerArg -> freeCompilerArg.value }
       )
