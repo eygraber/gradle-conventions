@@ -43,13 +43,13 @@ public fun RepositoryHandler.addCommonRepositories(
     }
   }
 
-  if(includeMavenCentral) {
-    mavenCentral(mavenCentral)
-  }
-
   if(includeMavenCentralSnapshots) {
     mavenCentralSnapshots(mavenCentralSnapshots)
     mavenCentralSnapshotsS01(mavenCentralSnapshots)
+  }
+
+  if(includeMavenCentral) {
+    mavenCentral(mavenCentral)
   }
 
   if(includeJitpack) {
