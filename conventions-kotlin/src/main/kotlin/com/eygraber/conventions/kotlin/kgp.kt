@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
@@ -85,7 +86,9 @@ public fun Project.configureKgp(
       compilerOptions.allWarningsAsErrors.set(allWarningsAsErrors)
       if(this is KotlinJvmCompile) {
         compilerOptions.jvmTarget.set(JvmTarget.fromTarget(jdkVersion))
-        compilerOptions.useK2.set(useK2)
+        if(useK2) {
+          compilerOptions.languageVersion.set(KotlinVersion.KOTLIN_2_0)
+        }
       }
       compilerOptions.freeCompilerArgs.addAll(
         freeCompilerArgs.map { freeCompilerArg -> freeCompilerArg.value }
