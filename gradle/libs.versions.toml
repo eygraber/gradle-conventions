@@ -16,7 +16,7 @@ gradleConventions = "0.0.33"
 
 jdk = "17"
 
-kotlin = "1.8.20"
+kotlin = "1.8.21"
 
 ktlint = "11.3.1"
 
