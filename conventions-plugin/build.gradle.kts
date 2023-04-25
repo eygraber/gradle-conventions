@@ -25,5 +25,6 @@ dependencies {
   compileOnly(libs.buildscript.detekt)
   compileOnly(libs.buildscript.dokka)
   compileOnly(libs.buildscript.kotlin)
+  compileOnly(libs.buildscript.ktlint)
   compileOnly(libs.buildscript.publish)
 }

@@ -18,6 +18,8 @@ jdk = "17"
 
 kotlin = "1.8.20"
 
+ktlint = "11.3.1"
+
 publish = "0.25.2"
 
 [plugins]
@@ -35,6 +37,7 @@ buildscript-detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugi
 buildscript-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 buildscript-ejson = { module = "com.eygraber:ejson-gradle", version.ref = "ejson" }
 buildscript-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+buildscript-ktlint = { module = "org.jlleitschuh.gradle:ktlint-gradle", version.ref = "ktlint" }
 buildscript-publish = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "publish" }
 
 detekt = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
