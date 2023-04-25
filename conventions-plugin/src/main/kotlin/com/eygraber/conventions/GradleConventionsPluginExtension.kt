@@ -6,6 +6,7 @@ import com.eygraber.conventions.dependencies.GradleConventionsDependencies
 import com.eygraber.conventions.detekt.GradleConventionsDetekt
 import com.eygraber.conventions.github.GradleConventionsGitHub
 import com.eygraber.conventions.kotlin.GradleConventionsKotlin
+import com.eygraber.conventions.ktlint.GradleConventionsKtlint
 import com.eygraber.conventions.spm.GradleConventionsSpm
 import org.gradle.api.Action
 import org.gradle.api.Project
@@ -19,6 +20,7 @@ internal interface GradleConventionsConfigurableListener {
   fun GradleConventionsDetekt.onDetektConfigured(isUserConfigured: Boolean) {}
   fun GradleConventionsGitHub.onGitHubConfigured(isUserConfigured: Boolean) {}
   fun GradleConventionsKotlin.onKotlinConfigured(isUserConfigured: Boolean) {}
+  fun GradleConventionsKtlint.onKtlintConfigured(isUserConfigured: Boolean) {}
   fun GradleConventionsSpm.onSpmConfigured(isUserConfigured: Boolean) {}
 }
 
@@ -86,6 +88,17 @@ abstract class GradleConventionsPluginExtension {
     kotlin.configure(isKotlinConfigured)
     configureListeners += object : GradleConventionsConfigurableListener {
       override fun GradleConventionsKotlin.onKotlinConfigured(isUserConfigured: Boolean) {
+        configure(isUserConfigured)
+      }
+    }
+  }
+
+  internal fun awaitKtlintConfigured(
+    configure: GradleConventionsKtlint.(isConfigured: Boolean) -> Unit
+  ) {
+    ktlint.configure(isKtlintConfigured)
+    configureListeners += object : GradleConventionsConfigurableListener {
+      override fun GradleConventionsKtlint.onKtlintConfigured(isUserConfigured: Boolean) {
         configure(isUserConfigured)
       }
     }
@@ -182,6 +195,25 @@ abstract class GradleConventionsPluginExtension {
     configureListeners.forEach { listener ->
       with(listener) {
         kotlin.onKotlinConfigured(isKotlinConfigured)
+      }
+    }
+  }
+
+  private var wasKtlintUserConfigured: Boolean = false
+  private var isKtlintConfigured: Boolean = false
+  internal val ktlint = GradleConventionsKtlint()
+    get() {
+      wasKtlintUserConfigured = true
+
+      return field
+    }
+
+  fun ktlint(action: Action<GradleConventionsKtlint>) {
+    action.execute(ktlint)
+    isKtlintConfigured = true
+    configureListeners.forEach { listener ->
+      with(listener) {
+        ktlint.onKtlintConfigured(isKtlintConfigured)
       }
     }
   }
