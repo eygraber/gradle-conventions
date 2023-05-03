@@ -37,7 +37,7 @@ dependencyResolutionManagement {
 rootProject.name = "gradle-conventions"
 
 plugins {
-  id("com.gradle.enterprise") version "3.13"
+  id("com.gradle.enterprise") version "3.13.1"
 }
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
