@@ -10,10 +10,8 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.publish.PublishingExtension
-import org.gradle.kotlin.dsl.add
 import org.jetbrains.compose.ComposeExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
-import org.jlleitschuh.gradle.ktlint.KtlintExtension
 
 internal inline fun Project.android(action: Action<BaseExtension>) {
   action.execute(extensions.getByType(BaseExtension::class.java))
@@ -34,10 +32,6 @@ internal val Project.compose: ComposeExtension
 internal val Project.kotlin: KotlinProjectExtension
   get() =
     (this as ExtensionAware).extensions.getByName("kotlin") as KotlinProjectExtension
-
-internal inline fun Project.ktlint(action: Action<KtlintExtension>) {
-  action.execute(extensions.getByType(KtlintExtension::class.java))
-}
 
 internal inline fun Project.publishing(action: Action<PublishingExtension>) {
   action.execute(extensions.getByType(PublishingExtension::class.java))
