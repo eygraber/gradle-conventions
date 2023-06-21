@@ -5,6 +5,7 @@ import com.eygraber.conventions.kotlin.kmp.createSharedSourceSet
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
 fun KotlinMultiplatformExtension.kmpTargets(
   project: Project,
@@ -12,6 +13,9 @@ fun KotlinMultiplatformExtension.kmpTargets(
   jvm: Boolean = false,
   ios: Boolean = false,
   macos: Boolean = false,
+  wasm: Boolean = false,
+  isWasmLeafModule: Boolean = false,
+  wasmModuleName: String? = null,
   js: Boolean = false,
   isJsLeafModule: Boolean = false,
   jsModuleName: String? = null,
@@ -61,6 +65,21 @@ fun KotlinMultiplatformExtension.kmpTargets(
         name = "macos",
         targets = targets
       )
+    }
+  }
+
+  if (wasm) {
+    @OptIn(ExperimentalWasmDsl::class)
+    wasm {
+      if (wasmModuleName != null) {
+        moduleName = wasmModuleName
+      }
+
+      browser {
+        if (isWasmLeafModule) {
+          binaries.executable()
+        }
+      }
     }
   }
 
