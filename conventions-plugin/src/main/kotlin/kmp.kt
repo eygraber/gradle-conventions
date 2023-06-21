@@ -68,15 +68,15 @@ fun KotlinMultiplatformExtension.kmpTargets(
     }
   }
 
-  if (wasm) {
+  if(wasm) {
     @OptIn(ExperimentalWasmDsl::class)
     wasm {
-      if (wasmModuleName != null) {
+      if(wasmModuleName != null) {
         moduleName = wasmModuleName
       }
 
       browser {
-        if (isWasmLeafModule) {
+        if(isWasmLeafModule) {
           binaries.executable()
         }
       }
