@@ -2,6 +2,10 @@ import com.eygraber.conventions.detekt.registerDetektKmpIntermediateTask
 import com.eygraber.conventions.detekt.registerSourceSetDetektTask
 import com.eygraber.conventions.kotlin.kmp.createNestedSharedSourceSetForTargets
 import com.eygraber.conventions.kotlin.kmp.createSharedSourceSet
+import com.eygraber.conventions.kotlin.kmp.jsMain
+import com.eygraber.conventions.kotlin.kmp.jsTest
+import com.eygraber.conventions.kotlin.kmp.wasmMain
+import com.eygraber.conventions.kotlin.kmp.wasmTest
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -19,11 +23,12 @@ fun KotlinMultiplatformExtension.kmpTargets(
   js: Boolean = false,
   isJsLeafModule: Boolean = false,
   jsModuleName: String? = null,
+  createJsWasmSourceSetIfApplicable: Boolean = true,
   requireAtLeastOneTarget: Boolean = true
 ) {
   if(requireAtLeastOneTarget) {
-    check(android || jvm || ios || macos || js) {
-      "At least one of android, jvm, ios, macos, or js needs to be set to true"
+    check(android || jvm || ios || macos || js || wasm) {
+      "At least one of android, jvm, ios, macos, js, or wasm needs to be set to true"
     }
   }
 
@@ -95,6 +100,23 @@ fun KotlinMultiplatformExtension.kmpTargets(
         }
       }
     }
+  }
+
+  if(createJsWasmSourceSetIfApplicable && js && wasm) {
+    createSharedSourceSet(
+      project = project,
+      name = "jsWasm"
+    )
+
+    sourceSets.jsMain.get().dependsOn(sourceSets.getByName("jsWasmMain"))
+    sourceSets.jsTest.get().dependsOn(sourceSets.getByName("jsWasmTest"))
+    sourceSets.wasmMain.get().dependsOn(sourceSets.getByName("jsWasmMain"))
+    sourceSets.wasmTest.get().dependsOn(sourceSets.getByName("jsWasmTest"))
+
+    project.registerDetektKmpIntermediateTask(
+      intermediateName = "jsWasm",
+      targets = listOf(targets.getByName("js"), targets.getByName("wasm"))
+    )
   }
 
   if(jvm) {
