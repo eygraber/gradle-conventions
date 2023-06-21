@@ -43,7 +43,7 @@ public fun KotlinMultiplatformExtension.createSharedSourceSet(
     ) {
       group = "Publishing"
       description =
-        "Publishes all Maven 'apple' publications produced by this project to the githubPackages repository."
+        "Publishes all Maven '$name' publications produced by this project to the $repoNameForTasks repository."
       enabled = enableTasks
     }
   }
@@ -81,7 +81,7 @@ public fun <T : KotlinTarget> KotlinMultiplatformExtension.createNestedSharedSou
       ) {
         group = "Publishing"
         description =
-          "Publishes all Maven '$name' publications produced by this project to the githubPackages repository."
+          "Publishes all Maven '$name' publications produced by this project to the $repoNameForTasks repository."
         enabled = enableTasks
       }
 
@@ -198,3 +198,15 @@ public val NamedDomainObjectContainer<KotlinSourceSet>.jvmMain: NamedDomainObjec
  */
 public val NamedDomainObjectContainer<KotlinSourceSet>.jvmTest: NamedDomainObjectProvider<KotlinSourceSet>
   get() = named<KotlinSourceSet>("jvmTest")
+
+/**
+ * Provides the existing [wasmMain][KotlinSourceSet] element.
+ */
+public val NamedDomainObjectContainer<KotlinSourceSet>.wasmMain: NamedDomainObjectProvider<KotlinSourceSet>
+  get() = named<KotlinSourceSet>("wasmMain")
+
+/**
+ * Provides the existing [wasmTest][KotlinSourceSet] element.
+ */
+public val NamedDomainObjectContainer<KotlinSourceSet>.wasmTest: NamedDomainObjectProvider<KotlinSourceSet>
+  get() = named<KotlinSourceSet>("wasmTest")
