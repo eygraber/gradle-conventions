@@ -4,7 +4,9 @@ buildscript {
   dependencies {
     classpath(libs.buildscript.detekt)
     classpath(libs.buildscript.dokka)
-    classpath(libs.buildscript.kotlin)
+    with(libs.buildscript.kotlin.get()) {
+      classpath("$group:$name:$embeddedKotlinVersion")
+    }
     classpath(libs.buildscript.publish)
   }
 }
