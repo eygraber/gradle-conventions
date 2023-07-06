@@ -7,11 +7,170 @@ import com.eygraber.conventions.kotlin.kmp.jsTest
 import com.eygraber.conventions.kotlin.kmp.wasmMain
 import com.eygraber.conventions.kotlin.kmp.wasmTest
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+import org.jetbrains.kotlin.tooling.core.toKotlinVersion
 
 fun KotlinMultiplatformExtension.kmpTargets(
+  project: Project,
+  android: Boolean = false,
+  jvm: Boolean = false,
+  ios: Boolean = false,
+  macos: Boolean = false,
+  wasm: Boolean = false,
+  isWasmLeafModule: Boolean = false,
+  wasmModuleName: String? = null,
+  js: Boolean = false,
+  isJsLeafModule: Boolean = false,
+  jsModuleName: String? = null,
+  createJsWasmSourceSetIfApplicable: Boolean = true,
+  requireAtLeastOneTarget: Boolean = true,
+  useDefaultTargetHierarchy: Boolean = true
+) {
+  @OptIn(ExperimentalKotlinGradlePluginApi::class)
+  if(project.kotlinToolingVersion.toKotlinVersion().isAtLeast(major = 1, minor = 9)) {
+    kmpTargets19(
+      project = project,
+      android = android,
+      jvm = jvm,
+      ios = ios,
+      macos = macos,
+      wasm = wasm,
+      isWasmLeafModule = isWasmLeafModule,
+      wasmModuleName = wasmModuleName,
+      js = js,
+      isJsLeafModule = isJsLeafModule,
+      jsModuleName = jsModuleName,
+      requireAtLeastOneTarget = requireAtLeastOneTarget,
+      useDefaultTargetHierarchy = useDefaultTargetHierarchy
+    )
+  }
+  else {
+    kmpTargetsPre19(
+      project = project,
+      android = android,
+      jvm = jvm,
+      ios = ios,
+      macos = macos,
+      wasm = wasm,
+      isWasmLeafModule = isWasmLeafModule,
+      wasmModuleName = wasmModuleName,
+      js = js,
+      isJsLeafModule = isJsLeafModule,
+      jsModuleName = jsModuleName,
+      createJsWasmSourceSetIfApplicable = createJsWasmSourceSetIfApplicable,
+      requireAtLeastOneTarget = requireAtLeastOneTarget
+    )
+  }
+}
+
+private fun KotlinMultiplatformExtension.kmpTargets19(
+  project: Project,
+  android: Boolean = false,
+  jvm: Boolean = false,
+  ios: Boolean = false,
+  macos: Boolean = false,
+  wasm: Boolean = false,
+  isWasmLeafModule: Boolean = false,
+  wasmModuleName: String? = null,
+  js: Boolean = false,
+  isJsLeafModule: Boolean = false,
+  jsModuleName: String? = null,
+  requireAtLeastOneTarget: Boolean = true,
+  useDefaultTargetHierarchy: Boolean = true
+) {
+  if(requireAtLeastOneTarget) {
+    check(android || jvm || ios || macos || js || wasm) {
+      "At least one of android, jvm, ios, macos, js, or wasm needs to be set to true"
+    }
+  }
+
+  if(useDefaultTargetHierarchy) {
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    targetHierarchy.default {
+      group("jsWasm") {
+        withJs()
+        withWasm()
+      }
+    }
+  }
+
+  if(android) {
+    androidTarget {
+      publishAllLibraryVariants()
+    }
+  }
+
+  if(ios || macos) {
+    project.afterEvaluate {
+      project.registerSourceSetDetektTask("apple", "ios", "macos")
+    }
+
+    if(ios) {
+      val targets = listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+      )
+
+      project.registerDetektKmpIntermediateTask(intermediateName = "ios", targets)
+    }
+
+    if(macos) {
+      val targets = listOf(
+        macosX64(),
+        macosArm64()
+      )
+
+      project.registerDetektKmpIntermediateTask(intermediateName = "macos", targets)
+    }
+  }
+
+  if(wasm) {
+    @OptIn(ExperimentalWasmDsl::class)
+    wasm {
+      if(wasmModuleName != null) {
+        moduleName = wasmModuleName
+      }
+
+      browser {
+        if(isWasmLeafModule) {
+          binaries.executable()
+        }
+      }
+    }
+  }
+
+  if(js) {
+    js(IR) {
+      if(jsModuleName != null) {
+        moduleName = jsModuleName
+      }
+
+      browser {
+        if(isJsLeafModule) {
+          binaries.executable()
+        }
+      }
+    }
+  }
+
+  if(js && wasm) {
+    project.registerDetektKmpIntermediateTask(
+      intermediateName = "jsWasm",
+      targets = listOf(targets.getByName("js"), targets.getByName("wasm"))
+    )
+  }
+
+  if(jvm) {
+    jvm()
+  }
+}
+
+private fun KotlinMultiplatformExtension.kmpTargetsPre19(
   project: Project,
   android: Boolean = false,
   jvm: Boolean = false,
@@ -33,6 +192,7 @@ fun KotlinMultiplatformExtension.kmpTargets(
   }
 
   if(android) {
+    @Suppress("DEPRECATION")
     android {
       publishAllLibraryVariants()
     }

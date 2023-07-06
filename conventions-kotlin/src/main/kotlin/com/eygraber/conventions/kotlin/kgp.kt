@@ -6,6 +6,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JvmVendorSpec
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -13,8 +14,10 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
+import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.tooling.core.toKotlinVersion
 
 public fun Project.configureKgp(
   jdkVersion: Provider<String>,
@@ -94,9 +97,15 @@ public fun Project.configureKgp(
         freeCompilerArgs.map { freeCompilerArg -> freeCompilerArg.value }
       )
       if(!isKmp) {
-        compilerOptions.freeCompilerArgs.addAll(
-          optIns.map { optIn -> "-opt-in=${optIn.value}" }
-        )
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        if(project.kotlinToolingVersion.toKotlinVersion().isAtLeast(major = 1, minor = 9)) {
+          compilerOptions.optIn.addAll(optIns.map(KotlinOptIn::value))
+        }
+        else {
+          compilerOptions.freeCompilerArgs.addAll(
+            optIns.map { optIn -> "-opt-in=${optIn.value}" }
+          )
+        }
       }
     }
   }
