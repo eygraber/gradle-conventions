@@ -69,6 +69,7 @@ jobs:
         with:
           github-token: ${{ secrets.PUSH_PAT }}
           script: |
+            const {GIT_HEAD} = process.env
             github.rest.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
