@@ -1,9 +1,7 @@
 name: Publish a release
 
 on:
-  push:
-    branches:
-      - release
+  workflow_dispatch
 
 env:
   VERSION_FILE: gradle.properties
@@ -17,6 +15,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PUSH_PAT }}
 
       - name: Generate versions
         uses: HardNorth/github-version-generate@v1.3.0
@@ -44,6 +44,13 @@ jobs:
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.ARTIFACT_SIGNING_PRIVATE_KEY }}
         run: ./gradlew publish -Pversion=${{ env.RELEASE_VERSION }}
 
+      - name: Create, checkout, and push release branch
+        run: |
+          git config user.name eygraber
+          git config user.email 1100381+eygraber@users.noreply.github.com
+          git checkout -b releases/${{ env.RELEASE_VERSION }}
+          git push origin releases/${{ env.RELEASE_VERSION }}
+
       - name: Import GPG Key
         uses: crazy-max/ghaction-import-gpg@v5.3.0
         with:
@@ -53,16 +60,20 @@ jobs:
           git_commit_gpgsign: true
           git_tag_gpgsign: true
 
+      - name: Store SHA of HEAD commit on ENV
+        run: echo "GIT_HEAD=$(git rev-parse HEAD)" >> $GITHUB_ENV
+
       - name: Create tag
         id: create_tag
         uses: actions/github-script@v6
         with:
+          github-token: ${{ secrets.PUSH_PAT }}
           script: |
             github.rest.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
               ref: "refs/tags/${{ env.RELEASE_VERSION }}",
-              sha: context.sha
+              sha: `${GIT_HEAD}`
             })
 
       - name: Build changelog
@@ -79,21 +90,24 @@ jobs:
         uses: ncipollo/release-action@v1.12.0
         with:
           body: ${{ steps.build_changelog.outputs.changelog }}
-          commit: release
           name: Release ${{ env.RELEASE_VERSION }}
           tag: ${{ env.RELEASE_VERSION }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PUSH_PAT }}
 
       - uses: actions/checkout@v3
         with:
-          ref: 'master'
+          ref: ${{ github.event.head_ref }}
           token: ${{ secrets.PUSH_PAT }}
 
       - name: Prepare next dev version
+        id: prepare_next_dev
         run: |
-          git config user.name eygraber
-          git config user.email eygraber@users.noreply.github.com
           sed -i -e 's/${{ env.CURRENT_VERSION }}/${{ env.NEXT_VERSION }}/g' gradle.properties
-          git add gradle.properties
-          git commit -m "Prepare next dev version (${{ env.NEXT_VERSION }})"
-          git push origin master
+
+      - name: Commit next dev version
+        id: commit_next_dev
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: "['gradle.properties']"
+          default_author: github_actions
+          message: "Prepare next dev version (${{ env.NEXT_VERSION }})"
