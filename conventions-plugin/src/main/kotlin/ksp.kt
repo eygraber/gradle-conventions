@@ -2,32 +2,12 @@ import com.eygraber.conventions.capitalize
 import io.gitlab.arturbosch.detekt.Detekt
 import org.gradle.kotlin.dsl.dependencies
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
 import org.jetbrains.kotlin.gradle.kpm.external.project
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 interface KspDependencies {
   fun ksp(dependencyNotation: Any)
-}
-
-fun KotlinProjectExtension.configureKspSourceSets() {
-  check(this !is KotlinMultiplatformExtension) {
-    """
-    |configureKspSourceSets isn't meant to be used with KMP.
-    |Please use one of the functions meant for use with KMP:
-    |  KotlinTarget.kspDependencies
-    |  KotlinMultiplatformExtension.kspDependenciesForAllTargets
-    |  KotlinMultiplatformExtension.commonMainKspDependencies
-    """.trimMargin()
-  }
-
-  sourceSets.configureEach {
-    kotlin.srcDir("build/generated/ksp/$name/kotlin")
-    kotlin.srcDir("build/generated/ksp/$name/java")
-    resources.srcDir("build/generated/ksp/$name/resources")
-  }
 }
 
 fun KotlinTarget.kspDependencies(block: KspDependencies.() -> Unit) {
@@ -38,13 +18,6 @@ fun KotlinTarget.kspDependencies(block: KspDependencies.() -> Unit) {
         add(configurationName, dependencyNotation)
       }
     }.block()
-  }
-
-  compilations.configureEach {
-    kotlinSourceSets.forEach { sourceSet ->
-      sourceSet.kotlin.srcDir("build/generated/ksp/$targetName/${sourceSet.name}/kotlin")
-      sourceSet.resources.srcDir("build/generated/ksp/$targetName/${sourceSet.name}/resources")
-    }
   }
 }
 
@@ -64,16 +37,6 @@ fun KotlinMultiplatformExtension.commonMainKspDependencies(block: KspDependencie
         add("kspCommonMainMetadata", dependencyNotation)
       }
     }.block()
-  }
-
-  sourceSets.named("commonMain").configure {
-    kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
-  }
-
-  project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
-    if(name != "kspCommonMainKotlinMetadata") {
-      dependsOn("kspCommonMainKotlinMetadata")
-    }
   }
 
   project.plugins.withId("io.gitlab.arturbosch.detekt") {
