@@ -12,7 +12,7 @@ dokka = "1.8.20"
 
 ejson = "1.0.8"
 
-gradleConventions = "0.0.37"
+gradleConventions = "0.0.38"
 
 jdk = "17"
 
