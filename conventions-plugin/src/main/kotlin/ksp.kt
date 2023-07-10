@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
 import org.jetbrains.kotlin.gradle.kpm.external.project
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 interface KspDependencies {
   fun ksp(dependencyNotation: Any)
@@ -37,6 +38,16 @@ fun KotlinMultiplatformExtension.commonMainKspDependencies(block: KspDependencie
         add("kspCommonMainMetadata", dependencyNotation)
       }
     }.block()
+  }
+
+  sourceSets.named("commonMain").configure {
+    kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
+  }
+
+  project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
+    if(name != "kspCommonMainKotlinMetadata") {
+      dependsOn("kspCommonMainKotlinMetadata")
+    }
   }
 
   project.plugins.withId("io.gitlab.arturbosch.detekt") {
