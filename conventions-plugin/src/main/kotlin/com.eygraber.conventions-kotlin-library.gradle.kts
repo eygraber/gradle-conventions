@@ -6,7 +6,8 @@ val kotlinDefaults = gradleConventionsDefaultsService.kotlin
 
 with(gradleConventionsExtension) {
   with(kotlin) {
-    jdkVersion = kotlinDefaults.jdkVersion
+    jvmTargetVersion = kotlinDefaults.jvmTargetVersion
+    jdkToolchainVersion = kotlinDefaults.jdkToolchainVersion
     jvmDistribution = kotlinDefaults.jvmDistribution
     allWarningsAsErrors = kotlinDefaults.allWarningsAsErrors
     explicitApiMode = kotlinDefaults.explicitApiMode
@@ -16,21 +17,16 @@ with(gradleConventionsExtension) {
     optIns = kotlinDefaults.optIns
   }
 
-  awaitKotlinConfigured { isUserConfigured ->
-    val jdkVersion = jdkVersion ?: if(isUserConfigured) null else ""
-
-    if(jdkVersion != "") {
-      configureKgp(
-        jdkVersion = requireNotNull(jdkVersion) {
-          "Please set jdkVersion in the gradleConventions kotlin extension"
-        },
-        jvmDistribution = jvmDistribution,
-        allWarningsAsErrors = allWarningsAsErrors,
-        explicitApiMode = explicitApiMode,
-        configureJavaCompatibility = configureJava,
-        freeCompilerArgs = freeCompilerArgs.toList(),
-        optIns = optIns.toTypedArray()
-      )
-    }
+  awaitKotlinConfigured {
+    configureKgp(
+      jvmTargetVersion = jvmTargetVersion,
+      jdkToolchainVersion = jdkToolchainVersion,
+      jvmDistribution = jvmDistribution,
+      allWarningsAsErrors = allWarningsAsErrors,
+      explicitApiMode = explicitApiMode,
+      configureJavaCompatibility = configureJava,
+      freeCompilerArgs = freeCompilerArgs.toList(),
+      optIns = optIns.toTypedArray()
+    )
   }
 }

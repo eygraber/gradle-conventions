@@ -14,17 +14,15 @@ val kotlinDefaults = gradleConventionsDefaultsService.kotlin
 ext.detekt.ignoredAndroidFlavors = detektDefaults.ignoredAndroidFlavors
 ext.detekt.ignoredAndroidVariants = detektDefaults.ignoredAndroidVariants
 ext.detekt.detektPluginDependencies = detektDefaults.detektPluginDependencies
-ext.kotlin.jdkVersion = kotlinDefaults.jdkVersion
+ext.kotlin.jvmTargetVersion = kotlinDefaults.jvmTargetVersion
 
 @Suppress("LabeledExpression")
 ext.awaitKotlinConfigured { isKotlinUserConfigured ->
   ext.awaitDetektConfigured {
-    if(jdkVersion == null && !isKotlinUserConfigured) return@awaitDetektConfigured
+    if(jvmTargetVersion == null && !isKotlinUserConfigured) return@awaitDetektConfigured
 
     configureDetekt(
-      jdkVersion = requireNotNull(jdkVersion) {
-        "Please set jdkVersion in the gradleConventions kotlin extension"
-      }
+      jvmTargetVersion = jvmTargetVersion
     )
 
     dependencies {

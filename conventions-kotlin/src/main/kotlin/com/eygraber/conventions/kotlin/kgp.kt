@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.tooling.core.toKotlinVersion
 
 public fun Project.configureKgp(
-  jdkVersion: Provider<String>,
+  jvmTargetVersion: Provider<JvmTarget?>,
+  jdkToolchainVersion: Provider<JavaLanguageVersion?>,
   jvmDistribution: JvmVendorSpec? = null,
   allWarningsAsErrors: Boolean = true,
   explicitApiMode: ExplicitApiMode = ExplicitApiMode.Disabled,
@@ -30,7 +31,8 @@ public fun Project.configureKgp(
   vararg optIns: KotlinOptIn
 ) {
   configureKgp(
-    jdkVersion.get(),
+    jvmTargetVersion = jvmTargetVersion.get(),
+    jdkToolchainVersion.get(),
     jvmDistribution,
     allWarningsAsErrors,
     explicitApiMode,
@@ -42,7 +44,8 @@ public fun Project.configureKgp(
 }
 
 public fun Project.configureKgp(
-  jdkVersion: String,
+  jvmTargetVersion: JvmTarget?,
+  jdkToolchainVersion: JavaLanguageVersion?,
   jvmDistribution: JvmVendorSpec? = null,
   allWarningsAsErrors: Boolean = true,
   explicitApiMode: ExplicitApiMode = ExplicitApiMode.Disabled,
@@ -51,10 +54,10 @@ public fun Project.configureKgp(
   freeCompilerArgs: List<KotlinFreeCompilerArg> = emptyList(),
   vararg optIns: KotlinOptIn
 ) {
-  if(configureJavaCompatibility) {
+  if(configureJavaCompatibility && jvmTargetVersion != null) {
     tasks.withType(JavaCompile::class.java) {
-      sourceCompatibility = jdkVersion
-      targetCompatibility = jdkVersion
+      sourceCompatibility = jvmTargetVersion.target
+      targetCompatibility = jvmTargetVersion.target
     }
   }
 
@@ -69,7 +72,7 @@ public fun Project.configureKgp(
 
       plugins.withType(JavaBasePlugin::class.java) {
         jvmToolchain {
-          languageVersion.set(JavaLanguageVersion.of(jdkVersion.removePrefix("1.")))
+          languageVersion.set(jdkToolchainVersion)
           if(jvmDistribution != null) {
             vendor.set(jvmDistribution)
           }
@@ -88,7 +91,9 @@ public fun Project.configureKgp(
     tasks.withType(KotlinCompilationTask::class.java).configureEach {
       compilerOptions.allWarningsAsErrors.set(allWarningsAsErrors)
       if(this is KotlinJvmCompile) {
-        compilerOptions.jvmTarget.set(JvmTarget.fromTarget(jdkVersion))
+        if(jvmTargetVersion != null) {
+          compilerOptions.jvmTarget.set(jvmTargetVersion)
+        }
         if(useK2) {
           compilerOptions.languageVersion.set(KotlinVersion.KOTLIN_2_0)
         }

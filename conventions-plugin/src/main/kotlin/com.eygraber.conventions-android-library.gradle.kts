@@ -21,7 +21,7 @@ ext.android.publishEverything = androidDefaults.publishEverything
 ext.android.coreLibraryDesugaringDependency = androidDefaults.coreLibraryDesugaringDependency
 ext.android.flavors = androidDefaults.flavors
 ext.android.optInsToDependencyPredicate = androidDefaults.optInsToDependencyPredicate
-ext.kotlin.jdkVersion = kotlinDefaults.jdkVersion
+ext.kotlin.jvmTargetVersion = kotlinDefaults.jvmTargetVersion
 
 var isAndroidPublishingConfigured = false
 
@@ -31,7 +31,7 @@ ext.awaitKotlinConfigured { isKotlinUserConfigured ->
     val isSdkVersionsConfigured = compileSdk > 0 && minSdk > 0
     if(!isSdkVersionsConfigured && !isAndroidUserConfigured) return@awaitAndroidConfigured
 
-    if(jdkVersion == null && !isKotlinUserConfigured) return@awaitAndroidConfigured
+    if(jvmTargetVersion == null && !isKotlinUserConfigured) return@awaitAndroidConfigured
 
     check(compileSdk > 0) {
       "android.compileSdk doesn't have a value set"
@@ -76,14 +76,14 @@ ext.awaitKotlinConfigured { isKotlinUserConfigured ->
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
       }
 
-      val jdkVersion = jdkVersion
-      if(jdkVersion != null) {
+      val jvmTargetVersion = jvmTargetVersion
+      if(jvmTargetVersion != null) {
         compileOptions {
           if(coreLibraryDesugaringDependency != null) {
             isCoreLibraryDesugaringEnabled = true
           }
-          sourceCompatibility = JavaVersion.toVersion(jdkVersion)
-          targetCompatibility = JavaVersion.toVersion(jdkVersion)
+          sourceCompatibility = JavaVersion.toVersion(jvmTargetVersion)
+          targetCompatibility = JavaVersion.toVersion(jvmTargetVersion)
         }
       }
 
