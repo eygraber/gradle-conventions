@@ -70,11 +70,13 @@ public fun Project.configureKgp(
         ExplicitApiMode.Disabled -> explicitApi = null
       }
 
-      plugins.withType(JavaBasePlugin::class.java) {
-        jvmToolchain {
-          languageVersion.set(jdkToolchainVersion)
-          if(jvmDistribution != null) {
-            vendor.set(jvmDistribution)
+      if(jdkToolchainVersion != null) {
+        plugins.withType(JavaBasePlugin::class.java) {
+          jvmToolchain {
+            languageVersion.set(jdkToolchainVersion)
+            if(jvmDistribution != null) {
+              vendor.set(jvmDistribution)
+            }
           }
         }
       }

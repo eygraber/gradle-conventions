@@ -43,9 +43,11 @@ abstract class GradleConventionsPlugin : Plugin<Project> {
         }
 
         awaitComposeConfigured {
-          compose.applyToAndroidAndJvmOnly = applyToAndroidAndJvmOnly
           compose.androidComposeCompilerVersionOverride = androidComposeCompilerVersionOverride
           compose.androidComposeDependencyBomVersion = androidComposeDependencyBomVersion
+          compose.enableAndroidCompilerMetrics = enableAndroidCompilerMetrics
+          compose.ignoreNonJvmTargets = ignoreNonJvmTargets
+          compose.jetbrainsComposeCompilerOverride = jetbrainsComposeCompilerOverride
           compose.useAndroidComposeCompilerVersionForJetbrainsComposeCompilerVersion =
             useAndroidComposeCompilerVersionForJetbrainsComposeCompilerVersion
         }
