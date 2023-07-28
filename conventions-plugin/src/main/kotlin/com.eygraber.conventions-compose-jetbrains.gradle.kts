@@ -11,7 +11,7 @@ plugins {
 }
 
 gradleConventionsExtension.awaitComposeConfigured {
-  if(applyToAndroidAndJvmOnly) {
+  if(ignoreNonJvmTargets) {
     // only apply to android/jvm targets if we're in a multiplatform project
     plugins.withId("org.jetbrains.kotlin.multiplatform") {
       plugins.removeAll {
@@ -30,10 +30,10 @@ gradleConventionsExtension.awaitComposeConfigured {
     }
   }
 
-  if(useAndroidComposeCompilerVersionForJetbrainsComposeCompilerVersion) {
-    androidComposeCompilerVersionOverride?.let { compilerVersion ->
-      compose.kotlinCompilerPlugin.set("androidx.compose.compiler:compiler:$compilerVersion")
-    }
+  jetbrainsComposeCompilerOverride?.apply {
+    compose.kotlinCompilerPlugin.set(
+      "$group:$name${if(version == null) "" else ":$version"}"
+    )
   }
 
   plugins.withType<BasePlugin> {
