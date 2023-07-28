@@ -8,9 +8,12 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.provider.Provider
 import org.gradle.internal.Actions
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 public fun Project.configureDetekt(
-  jdkVersion: Provider<String>,
+  jvmTargetVersion: Provider<JvmTarget?>,
   useRootConfigFile: Boolean = true,
   useProjectConfigFile: Boolean = true,
   configFiles: ConfigurableFileCollection = files(),
@@ -19,7 +22,7 @@ public fun Project.configureDetekt(
   configure: Action<DetektExtension> = Actions.doNothing()
 ) {
   configureDetekt(
-    jdkVersion.get(),
+    jvmTargetVersion.get(),
     useRootConfigFile,
     useProjectConfigFile,
     configFiles,
@@ -30,7 +33,7 @@ public fun Project.configureDetekt(
 }
 
 public fun Project.configureDetekt(
-  jdkVersion: String,
+  jvmTargetVersion: JvmTarget?,
   useRootConfigFile: Boolean = true,
   useProjectConfigFile: Boolean = true,
   configFiles: ConfigurableFileCollection = files(),
@@ -66,7 +69,19 @@ public fun Project.configureDetekt(
 
   tasks.withType(Detekt::class.java).configureEach {
     // Target version of the generated JVM bytecode. It is used for type resolution.
-    jvmTarget = jdkVersion
+    if(jvmTargetVersion == null) {
+      var jvmTargetSet = false
+      tasks.withType(KotlinCompilationTask::class.java).configureEach {
+        if(this is KotlinJvmCompile && !jvmTargetSet) {
+          jvmTarget = compilerOptions.jvmTarget.get().target
+          jvmTargetSet = true
+        }
+      }
+    }
+    else {
+      jvmTarget = jvmTargetVersion.target
+    }
+
     val projectDir = projectDir
     val buildDir = project.buildDir
 

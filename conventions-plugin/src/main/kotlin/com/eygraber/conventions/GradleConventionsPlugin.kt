@@ -67,7 +67,8 @@ abstract class GradleConventionsPlugin : Plugin<Project> {
         }
 
         awaitKotlinConfigured {
-          kotlin.jdkVersion = jdkVersion
+          kotlin.jvmTargetVersion = jvmTargetVersion
+          kotlin.jdkToolchainVersion = jdkToolchainVersion
           kotlin.jvmDistribution = jvmDistribution
           kotlin.allWarningsAsErrors = allWarningsAsErrors
           kotlin.explicitApiMode = explicitApiMode
