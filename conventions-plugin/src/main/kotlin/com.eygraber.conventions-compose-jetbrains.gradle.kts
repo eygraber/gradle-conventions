@@ -39,7 +39,7 @@ gradleConventionsExtension.awaitComposeConfigured {
   // jetbrains compose plugin rewrites compose dependencies for android to point to androidx
   // if we want to use the compose BOM we need to rewrite the rewritten dependencies to not include a version
   // https://github.com/JetBrains/compose-multiplatform/issues/2502
-  if(androidComposeDependencyBomVersion != null) {
+  if(bomifyAndroidxComposeRewrites) {
     plugins.withType<BasePlugin> {
       android {
         dependencies {
