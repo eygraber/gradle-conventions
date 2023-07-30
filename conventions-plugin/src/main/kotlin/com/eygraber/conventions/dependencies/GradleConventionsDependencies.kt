@@ -19,12 +19,12 @@ class ConventionDependencyHandler(
   fun implementation(dependencyNotation: Any): Dependency? = add("implementation", dependencyNotation)
 }
 
-class GradleConventionsProjectDependencies {
+class GradleConventionsDependencies {
   var resolutionVersionSelector: (ModuleVersionSelector.(ResolutionVersionSelector) -> Unit)? = null
 
   internal var projectDependencies: MutableList<ConventionDependencyHandler.() -> Unit> = mutableListOf()
 
-  operator fun invoke(
+  fun projectDependencies(
     dependencies: ConventionDependencyHandler.() -> Unit
   ) {
     projectDependencies += dependencies

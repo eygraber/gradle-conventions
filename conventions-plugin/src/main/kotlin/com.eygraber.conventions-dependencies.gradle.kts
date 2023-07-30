@@ -5,10 +5,10 @@ import com.eygraber.conventions.gradleConventionsExtension
 
 val ext = gradleConventionsExtension
 val dependenciesDefaults = gradleConventionsDefaultsService.dependencies
-ext.projectDependencies.resolutionVersionSelector = dependenciesDefaults.resolutionVersionSelector
-ext.projectDependencies.projectDependencies = dependenciesDefaults.projectDependencies
+ext.dependencies.resolutionVersionSelector = dependenciesDefaults.resolutionVersionSelector
+ext.dependencies.projectDependencies = dependenciesDefaults.projectDependencies
 
-ext.awaitProjectDependenciesConfigured {
+ext.awaitDependenciesConfigured {
   // com.github.ben-manes.versions sets the version of dependencies
   // to + in order to find the latest versions and we don't want to mess with that
   if("dependencyUpdates" !in gradle.startParameter.taskNames) {
