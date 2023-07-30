@@ -2,7 +2,7 @@ package com.eygraber.conventions
 
 import com.eygraber.conventions.android.GradleConventionsAndroid
 import com.eygraber.conventions.compose.GradleConventionsCompose
-import com.eygraber.conventions.dependencies.GradleConventionsProjectDependencies
+import com.eygraber.conventions.project.common.GradleConventionsProjectCommon
 import com.eygraber.conventions.detekt.GradleConventionsDetekt
 import com.eygraber.conventions.github.GradleConventionsGitHub
 import com.eygraber.conventions.kotlin.GradleConventionsKotlin
@@ -17,7 +17,7 @@ import org.gradle.kotlin.dsl.registerIfAbsent
 internal abstract class GradleConventionsDefaults : BuildService<None> {
   val android = GradleConventionsAndroid()
   val compose = GradleConventionsCompose()
-  val dependencies = GradleConventionsProjectDependencies()
+  val projectCommon = GradleConventionsProjectCommon()
   val detekt = GradleConventionsDetekt()
   val github = GradleConventionsGitHub()
   val kotlin = GradleConventionsKotlin()
@@ -51,9 +51,9 @@ abstract class GradleConventionsPlugin : Plugin<Project> {
             useAndroidComposeCompilerVersionForJetbrainsComposeCompilerVersion
         }
 
-        awaitProjectDependenciesConfigured {
-          dependencies.resolutionVersionSelector = resolutionVersionSelector
-          dependencies.projectDependencies = projectDependencies
+        awaitProjectCommonConfigured {
+          projectCommon.resolutionVersionSelector = resolutionVersionSelector
+          projectCommon.projectDependencies = projectDependencies
         }
 
         awaitDetektConfigured {
