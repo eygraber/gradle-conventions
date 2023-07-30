@@ -9,11 +9,11 @@ import org.gradle.api.provider.Provider
 
 class GradleConventionsCompose {
   var androidComposeCompilerVersionOverride: String? = null
-  var androidComposeDependencyBomVersion: String? = null
   var enableAndroidCompilerMetrics: Boolean = false
   var applyToAndroidAndJvmOnly: Boolean = false
   var jetbrainsComposeCompilerOverride: MinimalExternalModuleDependency? = null
   var useAndroidComposeCompilerVersionForJetbrainsComposeCompilerVersion: Boolean = false
+  var bomifyAndroidxComposeRewrites: Boolean = false
 
   @Suppress("ObjectPropertyNaming")
   companion object {
@@ -24,8 +24,6 @@ class GradleConventionsCompose {
   fun android(
     compilerVersionOverride: Provider<String>? = null,
     compilerOverride: Provider<MinimalExternalModuleDependency>? = null,
-    bomVersion: Provider<String>? = null,
-    bom: Provider<MinimalExternalModuleDependency>? = null,
     enableAndroidCompilerMetrics: Boolean = false
   ) {
     compilerVersionOverride?.let { androidComposeCompilerVersionOverride = it.get() }
@@ -40,35 +38,38 @@ class GradleConventionsCompose {
       }
       androidComposeCompilerVersionOverride = version
     }
-    bomVersion?.let { androidComposeDependencyBomVersion = it.get() }
-    bom?.let { androidComposeDependencyBomVersion = it.get().version }
     this.enableAndroidCompilerMetrics = enableAndroidCompilerMetrics
   }
 
   fun multiplatformWithAndroidCompiler(
     androidCompilerVersion: Provider<String>,
-    applyToAndroidAndJvmOnly: Boolean = false
+    applyToAndroidAndJvmOnly: Boolean = false,
+    bomifyAndroidxComposeRewrites: Boolean = false
   ) {
     multiplatform(
       compilerMavenCoordinatesOverride = "$JetpackCompilerArtifact:$androidCompilerVersion",
-      applyToAndroidAndJvmOnly = applyToAndroidAndJvmOnly
+      applyToAndroidAndJvmOnly = applyToAndroidAndJvmOnly,
+      bomifyAndroidxComposeRewrites = bomifyAndroidxComposeRewrites
     )
   }
 
   fun multiplatformWithJetbrainsCompiler(
     jetbrainsCompilerVersion: Provider<String>,
-    applyToAndroidAndJvmOnly: Boolean = false
+    applyToAndroidAndJvmOnly: Boolean = false,
+    bomifyAndroidxComposeRewrites: Boolean = false
   ) {
     multiplatform(
       compilerMavenCoordinatesOverride = "$JetbrainsCompilerArtifact:$jetbrainsCompilerVersion",
-      applyToAndroidAndJvmOnly = applyToAndroidAndJvmOnly
+      applyToAndroidAndJvmOnly = applyToAndroidAndJvmOnly,
+      bomifyAndroidxComposeRewrites = bomifyAndroidxComposeRewrites
     )
   }
 
   fun multiplatform(
     compilerMavenCoordinatesOverride: String? = null,
     compilerOverride: Provider<MinimalExternalModuleDependency>? = null,
-    applyToAndroidAndJvmOnly: Boolean = false
+    applyToAndroidAndJvmOnly: Boolean = false,
+    bomifyAndroidxComposeRewrites: Boolean = false
   ) {
     if(compilerMavenCoordinatesOverride != null) {
       val coords = compilerMavenCoordinatesOverride.split(":")
@@ -94,5 +95,6 @@ class GradleConventionsCompose {
     }
     compilerOverride?.let { jetbrainsComposeCompilerOverride = it.get() }
     this.applyToAndroidAndJvmOnly = applyToAndroidAndJvmOnly
+    this.bomifyAndroidxComposeRewrites = bomifyAndroidxComposeRewrites
   }
 }
