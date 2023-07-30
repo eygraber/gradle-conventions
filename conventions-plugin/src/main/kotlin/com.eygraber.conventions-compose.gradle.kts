@@ -10,4 +10,3 @@ ext.compose.applyToAndroidAndJvmOnly = composeDefaults.applyToAndroidAndJvmOnly
 ext.compose.jetbrainsComposeCompilerOverride = composeDefaults.jetbrainsComposeCompilerOverride
 ext.compose.useAndroidComposeCompilerVersionForJetbrainsComposeCompilerVersion =
   composeDefaults.useAndroidComposeCompilerVersionForJetbrainsComposeCompilerVersion
-ext.compose.bomifyAndroidxComposeRewrites = composeDefaults.bomifyAndroidxComposeRewrites
