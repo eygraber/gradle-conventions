@@ -1,4 +1,3 @@
-import com.android.build.gradle.BasePlugin
 import com.eygraber.conventions.gradleConventionsExtension
 import org.jetbrains.compose.ComposeCompilerKotlinSupportPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -34,41 +33,5 @@ gradleConventionsExtension.awaitComposeConfigured {
     compose.kotlinCompilerPlugin.set(
       "$group:$name${if(version == null) "" else ":$version"}"
     )
-  }
-
-  // jetbrains compose plugin rewrites compose dependencies for android to point to androidx
-  // if we want to use the compose BOM we need to rewrite the rewritten dependencies to not include a version
-  // https://github.com/JetBrains/compose-multiplatform/issues/2502
-  if(bomifyAndroidxComposeRewrites) {
-    plugins.withType<BasePlugin> {
-      android {
-        dependencies {
-          components {
-            all {
-              val isCompiler = id.group.endsWith("compiler")
-              val isCompose = id.group.startsWith("androidx.compose")
-              val isBom = id.name == "compose-bom"
-
-              val override = isCompose && !isCompiler && !isBom
-              if(override) {
-                listOf(
-                  "debugApiElements-published",
-                  "debugRuntimeElements-published",
-                  "releaseApiElements-published",
-                  "releaseRuntimeElements-published"
-                ).forEach { variantNameToAlter ->
-                  withVariant(variantNameToAlter) {
-                    withDependencies {
-                      removeAll { true } // remove androidx artifact with version
-                      add("${id.group}:${id.name}") // add androidx artifact without version
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
   }
 }

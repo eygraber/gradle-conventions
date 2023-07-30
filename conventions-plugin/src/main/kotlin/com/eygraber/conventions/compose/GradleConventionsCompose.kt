@@ -13,7 +13,6 @@ class GradleConventionsCompose {
   var applyToAndroidAndJvmOnly: Boolean = false
   var jetbrainsComposeCompilerOverride: MinimalExternalModuleDependency? = null
   var useAndroidComposeCompilerVersionForJetbrainsComposeCompilerVersion: Boolean = false
-  var bomifyAndroidxComposeRewrites: Boolean = false
 
   @Suppress("ObjectPropertyNaming")
   companion object {
@@ -43,33 +42,28 @@ class GradleConventionsCompose {
 
   fun multiplatformWithAndroidCompiler(
     androidCompilerVersion: Provider<String>,
-    applyToAndroidAndJvmOnly: Boolean = false,
-    bomifyAndroidxComposeRewrites: Boolean = false
+    applyToAndroidAndJvmOnly: Boolean = false
   ) {
     multiplatform(
       compilerMavenCoordinatesOverride = "$JetpackCompilerArtifact:$androidCompilerVersion",
-      applyToAndroidAndJvmOnly = applyToAndroidAndJvmOnly,
-      bomifyAndroidxComposeRewrites = bomifyAndroidxComposeRewrites
+      applyToAndroidAndJvmOnly = applyToAndroidAndJvmOnly
     )
   }
 
   fun multiplatformWithJetbrainsCompiler(
     jetbrainsCompilerVersion: Provider<String>,
-    applyToAndroidAndJvmOnly: Boolean = false,
-    bomifyAndroidxComposeRewrites: Boolean = false
+    applyToAndroidAndJvmOnly: Boolean = false
   ) {
     multiplatform(
       compilerMavenCoordinatesOverride = "$JetbrainsCompilerArtifact:$jetbrainsCompilerVersion",
-      applyToAndroidAndJvmOnly = applyToAndroidAndJvmOnly,
-      bomifyAndroidxComposeRewrites = bomifyAndroidxComposeRewrites
+      applyToAndroidAndJvmOnly = applyToAndroidAndJvmOnly
     )
   }
 
   fun multiplatform(
     compilerMavenCoordinatesOverride: String? = null,
     compilerOverride: Provider<MinimalExternalModuleDependency>? = null,
-    applyToAndroidAndJvmOnly: Boolean = false,
-    bomifyAndroidxComposeRewrites: Boolean = false
+    applyToAndroidAndJvmOnly: Boolean = false
   ) {
     if(compilerMavenCoordinatesOverride != null) {
       val coords = compilerMavenCoordinatesOverride.split(":")
@@ -95,6 +89,5 @@ class GradleConventionsCompose {
     }
     compilerOverride?.let { jetbrainsComposeCompilerOverride = it.get() }
     this.applyToAndroidAndJvmOnly = applyToAndroidAndJvmOnly
-    this.bomifyAndroidxComposeRewrites = bomifyAndroidxComposeRewrites
   }
 }

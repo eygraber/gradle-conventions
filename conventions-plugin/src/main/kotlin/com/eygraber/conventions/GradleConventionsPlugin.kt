@@ -49,7 +49,6 @@ abstract class GradleConventionsPlugin : Plugin<Project> {
           compose.jetbrainsComposeCompilerOverride = jetbrainsComposeCompilerOverride
           compose.useAndroidComposeCompilerVersionForJetbrainsComposeCompilerVersion =
             useAndroidComposeCompilerVersionForJetbrainsComposeCompilerVersion
-          compose.bomifyAndroidxComposeRewrites = bomifyAndroidxComposeRewrites
         }
 
         awaitProjectDependenciesConfigured {
