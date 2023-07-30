@@ -10,6 +10,7 @@ import com.eygraber.conventions.spm.GradleConventionsSpm
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.util.concurrent.CopyOnWriteArrayList
 
 internal interface GradleConventionsConfigurableListener {
@@ -176,7 +177,11 @@ abstract class GradleConventionsPluginExtension {
       return field
     }
 
-  fun kotlin(action: Action<GradleConventionsKotlin>) {
+  fun kotlin(
+    jvmTargetVersion: JvmTarget,
+    action: Action<GradleConventionsKotlin>
+  ) {
+    kotlin.jvmTargetVersion = jvmTargetVersion
     action.execute(kotlin)
     isKotlinConfigured = true
     configureListeners.forEach { listener ->

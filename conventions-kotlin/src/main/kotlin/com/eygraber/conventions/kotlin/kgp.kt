@@ -25,7 +25,7 @@ public fun Project.configureKgp(
   jvmDistribution: JvmVendorSpec? = null,
   allWarningsAsErrors: Boolean = true,
   explicitApiMode: ExplicitApiMode = ExplicitApiMode.Disabled,
-  configureJavaCompatibility: Boolean = true,
+  configureJavaTargetVersion: Boolean = true,
   useK2: Boolean = false,
   freeCompilerArgs: List<KotlinFreeCompilerArg> = emptyList(),
   vararg optIns: KotlinOptIn
@@ -36,7 +36,7 @@ public fun Project.configureKgp(
     jvmDistribution,
     allWarningsAsErrors,
     explicitApiMode,
-    configureJavaCompatibility,
+    configureJavaTargetVersion,
     useK2,
     freeCompilerArgs,
     *optIns
@@ -49,12 +49,12 @@ public fun Project.configureKgp(
   jvmDistribution: JvmVendorSpec? = null,
   allWarningsAsErrors: Boolean = true,
   explicitApiMode: ExplicitApiMode = ExplicitApiMode.Disabled,
-  configureJavaCompatibility: Boolean = true,
+  configureJavaTargetVersion: Boolean = true,
   useK2: Boolean = false,
   freeCompilerArgs: List<KotlinFreeCompilerArg> = emptyList(),
   vararg optIns: KotlinOptIn
 ) {
-  if(configureJavaCompatibility && jvmTargetVersion != null) {
+  if(configureJavaTargetVersion && jvmTargetVersion != null) {
     tasks.withType(JavaCompile::class.java) {
       sourceCompatibility = jvmTargetVersion.target
       targetCompatibility = jvmTargetVersion.target

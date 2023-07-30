@@ -11,7 +11,7 @@ plugins {
 }
 
 gradleConventionsExtension.awaitComposeConfigured {
-  if(ignoreNonJvmTargets) {
+  if(applyToAndroidAndJvmOnly) {
     // only apply to android/jvm targets if we're in a multiplatform project
     plugins.withId("org.jetbrains.kotlin.multiplatform") {
       plugins.removeAll {
@@ -36,12 +36,13 @@ gradleConventionsExtension.awaitComposeConfigured {
     )
   }
 
-  plugins.withType<BasePlugin> {
-    android {
-      dependencies {
-        // jetbrains compose plugin rewrites compose dependencies for android to point to androidx
-        // if we want to use the compose BOM we need to rewrite the rewritten dependencies to not include a version
-        if(androidComposeDependencyBomVersion != null) {
+  // jetbrains compose plugin rewrites compose dependencies for android to point to androidx
+  // if we want to use the compose BOM we need to rewrite the rewritten dependencies to not include a version
+  // https://github.com/JetBrains/compose-multiplatform/issues/2502
+  if(androidComposeDependencyBomVersion != null) {
+    plugins.withType<BasePlugin> {
+      android {
+        dependencies {
           components {
             all {
               val isCompiler = id.group.endsWith("compiler")
@@ -50,7 +51,6 @@ gradleConventionsExtension.awaitComposeConfigured {
 
               val override = isCompose && !isCompiler && !isBom
               if(override) {
-                // copied from Jetbrains Compose RedirectAndroidVariants - https://shorturl.at/dioY9
                 listOf(
                   "debugApiElements-published",
                   "debugRuntimeElements-published",

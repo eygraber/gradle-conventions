@@ -46,7 +46,7 @@ abstract class GradleConventionsPlugin : Plugin<Project> {
           compose.androidComposeCompilerVersionOverride = androidComposeCompilerVersionOverride
           compose.androidComposeDependencyBomVersion = androidComposeDependencyBomVersion
           compose.enableAndroidCompilerMetrics = enableAndroidCompilerMetrics
-          compose.ignoreNonJvmTargets = ignoreNonJvmTargets
+          compose.applyToAndroidAndJvmOnly = applyToAndroidAndJvmOnly
           compose.jetbrainsComposeCompilerOverride = jetbrainsComposeCompilerOverride
           compose.useAndroidComposeCompilerVersionForJetbrainsComposeCompilerVersion =
             useAndroidComposeCompilerVersionForJetbrainsComposeCompilerVersion
@@ -74,7 +74,7 @@ abstract class GradleConventionsPlugin : Plugin<Project> {
           kotlin.jvmDistribution = jvmDistribution
           kotlin.allWarningsAsErrors = allWarningsAsErrors
           kotlin.explicitApiMode = explicitApiMode
-          kotlin.configureJava = configureJava
+          kotlin.configureJavaTargetVersion = configureJavaTargetVersion
           kotlin.useK2 = useK2
           kotlin.freeCompilerArgs = freeCompilerArgs
           kotlin.optIns = optIns

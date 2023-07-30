@@ -26,152 +26,143 @@ ext.kotlin.jvmTargetVersion = kotlinDefaults.jvmTargetVersion
 var isAndroidPublishingConfigured = false
 
 @Suppress("LabeledExpression")
-ext.awaitKotlinConfigured { isKotlinUserConfigured ->
-  ext.awaitAndroidConfigured { isAndroidUserConfigured ->
-    val isSdkVersionsConfigured = compileSdk > 0 && minSdk > 0
-    if(!isSdkVersionsConfigured && !isAndroidUserConfigured) return@awaitAndroidConfigured
+ext.awaitAndroidConfigured { isAndroidUserConfigured ->
+  val isSdkVersionsConfigured = compileSdk > 0 && minSdk > 0
+  if(!isSdkVersionsConfigured && !isAndroidUserConfigured) return@awaitAndroidConfigured
 
-    if(jvmTargetVersion == null && !isKotlinUserConfigured) return@awaitAndroidConfigured
+  check(compileSdk > 0) {
+    "android.compileSdk doesn't have a value set"
+  }
 
-    check(compileSdk > 0) {
-      "android.compileSdk doesn't have a value set"
+  check(minSdk > 0) {
+    "android.minSdk doesn't have a value set"
+  }
+
+  val androidCompileSdk = compileSdk
+  val androidMinSdk = minSdk
+
+  androidLibrary {
+    compileSdk = androidCompileSdk
+
+    val kmpManifestFilePath = "src/androidMain/AndroidManifest.xml"
+    if(layout.projectDirectory.file(kmpManifestFilePath).asFile.exists()) {
+      sourceSets.named("main") {
+        manifest.srcFile(kmpManifestFilePath)
+      }
     }
 
-    check(minSdk > 0) {
-      "android.minSdk doesn't have a value set"
+    val kmpResPath = "src/androidMain/res"
+    if(layout.projectDirectory.file(kmpResPath).asFile.exists()) {
+      sourceSets.named("main") {
+        res.srcDir(kmpResPath)
+      }
     }
 
-    val androidCompileSdk = compileSdk
-    val androidMinSdk = minSdk
-
-    androidLibrary {
-      compileSdk = androidCompileSdk
-
-      val kmpManifestFilePath = "src/androidMain/AndroidManifest.xml"
-      if(layout.projectDirectory.file(kmpManifestFilePath).asFile.exists()) {
-        sourceSets.named("main") {
-          manifest.srcFile(kmpManifestFilePath)
-        }
+    val kmpResourcesPath = "src/commonMain/resources"
+    if(layout.projectDirectory.file(kmpResourcesPath).asFile.exists()) {
+      sourceSets.named("main") {
+        res.srcDir(kmpResourcesPath)
       }
+    }
 
-      val kmpResPath = "src/androidMain/res"
-      if(layout.projectDirectory.file(kmpResPath).asFile.exists()) {
-        sourceSets.named("main") {
-          res.srcDir(kmpResPath)
-        }
+    defaultConfig {
+      consumerProguardFile(project.file("consumer-rules.pro"))
+
+      minSdk = androidMinSdk
+
+      testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    compileOptions {
+      if(coreLibraryDesugaringDependency != null) {
+        isCoreLibraryDesugaringEnabled = true
       }
+    }
 
-      val kmpResourcesPath = "src/commonMain/resources"
-      if(layout.projectDirectory.file(kmpResourcesPath).asFile.exists()) {
-        sourceSets.named("main") {
-          res.srcDir(kmpResourcesPath)
-        }
+    packaging {
+      resources.pickFirsts += "META-INF/*"
+    }
+
+    buildTypes {
+      named("release") {
+        isMinifyEnabled = false
       }
-
-      defaultConfig {
-        consumerProguardFile(project.file("consumer-rules.pro"))
-
-        minSdk = androidMinSdk
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+      named("debug") {
+        isMinifyEnabled = false
       }
+    }
 
-      val jvmTargetVersion = jvmTargetVersion
-      if(jvmTargetVersion != null) {
-        compileOptions {
-          if(coreLibraryDesugaringDependency != null) {
-            isCoreLibraryDesugaringEnabled = true
-          }
-          sourceCompatibility = JavaVersion.toVersion(jvmTargetVersion)
-          targetCompatibility = JavaVersion.toVersion(jvmTargetVersion)
-        }
-      }
+    for((dimension, flavorsToRegister) in flavors) {
+      if(dimension !in flavorDimensions) flavorDimensions += dimension
 
-      packaging {
-        resources.pickFirsts += "META-INF/*"
-      }
-
-      buildTypes {
-        named("release") {
-          isMinifyEnabled = false
-        }
-        named("debug") {
-          isMinifyEnabled = false
-        }
-      }
-
-      for((dimension, flavorsToRegister) in flavors) {
-        if(dimension !in flavorDimensions) flavorDimensions += dimension
-
-        for(flavor in flavorsToRegister) {
-          // register throws if the name is already registered
-          // and this block can be called multiple times
-          runCatching {
-            productFlavors.register(flavor.name)
-          }
-        }
-      }
-
-      testOptions {
-        unitTests {
-          isIncludeAndroidResources = true
-        }
-      }
-
-      if(publishEverything) {
-        // we can't configure this twice and awaitAndroidConfigured can be called twice (default and user config)
-        // since publishing doesn't depend on values from the extension we can guard against this without issue
-        if(!isAndroidPublishingConfigured) {
-          publishing {
-            multipleVariants {
-              allVariants()
-              withJavadocJar()
-              withSourcesJar()
-            }
-          }
-          isAndroidPublishingConfigured = true
-        }
-      }
-
-      coreLibraryDesugaringDependency?.let { desugaringDependency ->
-        dependencies {
-          add("coreLibraryDesugaring", desugaringDependency)
+      for(flavor in flavorsToRegister) {
+        // register throws if the name is already registered
+        // and this block can be called multiple times
+        runCatching {
+          productFlavors.register(flavor.name)
         }
       }
     }
 
-    androidLibraryComponents {
-      val disabledFlavors = flavors.mapNotNull { (dimension, flavorsToRegister) ->
-        val disabledFlavors = flavorsToRegister.filterNot { it.enabled }
-        (dimension to disabledFlavors).takeIf { disabledFlavors.isNotEmpty() }
+    testOptions {
+      unitTests {
+        isIncludeAndroidResources = true
       }
-      if(disabledFlavors.isNotEmpty()) {
-        val selector = selector().let {
-          var s = it
-          for((dimension, disabled) in disabledFlavors) {
-            for(disabledFlavor in disabled) {
-              s = s.withFlavor(dimension to disabledFlavor.name)
-            }
+    }
+
+    if(publishEverything) {
+      // we can't configure this twice and awaitAndroidConfigured can be called twice (default and user config)
+      // since publishing doesn't depend on values from the extension we can guard against this without issue
+      if(!isAndroidPublishingConfigured) {
+        publishing {
+          multipleVariants {
+            allVariants()
+            withJavadocJar()
+            withSourcesJar()
           }
-          s
         }
+        isAndroidPublishingConfigured = true
+      }
+    }
 
-        beforeVariants(selector) { variant ->
-          variant.enable = false
+    coreLibraryDesugaringDependency?.let { desugaringDependency ->
+      dependencies {
+        add("coreLibraryDesugaring", desugaringDependency)
+      }
+    }
+  }
+
+  androidLibraryComponents {
+    val disabledFlavors = flavors.mapNotNull { (dimension, flavorsToRegister) ->
+      val disabledFlavors = flavorsToRegister.filterNot { it.enabled }
+      (dimension to disabledFlavors).takeIf { disabledFlavors.isNotEmpty() }
+    }
+    if(disabledFlavors.isNotEmpty()) {
+      val selector = selector().let {
+        var s = it
+        for((dimension, disabled) in disabledFlavors) {
+          for(disabledFlavor in disabled) {
+            s = s.withFlavor(dimension to disabledFlavor.name)
+          }
         }
+        s
       }
 
-      for((optIns, dependencyPredicate) in optInsToDependencyPredicate) {
-        onVariants { variant ->
-          doOnFirstMatchingIncomingDependencyBeforeResolution(
-            configurationName = "${variant.name}RuntimeClasspath",
-            dependencyPredicate = dependencyPredicate
-          ) {
-            tasks.withType(KotlinCompilationTask::class.java).configureEach {
-              compilerOptions {
-                for(optIn in optIns) {
-                  freeCompilerArgs.addAll("-opt-in=${optIn.value}")
-                }
+      beforeVariants(selector) { variant ->
+        variant.enable = false
+      }
+    }
+
+    for((optIns, dependencyPredicate) in optInsToDependencyPredicate) {
+      onVariants { variant ->
+        doOnFirstMatchingIncomingDependencyBeforeResolution(
+          configurationName = "${variant.name}RuntimeClasspath",
+          dependencyPredicate = dependencyPredicate
+        ) {
+          tasks.withType(KotlinCompilationTask::class.java).configureEach {
+            compilerOptions {
+              for(optIn in optIns) {
+                freeCompilerArgs.addAll("-opt-in=${optIn.value}")
               }
             }
           }
