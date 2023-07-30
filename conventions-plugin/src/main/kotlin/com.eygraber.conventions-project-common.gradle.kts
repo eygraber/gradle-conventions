@@ -1,14 +1,14 @@
-import com.eygraber.conventions.dependencies.ConventionDependencyHandler
-import com.eygraber.conventions.dependencies.ResolutionVersionSelector
+import com.eygraber.conventions.project.common.ConventionDependencyHandler
+import com.eygraber.conventions.project.common.ResolutionVersionSelector
 import com.eygraber.conventions.gradleConventionsDefaultsService
 import com.eygraber.conventions.gradleConventionsExtension
 
 val ext = gradleConventionsExtension
-val dependenciesDefaults = gradleConventionsDefaultsService.dependencies
-ext.dependencies.resolutionVersionSelector = dependenciesDefaults.resolutionVersionSelector
-ext.dependencies.projectDependencies = dependenciesDefaults.projectDependencies
+val dependenciesDefaults = gradleConventionsDefaultsService.projectCommon
+ext.projectCommon.resolutionVersionSelector = dependenciesDefaults.resolutionVersionSelector
+ext.projectCommon.projectDependencies = dependenciesDefaults.projectDependencies
 
-ext.awaitDependenciesConfigured {
+ext.awaitProjectCommonConfigured {
   // com.github.ben-manes.versions sets the version of dependencies
   // to + in order to find the latest versions and we don't want to mess with that
   if("dependencyUpdates" !in gradle.startParameter.taskNames) {

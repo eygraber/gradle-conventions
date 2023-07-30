@@ -1,4 +1,4 @@
-package com.eygraber.conventions.dependencies
+package com.eygraber.conventions.project.common
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
@@ -19,7 +19,7 @@ class ConventionDependencyHandler(
   fun implementation(dependencyNotation: Any): Dependency? = add("implementation", dependencyNotation)
 }
 
-class GradleConventionsDependencies {
+class GradleConventionsProjectCommon {
   var resolutionVersionSelector: (ModuleVersionSelector.(ResolutionVersionSelector) -> Unit)? = null
 
   internal var projectDependencies: MutableList<ConventionDependencyHandler.() -> Unit> = mutableListOf()

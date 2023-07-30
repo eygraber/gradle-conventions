@@ -2,7 +2,7 @@ package com.eygraber.conventions
 
 import com.eygraber.conventions.android.GradleConventionsAndroid
 import com.eygraber.conventions.compose.GradleConventionsCompose
-import com.eygraber.conventions.dependencies.GradleConventionsDependencies
+import com.eygraber.conventions.project.common.GradleConventionsProjectCommon
 import com.eygraber.conventions.detekt.GradleConventionsDetekt
 import com.eygraber.conventions.github.GradleConventionsGitHub
 import com.eygraber.conventions.kotlin.GradleConventionsKotlin
@@ -15,7 +15,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 internal interface GradleConventionsConfigurableListener {
   fun GradleConventionsAndroid.onAndroidConfigured(isUserConfigured: Boolean) {}
   fun GradleConventionsCompose.onComposeConfigured(isUserConfigured: Boolean) {}
-  fun GradleConventionsDependencies.onDependenciesConfigured(isUserConfigured: Boolean) {}
+  fun GradleConventionsProjectCommon.onProjectCommonConfigured(isUserConfigured: Boolean) {}
   fun GradleConventionsDetekt.onDetektConfigured(isUserConfigured: Boolean) {}
   fun GradleConventionsGitHub.onGitHubConfigured(isUserConfigured: Boolean) {}
   fun GradleConventionsKotlin.onKotlinConfigured(isUserConfigured: Boolean) {}
@@ -47,12 +47,12 @@ abstract class GradleConventionsPluginExtension {
     }
   }
 
-  internal fun awaitDependenciesConfigured(
-    configure: GradleConventionsDependencies.(isConfigured: Boolean) -> Unit
+  internal fun awaitProjectCommonConfigured(
+    configure: GradleConventionsProjectCommon.(isConfigured: Boolean) -> Unit
   ) {
-    dependencies.configure(isDependenciesConfigured)
+    projectCommon.configure(isProjectCommonConfigured)
     configureListeners += object : GradleConventionsConfigurableListener {
-      override fun GradleConventionsDependencies.onDependenciesConfigured(isUserConfigured: Boolean) {
+      override fun GradleConventionsProjectCommon.onProjectCommonConfigured(isUserConfigured: Boolean) {
         configure(isUserConfigured)
       }
     }
@@ -128,15 +128,15 @@ abstract class GradleConventionsPluginExtension {
     }
   }
 
-  private var isDependenciesConfigured: Boolean = false
-  internal val dependencies = GradleConventionsDependencies()
+  private var isProjectCommonConfigured: Boolean = false
+  internal val projectCommon = GradleConventionsProjectCommon()
 
-  fun dependencies(action: Action<GradleConventionsDependencies>) {
-    action.execute(dependencies)
-    isDependenciesConfigured = true
+  fun projectCommon(action: Action<GradleConventionsProjectCommon>) {
+    action.execute(projectCommon)
+    isProjectCommonConfigured = true
     configureListeners.forEach { listener ->
       with(listener) {
-        dependencies.onDependenciesConfigured(isDependenciesConfigured)
+        projectCommon.onProjectCommonConfigured(isProjectCommonConfigured)
       }
     }
   }
