@@ -23,7 +23,8 @@ gradleConventionsDefaults {
       libs.detektEygraber.style
     )
   }
-  kotlin(jvmTargetVersion = JvmTarget.JVM_17) {
+  kotlin {
+    jvmTargetVersion = JvmTarget.JVM_17
     allWarningsAsErrors = true
     optIns = setOf(KotlinOptIn.RequiresOptIn)
   }
