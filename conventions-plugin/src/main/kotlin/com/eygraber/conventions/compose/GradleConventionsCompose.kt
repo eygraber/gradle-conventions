@@ -11,36 +11,67 @@ class GradleConventionsCompose {
   var androidComposeCompilerVersionOverride: String? = null
   var androidComposeDependencyBomVersion: String? = null
   var enableAndroidCompilerMetrics: Boolean = false
-  var ignoreNonJvmTargets: Boolean = false
+  var applyToAndroidAndJvmOnly: Boolean = false
   var jetbrainsComposeCompilerOverride: MinimalExternalModuleDependency? = null
   var useAndroidComposeCompilerVersionForJetbrainsComposeCompilerVersion: Boolean = false
 
-  fun android(
-    compilerVersion: Provider<String>? = null,
-    bomVersion: Provider<String>? = null,
-    enableAndroidCompilerMetrics: Boolean = false
-  ) {
-    compilerVersion?.let { androidComposeCompilerVersionOverride = it.get() }
-    bomVersion?.let { androidComposeDependencyBomVersion = it.get() }
-    this.enableAndroidCompilerMetrics = enableAndroidCompilerMetrics
+  @Suppress("ObjectPropertyNaming")
+  companion object {
+    const val JetbrainsCompilerArtifact = "org.jetbrains.compose.compiler:compiler"
+    const val JetpackCompilerArtifact = "androidx.compose.compiler:compiler"
   }
 
   fun android(
-    compilerVersion: String? = null,
-    bomVersion: String? = null,
+    compilerVersionOverride: Provider<String>? = null,
+    compilerOverride: Provider<MinimalExternalModuleDependency>? = null,
+    bomVersion: Provider<String>? = null,
+    bom: Provider<MinimalExternalModuleDependency>? = null,
     enableAndroidCompilerMetrics: Boolean = false
   ) {
-    compilerVersion?.let { androidComposeCompilerVersionOverride = it }
-    bomVersion?.let { androidComposeDependencyBomVersion = it }
+    compilerVersionOverride?.let { androidComposeCompilerVersionOverride = it.get() }
+    compilerOverride?.let {
+      val dependency = it.get()
+      check(dependency.group == "androidx.compose.compiler" && dependency.name == "compiler") {
+        "Only the $JetpackCompilerArtifact artifact should be used as an override"
+      }
+      val version = it.get().version
+      requireNotNull(version) {
+        "Please specify a version for the $JetpackCompilerArtifact artifact"
+      }
+      androidComposeCompilerVersionOverride = version
+    }
+    bomVersion?.let { androidComposeDependencyBomVersion = it.get() }
+    bom?.let { androidComposeDependencyBomVersion = it.get().version }
     this.enableAndroidCompilerMetrics = enableAndroidCompilerMetrics
+  }
+
+  fun multiplatformWithAndroidCompiler(
+    androidCompilerVersion: Provider<String>,
+    applyToAndroidAndJvmOnly: Boolean = false
+  ) {
+    multiplatform(
+      compilerMavenCoordinatesOverride = "$JetpackCompilerArtifact:$androidCompilerVersion",
+      applyToAndroidAndJvmOnly = applyToAndroidAndJvmOnly
+    )
+  }
+
+  fun multiplatformWithJetbrainsCompiler(
+    jetbrainsCompilerVersion: Provider<String>,
+    applyToAndroidAndJvmOnly: Boolean = false
+  ) {
+    multiplatform(
+      compilerMavenCoordinatesOverride = "$JetbrainsCompilerArtifact:$jetbrainsCompilerVersion",
+      applyToAndroidAndJvmOnly = applyToAndroidAndJvmOnly
+    )
   }
 
   fun multiplatform(
-    compilerMavenCoordinates: String? = null,
-    ignoreNonJvmTargets: Boolean = false
+    compilerMavenCoordinatesOverride: String? = null,
+    compilerOverride: Provider<MinimalExternalModuleDependency>? = null,
+    applyToAndroidAndJvmOnly: Boolean = false
   ) {
-    if(compilerMavenCoordinates != null) {
-      val coords = compilerMavenCoordinates.split(":")
+    if(compilerMavenCoordinatesOverride != null) {
+      val coords = compilerMavenCoordinatesOverride.split(":")
       jetbrainsComposeCompilerOverride = when(coords.size) {
         3 -> DefaultMinimalDependency(
           DefaultModuleIdentifier.newId(
@@ -61,22 +92,7 @@ class GradleConventionsCompose {
         else -> error("Please specify full maven coordinates for the Compose compiler you'd like to use")
       }
     }
-    this.ignoreNonJvmTargets = ignoreNonJvmTargets
-  }
-
-  fun multiplatform(
-    compiler: Provider<MinimalExternalModuleDependency>? = null,
-    ignoreNonJvmTargets: Boolean = false
-  ) {
-    compiler?.let { jetbrainsComposeCompilerOverride = it.get() }
-    this.ignoreNonJvmTargets = ignoreNonJvmTargets
-  }
-
-  fun multiplatform(
-    compiler: MinimalExternalModuleDependency? = null,
-    ignoreNonJvmTargets: Boolean = false
-  ) {
-    compiler?.let { jetbrainsComposeCompilerOverride = it }
-    this.ignoreNonJvmTargets = ignoreNonJvmTargets
+    compilerOverride?.let { jetbrainsComposeCompilerOverride = it.get() }
+    this.applyToAndroidAndJvmOnly = applyToAndroidAndJvmOnly
   }
 }
