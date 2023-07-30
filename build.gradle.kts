@@ -1,4 +1,5 @@
 import com.eygraber.conventions.kotlin.KotlinOptIn
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 buildscript {
   dependencies {
@@ -22,9 +23,7 @@ gradleConventionsDefaults {
       libs.detektEygraber.style
     )
   }
-  kotlin {
-    jdkVersion = libs.versions.jdk.get()
-    jvmDistribution = JvmVendorSpec.AZUL
+  kotlin(jvmTargetVersion = JvmTarget.JVM_17) {
     allWarningsAsErrors = true
     optIns = setOf(KotlinOptIn.RequiresOptIn)
   }
