@@ -1,5 +1,6 @@
 package com.eygraber.conventions.kotlin
 
+import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.provider.Provider
@@ -29,19 +30,17 @@ public fun Project.configureKgp(
   useK2: Boolean = false,
   freeCompilerArgs: List<KotlinFreeCompilerArg> = emptyList(),
   vararg optIns: KotlinOptIn
-) {
-  configureKgp(
-    jvmTargetVersion = jvmTargetVersion.get(),
-    jdkToolchainVersion.get(),
-    jvmDistribution,
-    allWarningsAsErrors,
-    explicitApiMode,
-    configureJavaTargetVersion,
-    useK2,
-    freeCompilerArgs,
-    *optIns
-  )
-}
+): JavaVersion = configureKgp(
+  jvmTargetVersion = jvmTargetVersion.get(),
+  jdkToolchainVersion.get(),
+  jvmDistribution,
+  allWarningsAsErrors,
+  explicitApiMode,
+  configureJavaTargetVersion,
+  useK2,
+  freeCompilerArgs,
+  *optIns
+)
 
 public fun Project.configureKgp(
   jvmTargetVersion: JvmTarget?,
@@ -53,7 +52,39 @@ public fun Project.configureKgp(
   useK2: Boolean = false,
   freeCompilerArgs: List<KotlinFreeCompilerArg> = emptyList(),
   vararg optIns: KotlinOptIn
-) {
+): JavaVersion {
+  val lowestSupportedJava = JavaVersion.VERSION_17
+  val highestSupportedJava: JavaVersion = JavaVersion.VERSION_20
+
+  val targetJavaVersion = jvmTargetVersion?.target?.toInt()?.let(JavaVersion::toVersion)
+  val actualLowestSupportedJava: JavaVersion = when(targetJavaVersion) {
+    null -> lowestSupportedJava
+    else -> when {
+      targetJavaVersion > lowestSupportedJava -> targetJavaVersion
+      else -> lowestSupportedJava
+    }
+  }
+
+  require(actualLowestSupportedJava <= highestSupportedJava) {
+    val error = """
+    |The detected lowest supported version of Java ($actualLowestSupportedJava) is greater than the
+    |detected highest supported version of Java ($highestSupportedJava)
+    """.trimMargin()
+
+    if(targetJavaVersion != null && targetJavaVersion > lowestSupportedJava) {
+      "$error because jvmTargetVersion is $jvmTargetVersion"
+    }
+    else {
+      error
+    }
+  }
+
+  val buildJavaVersion: JavaVersion = when {
+    JavaVersion.current() < actualLowestSupportedJava -> actualLowestSupportedJava
+    JavaVersion.current() > highestSupportedJava -> highestSupportedJava
+    else -> JavaVersion.current()
+  }
+
   if(configureJavaTargetVersion && jvmTargetVersion != null) {
     tasks.withType(JavaCompile::class.java) {
       sourceCompatibility = jvmTargetVersion.target
@@ -70,7 +101,16 @@ public fun Project.configureKgp(
         ExplicitApiMode.Disabled -> explicitApi = null
       }
 
-      if(jdkToolchainVersion != null) {
+      if(jdkToolchainVersion == null) {
+        if(JavaVersion.current() != buildJavaVersion) {
+          plugins.withType(JavaBasePlugin::class.java) {
+            jvmToolchain {
+              languageVersion.set(JavaLanguageVersion.of(buildJavaVersion.majorVersion.toInt()))
+            }
+          }
+        }
+      }
+      else {
         plugins.withType(JavaBasePlugin::class.java) {
           jvmToolchain {
             languageVersion.set(jdkToolchainVersion)
@@ -107,8 +147,7 @@ public fun Project.configureKgp(
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         if(project.kotlinToolingVersion.toKotlinVersion().isAtLeast(major = 1, minor = 9)) {
           compilerOptions.optIn.addAll(optIns.map(KotlinOptIn::value))
-        }
-        else {
+        } else {
           compilerOptions.freeCompilerArgs.addAll(
             optIns.map { optIn -> "-opt-in=${optIn.value}" }
           )
@@ -116,6 +155,8 @@ public fun Project.configureKgp(
       }
     }
   }
+
+  return buildJavaVersion
 }
 
 public val Project.kotlinMultiplatform: KotlinMultiplatformExtension

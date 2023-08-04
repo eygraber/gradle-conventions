@@ -18,25 +18,8 @@ with(gradleConventionsExtension) {
     optIns = kotlinDefaults.optIns
   }
 
-  val highestSupportedJava: JavaVersion = when {
-    GradleVersion.current() < GradleVersion.version("8.3") -> JavaVersion.VERSION_17
-    else -> JavaVersion.VERSION_20
-  }
-
-  val lowestSupportedJava: JavaVersion = JavaVersion.VERSION_17
-
-  val buildJavaVersion: JavaVersion = when {
-    JavaVersion.current() < lowestSupportedJava -> lowestSupportedJava
-    JavaVersion.current() > highestSupportedJava -> highestSupportedJava
-    else -> JavaVersion.current()
-  }
-
-  if(JavaVersion.current() != buildJavaVersion) {
-    kotlin.jdkToolchainVersion = JavaLanguageVersion.of(buildJavaVersion.majorVersion.toInt())
-  }
-
   awaitKotlinConfigured {
-    configureKgp(
+    val buildJavaVersion = configureKgp(
       jvmTargetVersion = jvmTargetVersion,
       jdkToolchainVersion = jdkToolchainVersion,
       jvmDistribution = jvmDistribution,

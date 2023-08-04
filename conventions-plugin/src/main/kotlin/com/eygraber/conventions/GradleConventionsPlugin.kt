@@ -2,10 +2,10 @@ package com.eygraber.conventions
 
 import com.eygraber.conventions.android.GradleConventionsAndroid
 import com.eygraber.conventions.compose.GradleConventionsCompose
-import com.eygraber.conventions.project.common.GradleConventionsProjectCommon
 import com.eygraber.conventions.detekt.GradleConventionsDetekt
 import com.eygraber.conventions.github.GradleConventionsGitHub
 import com.eygraber.conventions.kotlin.GradleConventionsKotlin
+import com.eygraber.conventions.project.common.GradleConventionsProjectCommon
 import com.eygraber.conventions.spm.GradleConventionsSpm
 import org.gradle.api.Plugin
 import org.gradle.api.Project
