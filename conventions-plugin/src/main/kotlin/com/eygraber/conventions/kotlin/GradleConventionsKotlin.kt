@@ -13,9 +13,18 @@ class GradleConventionsKotlin {
   var allWarningsAsErrors: Boolean = true
   var explicitApiMode: ExplicitApiMode = ExplicitApiMode.Disabled
   var configureJavaTargetVersion: Boolean = true
-  var useK2: Boolean = false
+  var languageVersion: KotlinVersion? = null
+  var apiVersion: KotlinVersion? = null
+  var isProgressiveModeEnabled: Boolean = false
   var freeCompilerArgs: Set<KotlinFreeCompilerArg> = emptySet()
   var optIns: Set<KotlinOptIn> = emptySet()
+
+  var kotlinVersion: KotlinVersion = KotlinVersion.CURRENT
+    set(value) {
+      field = value
+      languageVersion = value
+      apiVersion = value
+    }
 
   fun Provider<String>.toJvmTarget() = JvmTarget.fromTarget(get())
 }

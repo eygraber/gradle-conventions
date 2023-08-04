@@ -13,7 +13,9 @@ with(gradleConventionsExtension) {
     allWarningsAsErrors = kotlinDefaults.allWarningsAsErrors
     explicitApiMode = kotlinDefaults.explicitApiMode
     configureJavaTargetVersion = kotlinDefaults.configureJavaTargetVersion
-    useK2 = kotlinDefaults.useK2
+    languageVersion = kotlinDefaults.languageVersion
+    apiVersion = kotlinDefaults.apiVersion
+    isProgressiveModeEnabled = kotlinDefaults.isProgressiveModeEnabled
     freeCompilerArgs = kotlinDefaults.freeCompilerArgs
     optIns = kotlinDefaults.optIns
   }
