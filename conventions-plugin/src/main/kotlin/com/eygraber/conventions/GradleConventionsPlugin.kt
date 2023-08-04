@@ -74,7 +74,9 @@ abstract class GradleConventionsPlugin : Plugin<Project> {
           kotlin.allWarningsAsErrors = allWarningsAsErrors
           kotlin.explicitApiMode = explicitApiMode
           kotlin.configureJavaTargetVersion = configureJavaTargetVersion
-          kotlin.useK2 = useK2
+          kotlin.languageVersion = languageVersion
+          kotlin.apiVersion = apiVersion
+          kotlin.isProgressiveModeEnabled = isProgressiveModeEnabled
           kotlin.freeCompilerArgs = freeCompilerArgs
           kotlin.optIns = optIns
         }

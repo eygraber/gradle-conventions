@@ -27,7 +27,9 @@ public fun Project.configureKgp(
   allWarningsAsErrors: Boolean = true,
   explicitApiMode: ExplicitApiMode = ExplicitApiMode.Disabled,
   configureJavaTargetVersion: Boolean = true,
-  useK2: Boolean = false,
+  kotlinLanguageVersion: KotlinVersion? = null,
+  kotlinApiVersion: KotlinVersion? = null,
+  isProgressiveModeEnabled: Boolean = false,
   freeCompilerArgs: List<KotlinFreeCompilerArg> = emptyList(),
   vararg optIns: KotlinOptIn
 ): JavaVersion = configureKgp(
@@ -37,7 +39,9 @@ public fun Project.configureKgp(
   allWarningsAsErrors,
   explicitApiMode,
   configureJavaTargetVersion,
-  useK2,
+  kotlinLanguageVersion,
+  kotlinApiVersion,
+  isProgressiveModeEnabled,
   freeCompilerArgs,
   *optIns
 )
@@ -49,7 +53,9 @@ public fun Project.configureKgp(
   allWarningsAsErrors: Boolean = true,
   explicitApiMode: ExplicitApiMode = ExplicitApiMode.Disabled,
   configureJavaTargetVersion: Boolean = true,
-  useK2: Boolean = false,
+  kotlinLanguageVersion: KotlinVersion? = null,
+  kotlinApiVersion: KotlinVersion? = null,
+  isProgressiveModeEnabled: Boolean = false,
   freeCompilerArgs: List<KotlinFreeCompilerArg> = emptyList(),
   vararg optIns: KotlinOptIn
 ): JavaVersion {
@@ -136,9 +142,14 @@ public fun Project.configureKgp(
         if(jvmTargetVersion != null) {
           compilerOptions.jvmTarget.set(jvmTargetVersion)
         }
-        if(useK2) {
-          compilerOptions.languageVersion.set(KotlinVersion.KOTLIN_2_0)
+        if(kotlinLanguageVersion != null) {
+          compilerOptions.languageVersion.set(kotlinLanguageVersion)
         }
+        if(kotlinApiVersion != null) {
+          compilerOptions.apiVersion.set(kotlinApiVersion)
+        }
+
+        compilerOptions.progressiveMode.set(isProgressiveModeEnabled)
       }
       compilerOptions.freeCompilerArgs.addAll(
         freeCompilerArgs.map { freeCompilerArg -> freeCompilerArg.value }
