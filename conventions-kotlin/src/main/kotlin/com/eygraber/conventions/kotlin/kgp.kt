@@ -149,7 +149,17 @@ public fun Project.configureKgp(
           compilerOptions.apiVersion.set(kotlinApiVersion)
         }
 
-        compilerOptions.progressiveMode.set(isProgressiveModeEnabled)
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        if(project.kotlinToolingVersion.toKotlinVersion().isAtLeast(major = 1, minor = 9)) {
+          compilerOptions.progressiveMode.set(isProgressiveModeEnabled)
+        }
+        else {
+          if(isProgressiveModeEnabled) {
+            compilerOptions.freeCompilerArgs.addAll(
+              "-progressive"
+            )
+          }
+        }
       }
       compilerOptions.freeCompilerArgs.addAll(
         freeCompilerArgs.map { freeCompilerArg -> freeCompilerArg.value }
