@@ -11,7 +11,7 @@ public fun Project.deleteRootBuildDirWhenCleaning() {
     "The \"base\" plugin must be applied to the root project in order to call deleteRootBuildDirWhenCleaning"
   }
 
-  val buildDir = buildDir
+  val buildDir = layout.buildDirectory.asFile.get()
 
   tasks.named("clean").configure {
     doFirst {

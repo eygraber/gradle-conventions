@@ -83,7 +83,7 @@ public fun Project.configureDetekt(
     }
 
     val projectDir = projectDir
-    val buildDir = project.buildDir
+    val buildDir = project.layout.buildDirectory.asFile.get()
 
     exclude {
       it.file.relativeTo(projectDir).startsWith(buildDir.relativeTo(projectDir))
