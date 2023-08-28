@@ -17,7 +17,9 @@ gradleConventionsExtension.awaitComposeConfigured {
         it is ComposeCompilerKotlinSupportPlugin
       }
 
-      class ComposeOnlyJvmPlugin : KotlinCompilerPluginSupportPlugin by ComposeCompilerKotlinSupportPlugin() {
+      class ComposeOnlyJvmPlugin @Inject constructor(
+        private val buildEventsListenerRegistry: BuildEventsListenerRegistry
+      ) : KotlinCompilerPluginSupportPlugin by ComposeCompilerKotlinSupportPlugin(buildEventsListenerRegistry) {
         override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean =
           when(kotlinCompilation.target.platformType) {
             KotlinPlatformType.androidJvm, KotlinPlatformType.jvm -> true
