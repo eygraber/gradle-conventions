@@ -1,5 +1,7 @@
 import com.eygraber.conventions.gradleConventionsExtension
 import org.jetbrains.compose.ComposeCompilerKotlinSupportPlugin
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -35,5 +37,21 @@ gradleConventionsExtension.awaitComposeConfigured {
     compose.kotlinCompilerPlugin.set(
       "$group:$name${if(version == null) "" else ":$version"}"
     )
+  }
+}
+
+plugins.withId("org.jetbrains.kotlin.multiplatform") {
+  with(extensions.getByType<KotlinMultiplatformExtension>()) {
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    targetHierarchy.default {
+      common {
+        group("cmp") {
+          withIos()
+          withJs()
+          withJvm()
+          withWasm()
+        }
+      }
+    }
   }
 }
