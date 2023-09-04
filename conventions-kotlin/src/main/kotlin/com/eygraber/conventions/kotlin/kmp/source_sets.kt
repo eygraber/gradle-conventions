@@ -188,6 +188,18 @@ public val NamedDomainObjectContainer<KotlinSourceSet>.jsTest: NamedDomainObject
   get() = named<KotlinSourceSet>("jsTest")
 
 /**
+ * Provides the existing [jsWasmMain][KotlinSourceSet] element.
+ */
+public val NamedDomainObjectContainer<KotlinSourceSet>.jsWasmMain: NamedDomainObjectProvider<KotlinSourceSet>
+  get() = named<KotlinSourceSet>("jsWasmMain")
+
+/**
+ * Provides the existing [jsWasmTest][KotlinSourceSet] element.
+ */
+public val NamedDomainObjectContainer<KotlinSourceSet>.jsWasmTest: NamedDomainObjectProvider<KotlinSourceSet>
+  get() = named<KotlinSourceSet>("jsWasmTest")
+
+/**
  * Provides the existing [jvmMain][KotlinSourceSet] element.
  */
 public val NamedDomainObjectContainer<KotlinSourceSet>.jvmMain: NamedDomainObjectProvider<KotlinSourceSet>
