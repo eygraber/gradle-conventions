@@ -62,7 +62,7 @@ public fun Project.configureKgp(
   val lowestSupportedJava = JavaVersion.VERSION_17
   val highestSupportedJava: JavaVersion = JavaVersion.VERSION_20
 
-  val targetJavaVersion = jvmTargetVersion?.target?.toInt()?.let(JavaVersion::toVersion)
+  val targetJavaVersion = jvmTargetVersion?.target?.let(JavaVersion::toVersion)
   val actualLowestSupportedJava: JavaVersion = when(targetJavaVersion) {
     null -> lowestSupportedJava
     else -> when {
