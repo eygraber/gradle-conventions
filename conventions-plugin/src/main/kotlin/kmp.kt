@@ -24,6 +24,8 @@ fun KotlinMultiplatformExtension.kmpTargets(
   isWasmLeafModule: Boolean = false,
   wasmModuleName: String? = null,
   js: Boolean = false,
+  jsBrowser: Boolean = true,
+  jsNode: Boolean = true,
   isJsLeafModule: Boolean = false,
   jsModuleName: String? = null,
   createJsWasmSourceSetIfApplicable: Boolean = true,
@@ -42,6 +44,8 @@ fun KotlinMultiplatformExtension.kmpTargets(
       isWasmLeafModule = isWasmLeafModule,
       wasmModuleName = wasmModuleName,
       js = js,
+      jsBrowser = jsBrowser,
+      jsNode = jsNode,
       isJsLeafModule = isJsLeafModule,
       jsModuleName = jsModuleName,
       requireAtLeastOneTarget = requireAtLeastOneTarget,
@@ -59,6 +63,8 @@ fun KotlinMultiplatformExtension.kmpTargets(
       isWasmLeafModule = isWasmLeafModule,
       wasmModuleName = wasmModuleName,
       js = js,
+      jsBrowser = jsBrowser,
+      jsNode = jsNode,
       isJsLeafModule = isJsLeafModule,
       jsModuleName = jsModuleName,
       createJsWasmSourceSetIfApplicable = createJsWasmSourceSetIfApplicable,
@@ -77,6 +83,8 @@ private fun KotlinMultiplatformExtension.kmpTargets19(
   isWasmLeafModule: Boolean = false,
   wasmModuleName: String? = null,
   js: Boolean = false,
+  jsBrowser: Boolean = true,
+  jsNode: Boolean = true,
   isJsLeafModule: Boolean = false,
   jsModuleName: String? = null,
   requireAtLeastOneTarget: Boolean = true,
@@ -150,9 +158,19 @@ private fun KotlinMultiplatformExtension.kmpTargets19(
         moduleName = jsModuleName
       }
 
-      browser {
-        if(isJsLeafModule) {
-          binaries.executable()
+      if(jsBrowser) {
+        browser {
+          if(isJsLeafModule) {
+            binaries.executable()
+          }
+        }
+      }
+
+      if(jsNode) {
+        nodejs {
+          if(isJsLeafModule) {
+            binaries.executable()
+          }
         }
       }
     }
@@ -180,6 +198,8 @@ private fun KotlinMultiplatformExtension.kmpTargetsPre19(
   isWasmLeafModule: Boolean = false,
   wasmModuleName: String? = null,
   js: Boolean = false,
+  jsBrowser: Boolean = true,
+  jsNode: Boolean = true,
   isJsLeafModule: Boolean = false,
   jsModuleName: String? = null,
   createJsWasmSourceSetIfApplicable: Boolean = true,
@@ -254,9 +274,19 @@ private fun KotlinMultiplatformExtension.kmpTargetsPre19(
         moduleName = jsModuleName
       }
 
-      browser {
-        if(isJsLeafModule) {
-          binaries.executable()
+      if(jsBrowser) {
+        browser {
+          if(isJsLeafModule) {
+            binaries.executable()
+          }
+        }
+      }
+
+      if(jsNode) {
+        nodejs {
+          if(isJsLeafModule) {
+            binaries.executable()
+          }
         }
       }
     }
