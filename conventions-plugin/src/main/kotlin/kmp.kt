@@ -116,9 +116,9 @@ private fun KotlinMultiplatformExtension.kmpTargets19(
     }
   }
 
-  if(ios || macos) {
+  if(ios || macos || tvos) {
     project.afterEvaluate {
-      project.registerSourceSetDetektTask("apple", "ios", "macos")
+      project.registerSourceSetDetektTask("apple", "ios", "macos", "tvos")
     }
 
     if(ios) {
@@ -233,12 +233,12 @@ private fun KotlinMultiplatformExtension.kmpTargetsPre19(
     }
   }
 
-  if(ios || macos) {
+  if(ios || macos || tvos) {
     createSharedSourceSet(
       project = project,
       name = "apple"
     )
-    project.registerSourceSetDetektTask("apple", "ios", "macos")
+    project.registerSourceSetDetektTask("apple", "ios", "macos", "tvos")
 
     if(ios) {
       val targets = listOf(
