@@ -20,6 +20,7 @@ fun KotlinMultiplatformExtension.kmpTargets(
   jvm: Boolean = false,
   ios: Boolean = false,
   macos: Boolean = false,
+  tvos: Boolean = false,
   wasm: Boolean = false,
   isWasmLeafModule: Boolean = false,
   wasmModuleName: String? = null,
@@ -40,6 +41,7 @@ fun KotlinMultiplatformExtension.kmpTargets(
       jvm = jvm,
       ios = ios,
       macos = macos,
+      tvos = tvos,
       wasm = wasm,
       isWasmLeafModule = isWasmLeafModule,
       wasmModuleName = wasmModuleName,
@@ -59,6 +61,7 @@ fun KotlinMultiplatformExtension.kmpTargets(
       jvm = jvm,
       ios = ios,
       macos = macos,
+      tvos = tvos,
       wasm = wasm,
       isWasmLeafModule = isWasmLeafModule,
       wasmModuleName = wasmModuleName,
@@ -79,6 +82,7 @@ private fun KotlinMultiplatformExtension.kmpTargets19(
   jvm: Boolean = false,
   ios: Boolean = false,
   macos: Boolean = false,
+  tvos: Boolean = false,
   wasm: Boolean = false,
   isWasmLeafModule: Boolean = false,
   wasmModuleName: String? = null,
@@ -134,6 +138,16 @@ private fun KotlinMultiplatformExtension.kmpTargets19(
       )
 
       project.registerDetektKmpIntermediateTask(intermediateName = "macos", targets)
+    }
+
+    if(tvos) {
+      val targets = listOf(
+        tvosX64(),
+        tvosArm64(),
+        tvosSimulatorArm64()
+      )
+
+      project.registerDetektKmpIntermediateTask(intermediateName = "tvos", targets)
     }
   }
 
@@ -194,6 +208,7 @@ private fun KotlinMultiplatformExtension.kmpTargetsPre19(
   jvm: Boolean = false,
   ios: Boolean = false,
   macos: Boolean = false,
+  tvos: Boolean = false,
   wasm: Boolean = false,
   isWasmLeafModule: Boolean = false,
   wasmModuleName: String? = null,
@@ -248,6 +263,20 @@ private fun KotlinMultiplatformExtension.kmpTargetsPre19(
       createNestedAppleSharedSourceSet(
         project = project,
         name = "macos",
+        targets = targets
+      )
+    }
+
+    if(tvos) {
+      val targets = listOf(
+        tvosX64(),
+        tvosArm64(),
+        tvosSimulatorArm64()
+      )
+
+      createNestedAppleSharedSourceSet(
+        project = project,
+        name = "tvos",
         targets = targets
       )
     }
