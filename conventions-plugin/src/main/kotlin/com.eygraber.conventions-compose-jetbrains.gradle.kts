@@ -5,6 +5,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
+import org.jetbrains.kotlin.tooling.core.toKotlinVersion
 
 plugins {
   id("org.jetbrains.compose")
@@ -42,14 +44,31 @@ gradleConventionsExtension.awaitComposeConfigured {
 
 plugins.withId("org.jetbrains.kotlin.multiplatform") {
   with(extensions.getByType<KotlinMultiplatformExtension>()) {
-    @OptIn(ExperimentalKotlinGradlePluginApi::class)
-    targetHierarchy.default {
-      common {
-        group("cmp") {
-          withIos()
-          withJs()
-          withJvm()
-          withWasm()
+    val isAtLeast192 = project.kotlinToolingVersion.toKotlinVersion().isAtLeast(major = 1, minor = 9, patch = 20)
+    if(isAtLeast192) {
+      @OptIn(ExperimentalKotlinGradlePluginApi::class)
+      applyDefaultHierarchyTemplate {
+        common {
+          group("cmp") {
+            withIos()
+            withJs()
+            withJvm()
+            withWasm()
+          }
+        }
+      }
+    }
+    else {
+      @Suppress("DEPRECATION")
+      @OptIn(ExperimentalKotlinGradlePluginApi::class)
+      targetHierarchy.default {
+        common {
+          group("cmp") {
+            withIos()
+            withJs()
+            withJvm()
+            withWasm()
+          }
         }
       }
     }

@@ -30,7 +30,8 @@ fun KotlinMultiplatformExtension.allKmpTargets(
     watchos = true,
     linux = true,
     windows = true,
-    wasm = true,
+    wasmJs = true,
+    wasmWasi = true,
     isWasmLeafModule = isWasmLeafModule,
     wasmModuleName = wasmModuleName,
     js = true,
@@ -55,7 +56,8 @@ fun KotlinMultiplatformExtension.kmpTargets(
   watchos: Boolean = false,
   linux: Boolean = false,
   windows: Boolean = false,
-  wasm: Boolean = false,
+  wasmJs: Boolean = false,
+  wasmWasi: Boolean = false,
   isWasmLeafModule: Boolean = false,
   wasmModuleName: String? = null,
   js: Boolean = false,
@@ -67,26 +69,41 @@ fun KotlinMultiplatformExtension.kmpTargets(
   requireAtLeastOneTarget: Boolean = true,
   useDefaultTargetHierarchy: Boolean = true
 ) {
-  @OptIn(ExperimentalKotlinGradlePluginApi::class)
   require(project.kotlinToolingVersion.toKotlinVersion().isAtLeast(major = 1, minor = 9)) {
     "A minimum Kotlin version of 1.9.0 is required to use kmpTargets"
   }
 
   val apple = ios || macos || tvos || watchos
+  val wasm = wasmJs || wasmWasi
 
   if(requireAtLeastOneTarget) {
-    check(android || androidNative || jvm || apple || linux || windows || js || wasm) {
-      "At least one of android, jvm, ios, macos, tvos, watchos, linux, windows, js, or wasm needs to be set to true"
+    require(android || androidNative || jvm || apple || linux || windows || js || wasm) {
+      "At least one target needs to be set to true"
     }
   }
 
+  val isAtLeast192 = project.kotlinToolingVersion.toKotlinVersion().isAtLeast(major = 1, minor = 9, patch = 20)
+
   if(useDefaultTargetHierarchy) {
-    @OptIn(ExperimentalKotlinGradlePluginApi::class)
-    targetHierarchy.default {
-      if(createJsWasmSourceSetIfApplicable) {
-        group("jsWasm") {
-          withJs()
-          withWasm()
+    if(isAtLeast192) {
+      @OptIn(ExperimentalKotlinGradlePluginApi::class)
+      applyDefaultHierarchyTemplate {
+        if(createJsWasmSourceSetIfApplicable) {
+          group("jsWasm") {
+            withJs()
+            withWasm()
+          }
+        }
+      }
+    } else {
+      @Suppress("DEPRECATION")
+      @OptIn(ExperimentalKotlinGradlePluginApi::class)
+      targetHierarchy.default {
+        if(createJsWasmSourceSetIfApplicable) {
+          group("jsWasm") {
+            withJs()
+            withWasm()
+          }
         }
       }
     }
@@ -165,16 +182,43 @@ fun KotlinMultiplatformExtension.kmpTargets(
     project.registerDetektKmpIntermediateTask(intermediateName = "windows", listOf(mingwX64()))
   }
 
-  if(wasm) {
-    @OptIn(ExperimentalWasmDsl::class)
-    wasm {
-      if(wasmModuleName != null) {
-        moduleName = wasmModuleName
+  if(wasmJs || wasmWasi) {
+    if(isAtLeast192) {
+      if(wasmJs) {
+        @OptIn(ExperimentalWasmDsl::class)
+        wasmJs {
+          if(wasmModuleName != null) {
+            moduleName = wasmModuleName
+          }
+
+          browser {
+            if(isWasmLeafModule) {
+              binaries.executable()
+            }
+          }
+        }
       }
 
-      browser {
-        if(isWasmLeafModule) {
-          binaries.executable()
+      if(wasmWasi) {
+        @OptIn(ExperimentalWasmDsl::class)
+        wasmWasi {
+          if(isWasmLeafModule) {
+            binaries.executable()
+          }
+        }
+      }
+    } else {
+      @Suppress("DEPRECATION")
+      @OptIn(ExperimentalWasmDsl::class)
+      wasm {
+        if(wasmModuleName != null) {
+          moduleName = wasmModuleName
+        }
+
+        browser {
+          if(isWasmLeafModule) {
+            binaries.executable()
+          }
         }
       }
     }
@@ -204,7 +248,7 @@ fun KotlinMultiplatformExtension.kmpTargets(
     }
   }
 
-  if(js && wasm) {
+  if(js && wasmJs) {
     project.registerDetektKmpIntermediateTask(
       intermediateName = "jsWasm",
       targets = listOf(targets.getByName("js"), targets.getByName("wasm"))
