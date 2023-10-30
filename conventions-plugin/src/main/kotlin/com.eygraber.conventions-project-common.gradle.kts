@@ -1,7 +1,7 @@
-import com.eygraber.conventions.project.common.ConventionDependencyHandler
-import com.eygraber.conventions.project.common.ResolutionVersionSelector
 import com.eygraber.conventions.gradleConventionsDefaultsService
 import com.eygraber.conventions.gradleConventionsExtension
+import com.eygraber.conventions.project.common.ConventionDependencyHandler
+import com.eygraber.conventions.project.common.ResolutionVersionSelector
 
 val ext = gradleConventionsExtension
 val dependenciesDefaults = gradleConventionsDefaultsService.projectCommon

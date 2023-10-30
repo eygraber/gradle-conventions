@@ -82,7 +82,7 @@ jobs:
           gradle-version: wrapper
 
       - name: Run ktlint
-        run: ./format
+        run: ./format --no-format
 
 
 env:
