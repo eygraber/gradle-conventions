@@ -30,13 +30,25 @@ public val NamedDomainObjectContainer<KotlinSourceSet>.androidInstrumentedTest: 
   get() = named<KotlinSourceSet>("androidInstrumentedTest")
 
 /**
- * Provides the existing [wasmMain][KotlinSourceSet] element.
+ * Provides the existing [wasmJsMain][KotlinSourceSet] element.
  */
-public val NamedDomainObjectContainer<KotlinSourceSet>.wasmMain: NamedDomainObjectProvider<KotlinSourceSet>
-  get() = named<KotlinSourceSet>("wasmMain")
+public val NamedDomainObjectContainer<KotlinSourceSet>.wasmJsMain: NamedDomainObjectProvider<KotlinSourceSet>
+  get() = named<KotlinSourceSet>("wasmJsMain")
 
 /**
- * Provides the existing [wasmTest][KotlinSourceSet] element.
+ * Provides the existing [wasmJsTest][KotlinSourceSet] element.
  */
-public val NamedDomainObjectContainer<KotlinSourceSet>.wasmTest: NamedDomainObjectProvider<KotlinSourceSet>
-  get() = named<KotlinSourceSet>("wasmTest")
+public val NamedDomainObjectContainer<KotlinSourceSet>.wasmJsTest: NamedDomainObjectProvider<KotlinSourceSet>
+  get() = named<KotlinSourceSet>("wasmJsTest")
+
+/**
+ * Provides the existing [wasmWasiMain][KotlinSourceSet] element.
+ */
+public val NamedDomainObjectContainer<KotlinSourceSet>.wasmWasiMain: NamedDomainObjectProvider<KotlinSourceSet>
+  get() = named<KotlinSourceSet>("wasmWasiMain")
+
+/**
+ * Provides the existing [wasmWasiTest][KotlinSourceSet] element.
+ */
+public val NamedDomainObjectContainer<KotlinSourceSet>.wasmWasiTest: NamedDomainObjectProvider<KotlinSourceSet>
+  get() = named<KotlinSourceSet>("wasmWasiTest")
