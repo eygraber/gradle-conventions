@@ -14,10 +14,12 @@ enum class BinaryType {
 
 fun KotlinMultiplatformExtension.allKmpTargets(
   project: Project,
-  wasmModuleName: String? = null,
   jsBrowser: Boolean = true,
   jsNode: Boolean = true,
   jsModuleName: String? = null,
+  wasmJsBrowser: Boolean = true,
+  wasmJsNode: Boolean = true,
+  wasmJsModuleName: String? = null,
   binaryType: BinaryType = BinaryType.Library,
   createJsWasmSourceSetIfApplicable: Boolean = true,
   requireAtLeastOneTarget: Boolean = true,
@@ -36,11 +38,13 @@ fun KotlinMultiplatformExtension.allKmpTargets(
     mingw = true,
     wasmJs = true,
     wasmWasi = true,
-    wasmModuleName = wasmModuleName,
     js = true,
     jsBrowser = jsBrowser,
     jsNode = jsNode,
     jsModuleName = jsModuleName,
+    wasmJsBrowser = wasmJsBrowser,
+    wasmJsNode = wasmJsNode,
+    wasmJsModuleName = wasmJsModuleName,
     binaryType = binaryType,
     createJsWasmSourceSetIfApplicable = createJsWasmSourceSetIfApplicable,
     requireAtLeastOneTarget = requireAtLeastOneTarget,
@@ -61,11 +65,13 @@ fun KotlinMultiplatformExtension.kmpTargets(
   mingw: Boolean = false,
   wasmJs: Boolean = false,
   wasmWasi: Boolean = false,
-  wasmModuleName: String? = null,
   js: Boolean = false,
   jsBrowser: Boolean = true,
   jsNode: Boolean = true,
   jsModuleName: String? = null,
+  wasmJsBrowser: Boolean = true,
+  wasmJsNode: Boolean = true,
+  wasmJsModuleName: String? = null,
   binaryType: BinaryType = BinaryType.Library,
   createJsWasmSourceSetIfApplicable: Boolean = true,
   requireAtLeastOneTarget: Boolean = true,
@@ -260,13 +266,23 @@ fun KotlinMultiplatformExtension.kmpTargets(
     if(wasmJs) {
       @OptIn(ExperimentalWasmDsl::class)
       wasmJs {
-        if(wasmModuleName != null) {
-          moduleName = wasmModuleName
+        if(wasmJsModuleName != null) {
+          moduleName = wasmJsModuleName
         }
 
-        browser {
-          if(binaryType == BinaryType.Executable) {
-            binaries.executable()
+        if(wasmJsBrowser) {
+          browser {
+            if(binaryType == BinaryType.Executable) {
+              binaries.executable()
+            }
+          }
+        }
+
+        if(wasmJsNode) {
+          nodejs {
+            if(binaryType == BinaryType.Executable) {
+              binaries.executable()
+            }
           }
         }
       }
