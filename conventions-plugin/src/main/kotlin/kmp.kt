@@ -309,7 +309,7 @@ fun KotlinMultiplatformExtension.kmpTargets(
   if(js && wasmJs) {
     project.registerDetektKmpIntermediateTask(
       intermediateName = "jsWasm",
-      targets = listOf(targets.getByName("js"), targets.getByName("wasm"))
+      targets = listOf(targets.getByName("js"), targets.getByName("wasmJs"))
     )
   }
 
