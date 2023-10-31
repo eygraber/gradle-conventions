@@ -7,14 +7,18 @@ import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.tooling.core.toKotlinVersion
 
+enum class BinaryType {
+  Library,
+  Executable
+}
+
 fun KotlinMultiplatformExtension.allKmpTargets(
   project: Project,
-  isWasmLeafModule: Boolean = false,
   wasmModuleName: String? = null,
   jsBrowser: Boolean = true,
   jsNode: Boolean = true,
-  isJsLeafModule: Boolean = false,
   jsModuleName: String? = null,
+  binaryType: BinaryType = BinaryType.Library,
   createJsWasmSourceSetIfApplicable: Boolean = true,
   requireAtLeastOneTarget: Boolean = true,
   useDefaultTargetHierarchy: Boolean = true
@@ -29,16 +33,15 @@ fun KotlinMultiplatformExtension.allKmpTargets(
     tvos = true,
     watchos = true,
     linux = true,
-    windows = true,
+    mingw = true,
     wasmJs = true,
     wasmWasi = true,
-    isWasmLeafModule = isWasmLeafModule,
     wasmModuleName = wasmModuleName,
     js = true,
     jsBrowser = jsBrowser,
     jsNode = jsNode,
-    isJsLeafModule = isJsLeafModule,
     jsModuleName = jsModuleName,
+    binaryType = binaryType,
     createJsWasmSourceSetIfApplicable = createJsWasmSourceSetIfApplicable,
     requireAtLeastOneTarget = requireAtLeastOneTarget,
     useDefaultTargetHierarchy = useDefaultTargetHierarchy
@@ -55,55 +58,39 @@ fun KotlinMultiplatformExtension.kmpTargets(
   tvos: Boolean = false,
   watchos: Boolean = false,
   linux: Boolean = false,
-  windows: Boolean = false,
+  mingw: Boolean = false,
   wasmJs: Boolean = false,
   wasmWasi: Boolean = false,
-  isWasmLeafModule: Boolean = false,
   wasmModuleName: String? = null,
   js: Boolean = false,
   jsBrowser: Boolean = true,
   jsNode: Boolean = true,
-  isJsLeafModule: Boolean = false,
   jsModuleName: String? = null,
+  binaryType: BinaryType = BinaryType.Library,
   createJsWasmSourceSetIfApplicable: Boolean = true,
   requireAtLeastOneTarget: Boolean = true,
   useDefaultTargetHierarchy: Boolean = true
 ) {
-  require(project.kotlinToolingVersion.toKotlinVersion().isAtLeast(major = 1, minor = 9)) {
-    "A minimum Kotlin version of 1.9.0 is required to use kmpTargets"
+  require(project.kotlinToolingVersion.toKotlinVersion().isAtLeast(major = 1, minor = 9, patch = 20)) {
+    "A minimum Kotlin version of 1.9.20 is required to use kmpTargets"
   }
 
   val apple = ios || macos || tvos || watchos
   val wasm = wasmJs || wasmWasi
 
   if(requireAtLeastOneTarget) {
-    require(android || androidNative || jvm || apple || linux || windows || js || wasm) {
+    require(android || androidNative || jvm || apple || linux || mingw || js || wasm) {
       "At least one target needs to be set to true"
     }
   }
 
-  val isAtLeast192 = project.kotlinToolingVersion.toKotlinVersion().isAtLeast(major = 1, minor = 9, patch = 20)
-
   if(useDefaultTargetHierarchy) {
-    if(isAtLeast192) {
-      @OptIn(ExperimentalKotlinGradlePluginApi::class)
-      applyDefaultHierarchyTemplate {
-        if(createJsWasmSourceSetIfApplicable) {
-          group("jsWasm") {
-            withJs()
-            withWasm()
-          }
-        }
-      }
-    } else {
-      @Suppress("DEPRECATION")
-      @OptIn(ExperimentalKotlinGradlePluginApi::class)
-      targetHierarchy.default {
-        if(createJsWasmSourceSetIfApplicable) {
-          group("jsWasm") {
-            withJs()
-            withWasm()
-          }
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    applyDefaultHierarchyTemplate {
+      if(createJsWasmSourceSetIfApplicable) {
+        group("jsWasm") {
+          withJs()
+          withWasm()
         }
       }
     }
@@ -116,10 +103,29 @@ fun KotlinMultiplatformExtension.kmpTargets(
   }
 
   if(androidNative) {
-    androidNativeArm32()
-    androidNativeArm64()
-    androidNativeX86()
-    androidNativeX64()
+    androidNativeArm32 {
+      if(binaryType == BinaryType.Executable) {
+        binaries.executable()
+      }
+    }
+
+    androidNativeArm64 {
+      if(binaryType == BinaryType.Executable) {
+        binaries.executable()
+      }
+    }
+
+    androidNativeX86 {
+      if(binaryType == BinaryType.Executable) {
+        binaries.executable()
+      }
+    }
+
+    androidNativeX64 {
+      if(binaryType == BinaryType.Executable) {
+        binaries.executable()
+      }
+    }
   }
 
   if(apple) {
@@ -129,9 +135,21 @@ fun KotlinMultiplatformExtension.kmpTargets(
 
     if(ios) {
       val targets = listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
+        iosX64 {
+          if(binaryType == BinaryType.Executable) {
+            binaries.executable()
+          }
+        },
+        iosArm64 {
+          if(binaryType == BinaryType.Executable) {
+            binaries.executable()
+          }
+        },
+        iosSimulatorArm64 {
+          if(binaryType == BinaryType.Executable) {
+            binaries.executable()
+          }
+        }
       )
 
       project.registerDetektKmpIntermediateTask(intermediateName = "ios", targets)
@@ -139,8 +157,16 @@ fun KotlinMultiplatformExtension.kmpTargets(
 
     if(macos) {
       val targets = listOf(
-        macosX64(),
-        macosArm64()
+        macosX64 {
+          if(binaryType == BinaryType.Executable) {
+            binaries.executable()
+          }
+        },
+        macosArm64 {
+          if(binaryType == BinaryType.Executable) {
+            binaries.executable()
+          }
+        }
       )
 
       project.registerDetektKmpIntermediateTask(intermediateName = "macos", targets)
@@ -148,9 +174,21 @@ fun KotlinMultiplatformExtension.kmpTargets(
 
     if(tvos) {
       val targets = listOf(
-        tvosX64(),
-        tvosArm64(),
-        tvosSimulatorArm64()
+        tvosX64 {
+          if(binaryType == BinaryType.Executable) {
+            binaries.executable()
+          }
+        },
+        tvosArm64 {
+          if(binaryType == BinaryType.Executable) {
+            binaries.executable()
+          }
+        },
+        tvosSimulatorArm64 {
+          if(binaryType == BinaryType.Executable) {
+            binaries.executable()
+          }
+        }
       )
 
       project.registerDetektKmpIntermediateTask(intermediateName = "tvos", targets)
@@ -158,11 +196,31 @@ fun KotlinMultiplatformExtension.kmpTargets(
 
     if(watchos) {
       val targets = listOf(
-        watchosX64(),
-        watchosArm32(),
-        watchosArm64(),
-        watchosDeviceArm64(),
-        watchosSimulatorArm64(),
+        watchosX64 {
+          if(binaryType == BinaryType.Executable) {
+            binaries.executable()
+          }
+        },
+        watchosArm32 {
+          if(binaryType == BinaryType.Executable) {
+            binaries.executable()
+          }
+        },
+        watchosArm64 {
+          if(binaryType == BinaryType.Executable) {
+            binaries.executable()
+          }
+        },
+        watchosDeviceArm64 {
+          if(binaryType == BinaryType.Executable) {
+            binaries.executable()
+          }
+        },
+        watchosSimulatorArm64 {
+          if(binaryType == BinaryType.Executable) {
+            binaries.executable()
+          }
+        },
       )
 
       project.registerDetektKmpIntermediateTask(intermediateName = "watchos", targets)
@@ -171,54 +229,54 @@ fun KotlinMultiplatformExtension.kmpTargets(
 
   if(linux) {
     val targets = listOf(
-      linuxX64(),
-      linuxArm64()
+      linuxX64 {
+        if(binaryType == BinaryType.Executable) {
+          binaries.executable()
+        }
+      },
+      linuxArm64 {
+        if(binaryType == BinaryType.Executable) {
+          binaries.executable()
+        }
+      }
     )
 
     project.registerDetektKmpIntermediateTask(intermediateName = "linux", targets)
   }
 
-  if(windows) {
-    project.registerDetektKmpIntermediateTask(intermediateName = "windows", listOf(mingwX64()))
+  if(mingw) {
+    val targets = listOf(
+      mingwX64 {
+        if(binaryType == BinaryType.Executable) {
+          binaries.executable()
+        }
+      }
+    )
+
+    project.registerDetektKmpIntermediateTask(intermediateName = "mingw", targets)
   }
 
   if(wasmJs || wasmWasi) {
-    if(isAtLeast192) {
-      if(wasmJs) {
-        @OptIn(ExperimentalWasmDsl::class)
-        wasmJs {
-          if(wasmModuleName != null) {
-            moduleName = wasmModuleName
-          }
-
-          browser {
-            if(isWasmLeafModule) {
-              binaries.executable()
-            }
-          }
-        }
-      }
-
-      if(wasmWasi) {
-        @OptIn(ExperimentalWasmDsl::class)
-        wasmWasi {
-          if(isWasmLeafModule) {
-            binaries.executable()
-          }
-        }
-      }
-    } else {
-      @Suppress("DEPRECATION")
+    if(wasmJs) {
       @OptIn(ExperimentalWasmDsl::class)
-      wasm {
+      wasmJs {
         if(wasmModuleName != null) {
           moduleName = wasmModuleName
         }
 
         browser {
-          if(isWasmLeafModule) {
+          if(binaryType == BinaryType.Executable) {
             binaries.executable()
           }
+        }
+      }
+    }
+
+    if(wasmWasi) {
+      @OptIn(ExperimentalWasmDsl::class)
+      wasmWasi {
+        if(binaryType == BinaryType.Executable) {
+          binaries.executable()
         }
       }
     }
@@ -232,7 +290,7 @@ fun KotlinMultiplatformExtension.kmpTargets(
 
       if(jsBrowser) {
         browser {
-          if(isJsLeafModule) {
+          if(binaryType == BinaryType.Executable) {
             binaries.executable()
           }
         }
@@ -240,7 +298,7 @@ fun KotlinMultiplatformExtension.kmpTargets(
 
       if(jsNode) {
         nodejs {
-          if(isJsLeafModule) {
+          if(binaryType == BinaryType.Executable) {
             binaries.executable()
           }
         }
