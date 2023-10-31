@@ -1,118 +1,14 @@
 package com.eygraber.conventions.kotlin.kmp
 
-import com.eygraber.conventions.publishing.configurePublishingRepositories
-import com.eygraber.conventions.tasks.dependsOn
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import taskName
 
 public val Project.kmpSourceSets: NamedDomainObjectContainer<KotlinSourceSet>
   get() = extensions.getByType(KotlinMultiplatformExtension::class.java).sourceSets
-
-public fun KotlinTarget.mainAndTestSourceSets(): Pair<KotlinSourceSet, KotlinSourceSet> =
-  compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).defaultSourceSet to
-    compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME).defaultSourceSet
-
-public fun KotlinMultiplatformExtension.createSharedSourceSet(
-  project: Project,
-  name: String,
-  enableTasks: Boolean = true
-) {
-  with(sourceSets) {
-    create("${name}Main") {
-      dependsOn(getByName("commonMain"))
-    }
-
-    create("${name}Test") {
-      dependsOn(getByName("commonTest"))
-    }
-  }
-
-  val sourceSetNameForTasks = name.taskName()
-
-  project.configurePublishingRepositories {
-    val repoNameForTasks = this.name.taskName()
-    project.tasks.register(
-      "publish${sourceSetNameForTasks}PublicationTo${repoNameForTasks}Repository"
-    ) {
-      group = "Publishing"
-      description =
-        "Publishes all Maven '$name' publications produced by this project to the $repoNameForTasks repository."
-      enabled = enableTasks
-    }
-  }
-}
-
-public fun <T : KotlinTarget> KotlinMultiplatformExtension.createNestedSharedSourceSetForTargets(
-  project: Project,
-  name: String,
-  targets: List<T>,
-  parentSourceSetName: String,
-  createIntermediatePublishingTasks: Boolean = true,
-  enableTasks: Boolean = true,
-  configureTarget: (T) -> Unit
-) {
-  val (nestedMainSourceSet, nestedTestSourceSet) = with(sourceSets) {
-    val main = create("${name}Main") {
-      dependsOn(getByName("${parentSourceSetName}Main"))
-    }
-
-    val test = create("${name}Test") {
-      dependsOn(getByName("${parentSourceSetName}Test"))
-    }
-
-    main to test
-  }
-
-  val sourceSetNameForTasks = name.taskName()
-  val parentSourceSetNameForTasks = parentSourceSetName.taskName()
-
-  if(createIntermediatePublishingTasks) {
-    project.configurePublishingRepositories {
-      val repoNameForTasks = this.name.taskName()
-      val publishTask = project.tasks.register(
-        "publish${sourceSetNameForTasks}PublicationTo${repoNameForTasks}Repository"
-      ) {
-        group = "Publishing"
-        description =
-          "Publishes all Maven '$name' publications produced by this project to the $repoNameForTasks repository."
-        enabled = enableTasks
-      }
-
-      project.tasks.named(
-        "publish${parentSourceSetNameForTasks}PublicationTo${repoNameForTasks}Repository"
-      ).dependsOn(publishTask.name)
-    }
-  }
-
-  targets.forEach { target ->
-    configureTarget(target)
-
-    val targetNameForTasks = target.name.taskName()
-
-    val (targetMainSourceSet, targetTestSourceSet) = target.mainAndTestSourceSets()
-    targetMainSourceSet.dependsOn(nestedMainSourceSet)
-    targetTestSourceSet.dependsOn(nestedTestSourceSet)
-
-    if(createIntermediatePublishingTasks) {
-      project.configurePublishingRepositories {
-        val repoNameForTasks = this.name.taskName()
-
-        project.tasks.named(
-          "publish${sourceSetNameForTasks}PublicationTo${repoNameForTasks}Repository"
-        ).dependsOn(
-          "publish${targetNameForTasks}PublicationTo${repoNameForTasks}Repository"
-        )
-      }
-    }
-  }
-}
 
 /**
  * Provides the existing [androidMain][KotlinSourceSet] element.

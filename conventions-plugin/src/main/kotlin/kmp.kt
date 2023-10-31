@@ -1,26 +1,60 @@
 import com.eygraber.conventions.detekt.registerDetektKmpIntermediateTask
 import com.eygraber.conventions.detekt.registerSourceSetDetektTask
-import com.eygraber.conventions.kotlin.kmp.createNestedSharedSourceSetForTargets
-import com.eygraber.conventions.kotlin.kmp.createSharedSourceSet
-import com.eygraber.conventions.kotlin.kmp.jsMain
-import com.eygraber.conventions.kotlin.kmp.jsTest
-import com.eygraber.conventions.kotlin.kmp.wasmMain
-import com.eygraber.conventions.kotlin.kmp.wasmTest
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.tooling.core.toKotlinVersion
+
+fun KotlinMultiplatformExtension.allKmpTargets(
+  project: Project,
+  isWasmLeafModule: Boolean = false,
+  wasmModuleName: String? = null,
+  jsBrowser: Boolean = true,
+  jsNode: Boolean = true,
+  isJsLeafModule: Boolean = false,
+  jsModuleName: String? = null,
+  createJsWasmSourceSetIfApplicable: Boolean = true,
+  requireAtLeastOneTarget: Boolean = true,
+  useDefaultTargetHierarchy: Boolean = true
+) {
+  kmpTargets(
+    project = project,
+    android = true,
+    androidNative = true,
+    jvm = true,
+    ios = true,
+    macos = true,
+    tvos = true,
+    watchos = true,
+    linux = true,
+    windows = true,
+    wasm = true,
+    isWasmLeafModule = isWasmLeafModule,
+    wasmModuleName = wasmModuleName,
+    js = true,
+    jsBrowser = jsBrowser,
+    jsNode = jsNode,
+    isJsLeafModule = isJsLeafModule,
+    jsModuleName = jsModuleName,
+    createJsWasmSourceSetIfApplicable = createJsWasmSourceSetIfApplicable,
+    requireAtLeastOneTarget = requireAtLeastOneTarget,
+    useDefaultTargetHierarchy = useDefaultTargetHierarchy
+  )
+}
 
 fun KotlinMultiplatformExtension.kmpTargets(
   project: Project,
   android: Boolean = false,
+  androidNative: Boolean = false,
   jvm: Boolean = false,
   ios: Boolean = false,
   macos: Boolean = false,
   tvos: Boolean = false,
+  watchos: Boolean = false,
+  linux: Boolean = false,
+  windows: Boolean = false,
   wasm: Boolean = false,
   isWasmLeafModule: Boolean = false,
   wasmModuleName: String? = null,
@@ -34,78 +68,26 @@ fun KotlinMultiplatformExtension.kmpTargets(
   useDefaultTargetHierarchy: Boolean = true
 ) {
   @OptIn(ExperimentalKotlinGradlePluginApi::class)
-  if(project.kotlinToolingVersion.toKotlinVersion().isAtLeast(major = 1, minor = 9)) {
-    kmpTargets19(
-      project = project,
-      android = android,
-      jvm = jvm,
-      ios = ios,
-      macos = macos,
-      tvos = tvos,
-      wasm = wasm,
-      isWasmLeafModule = isWasmLeafModule,
-      wasmModuleName = wasmModuleName,
-      js = js,
-      jsBrowser = jsBrowser,
-      jsNode = jsNode,
-      isJsLeafModule = isJsLeafModule,
-      jsModuleName = jsModuleName,
-      requireAtLeastOneTarget = requireAtLeastOneTarget,
-      useDefaultTargetHierarchy = useDefaultTargetHierarchy
-    )
+  require(project.kotlinToolingVersion.toKotlinVersion().isAtLeast(major = 1, minor = 9)) {
+    "A minimum Kotlin version of 1.9.0 is required to use kmpTargets"
   }
-  else {
-    kmpTargetsPre19(
-      project = project,
-      android = android,
-      jvm = jvm,
-      ios = ios,
-      macos = macos,
-      tvos = tvos,
-      wasm = wasm,
-      isWasmLeafModule = isWasmLeafModule,
-      wasmModuleName = wasmModuleName,
-      js = js,
-      jsBrowser = jsBrowser,
-      jsNode = jsNode,
-      isJsLeafModule = isJsLeafModule,
-      jsModuleName = jsModuleName,
-      createJsWasmSourceSetIfApplicable = createJsWasmSourceSetIfApplicable,
-      requireAtLeastOneTarget = requireAtLeastOneTarget
-    )
-  }
-}
 
-private fun KotlinMultiplatformExtension.kmpTargets19(
-  project: Project,
-  android: Boolean = false,
-  jvm: Boolean = false,
-  ios: Boolean = false,
-  macos: Boolean = false,
-  tvos: Boolean = false,
-  wasm: Boolean = false,
-  isWasmLeafModule: Boolean = false,
-  wasmModuleName: String? = null,
-  js: Boolean = false,
-  jsBrowser: Boolean = true,
-  jsNode: Boolean = true,
-  isJsLeafModule: Boolean = false,
-  jsModuleName: String? = null,
-  requireAtLeastOneTarget: Boolean = true,
-  useDefaultTargetHierarchy: Boolean = true
-) {
+  val apple = ios || macos || tvos || watchos
+
   if(requireAtLeastOneTarget) {
-    check(android || jvm || ios || macos || js || wasm) {
-      "At least one of android, jvm, ios, macos, js, or wasm needs to be set to true"
+    check(android || androidNative || jvm || apple || linux || windows || js || wasm) {
+      "At least one of android, jvm, ios, macos, tvos, watchos, linux, windows, js, or wasm needs to be set to true"
     }
   }
 
   if(useDefaultTargetHierarchy) {
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     targetHierarchy.default {
-      group("jsWasm") {
-        withJs()
-        withWasm()
+      if(createJsWasmSourceSetIfApplicable) {
+        group("jsWasm") {
+          withJs()
+          withWasm()
+        }
       }
     }
   }
@@ -116,9 +98,16 @@ private fun KotlinMultiplatformExtension.kmpTargets19(
     }
   }
 
-  if(ios || macos || tvos) {
+  if(androidNative) {
+    androidNativeArm32()
+    androidNativeArm64()
+    androidNativeX86()
+    androidNativeX64()
+  }
+
+  if(apple) {
     project.afterEvaluate {
-      project.registerSourceSetDetektTask("apple", "ios", "macos", "tvos")
+      project.registerSourceSetDetektTask("apple", "ios", "macos", "tvos", "watchos")
     }
 
     if(ios) {
@@ -149,6 +138,31 @@ private fun KotlinMultiplatformExtension.kmpTargets19(
 
       project.registerDetektKmpIntermediateTask(intermediateName = "tvos", targets)
     }
+
+    if(watchos) {
+      val targets = listOf(
+        watchosX64(),
+        watchosArm32(),
+        watchosArm64(),
+        watchosDeviceArm64(),
+        watchosSimulatorArm64(),
+      )
+
+      project.registerDetektKmpIntermediateTask(intermediateName = "watchos", targets)
+    }
+  }
+
+  if(linux) {
+    val targets = listOf(
+      linuxX64(),
+      linuxArm64()
+    )
+
+    project.registerDetektKmpIntermediateTask(intermediateName = "linux", targets)
+  }
+
+  if(windows) {
+    project.registerDetektKmpIntermediateTask(intermediateName = "windows", listOf(mingwX64()))
   }
 
   if(wasm) {
@@ -200,166 +214,4 @@ private fun KotlinMultiplatformExtension.kmpTargets19(
   if(jvm) {
     jvm()
   }
-}
-
-private fun KotlinMultiplatformExtension.kmpTargetsPre19(
-  project: Project,
-  android: Boolean = false,
-  jvm: Boolean = false,
-  ios: Boolean = false,
-  macos: Boolean = false,
-  tvos: Boolean = false,
-  wasm: Boolean = false,
-  isWasmLeafModule: Boolean = false,
-  wasmModuleName: String? = null,
-  js: Boolean = false,
-  jsBrowser: Boolean = true,
-  jsNode: Boolean = true,
-  isJsLeafModule: Boolean = false,
-  jsModuleName: String? = null,
-  createJsWasmSourceSetIfApplicable: Boolean = true,
-  requireAtLeastOneTarget: Boolean = true
-) {
-  if(requireAtLeastOneTarget) {
-    check(android || jvm || ios || macos || js || wasm) {
-      "At least one of android, jvm, ios, macos, js, or wasm needs to be set to true"
-    }
-  }
-
-  if(android) {
-    @Suppress("DEPRECATION")
-    android {
-      publishAllLibraryVariants()
-    }
-  }
-
-  if(ios || macos || tvos) {
-    createSharedSourceSet(
-      project = project,
-      name = "apple"
-    )
-    project.registerSourceSetDetektTask("apple", "ios", "macos", "tvos")
-
-    if(ios) {
-      val targets = listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-      )
-
-      createNestedAppleSharedSourceSet(
-        project = project,
-        name = "ios",
-        targets = targets
-      )
-    }
-
-    if(macos) {
-      val targets = listOf(
-        macosX64(),
-        macosArm64()
-      )
-
-      createNestedAppleSharedSourceSet(
-        project = project,
-        name = "macos",
-        targets = targets
-      )
-    }
-
-    if(tvos) {
-      val targets = listOf(
-        tvosX64(),
-        tvosArm64(),
-        tvosSimulatorArm64()
-      )
-
-      createNestedAppleSharedSourceSet(
-        project = project,
-        name = "tvos",
-        targets = targets
-      )
-    }
-  }
-
-  if(wasm) {
-    @OptIn(ExperimentalWasmDsl::class)
-    wasm {
-      if(wasmModuleName != null) {
-        moduleName = wasmModuleName
-      }
-
-      browser {
-        if(isWasmLeafModule) {
-          binaries.executable()
-        }
-      }
-    }
-  }
-
-  if(js) {
-    js(IR) {
-      if(jsModuleName != null) {
-        moduleName = jsModuleName
-      }
-
-      if(jsBrowser) {
-        browser {
-          if(isJsLeafModule) {
-            binaries.executable()
-          }
-        }
-      }
-
-      if(jsNode) {
-        nodejs {
-          if(isJsLeafModule) {
-            binaries.executable()
-          }
-        }
-      }
-    }
-  }
-
-  if(createJsWasmSourceSetIfApplicable && js && wasm) {
-    createSharedSourceSet(
-      project = project,
-      name = "jsWasm"
-    )
-
-    sourceSets.jsMain.get().dependsOn(sourceSets.getByName("jsWasmMain"))
-    sourceSets.jsTest.get().dependsOn(sourceSets.getByName("jsWasmTest"))
-    sourceSets.wasmMain.get().dependsOn(sourceSets.getByName("jsWasmMain"))
-    sourceSets.wasmTest.get().dependsOn(sourceSets.getByName("jsWasmTest"))
-
-    project.registerDetektKmpIntermediateTask(
-      intermediateName = "jsWasm",
-      targets = listOf(targets.getByName("js"), targets.getByName("wasm"))
-    )
-  }
-
-  if(jvm) {
-    jvm()
-  }
-}
-
-private fun KotlinMultiplatformExtension.createNestedAppleSharedSourceSet(
-  project: Project,
-  name: String,
-  targets: List<KotlinNativeTarget>
-) {
-  createNestedSharedSourceSetForTargets(
-    project = project,
-    name = name,
-    targets = targets,
-    parentSourceSetName = "apple"
-  ) { target ->
-    target.compilations.all {
-      compilerOptions.options.freeCompilerArgs.addAll(
-        listOf("-linker-options", "-application_extension")
-      )
-    }
-  }
-
-  project.registerDetektKmpIntermediateTask(name, targets)
 }
