@@ -7,7 +7,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JvmVendorSpec
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -60,7 +60,11 @@ public fun Project.configureKgp(
   vararg optIns: KotlinOptIn
 ): JavaVersion {
   val lowestSupportedJava = JavaVersion.VERSION_17
-  val highestSupportedJava: JavaVersion = JavaVersion.VERSION_20
+  val gradleVersion = GradleVersion.current()
+  val highestSupportedJava: JavaVersion = when {
+    gradleVersion >= GradleVersion.version("8.5") -> JavaVersion.VERSION_21
+    else -> JavaVersion.VERSION_20
+  }
 
   val targetJavaVersion = jvmTargetVersion?.target?.let(JavaVersion::toVersion)
   val actualLowestSupportedJava: JavaVersion = when(targetJavaVersion) {
@@ -149,7 +153,6 @@ public fun Project.configureKgp(
           compilerOptions.apiVersion.set(kotlinApiVersion)
         }
 
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         if(project.kotlinToolingVersion.toKotlinVersion().isAtLeast(major = 1, minor = 9)) {
           compilerOptions.progressiveMode.set(isProgressiveModeEnabled)
         }
@@ -165,7 +168,6 @@ public fun Project.configureKgp(
         freeCompilerArgs.map { freeCompilerArg -> freeCompilerArg.value }
       )
       if(!isKmp) {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         if(project.kotlinToolingVersion.toKotlinVersion().isAtLeast(major = 1, minor = 9)) {
           compilerOptions.optIn.addAll(optIns.map(KotlinOptIn::value))
         } else {
