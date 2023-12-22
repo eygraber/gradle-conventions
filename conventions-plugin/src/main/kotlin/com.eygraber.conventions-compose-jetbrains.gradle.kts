@@ -36,6 +36,12 @@ gradleConventionsExtension.awaitComposeConfigured {
       "$group:$name${if(version == null) "" else ":$version"}"
     )
   }
+
+  if(suppressKotlinVersionCompatForJetbrains != null) {
+    compose.kotlinCompilerPluginArgs.add(
+      "suppressKotlinVersionCompatibilityCheck=$suppressKotlinVersionCompatForJetbrains"
+    )
+  }
 }
 
 plugins.withId("org.jetbrains.kotlin.multiplatform") {

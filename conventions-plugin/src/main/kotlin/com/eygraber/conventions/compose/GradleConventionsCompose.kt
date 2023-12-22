@@ -13,6 +13,7 @@ class GradleConventionsCompose {
   var applyToAndroidAndJvmOnly: Boolean = false
   var jetbrainsComposeCompilerOverride: MinimalExternalModuleDependency? = null
   var useAndroidComposeCompilerVersionForJetbrainsComposeCompilerVersion: Boolean = false
+  var suppressKotlinVersionCompatForJetbrains: String? = null
 
   @Suppress("ObjectPropertyNaming")
   companion object {
@@ -42,28 +43,33 @@ class GradleConventionsCompose {
 
   fun multiplatformWithAndroidCompiler(
     androidCompilerVersion: Provider<String>,
-    applyToAndroidAndJvmOnly: Boolean = false
+    applyToAndroidAndJvmOnly: Boolean = false,
+    suppressKotlinVersion: String? = null
   ) {
     multiplatform(
       compilerMavenCoordinatesOverride = "$JetpackCompilerArtifact:$androidCompilerVersion",
-      applyToAndroidAndJvmOnly = applyToAndroidAndJvmOnly
+      applyToAndroidAndJvmOnly = applyToAndroidAndJvmOnly,
+      suppressKotlinVersion = suppressKotlinVersion
     )
   }
 
   fun multiplatformWithJetbrainsCompiler(
     jetbrainsCompilerVersion: Provider<String>,
-    applyToAndroidAndJvmOnly: Boolean = false
+    applyToAndroidAndJvmOnly: Boolean = false,
+    suppressKotlinVersion: String? = null
   ) {
     multiplatform(
       compilerMavenCoordinatesOverride = "$JetbrainsCompilerArtifact:$jetbrainsCompilerVersion",
-      applyToAndroidAndJvmOnly = applyToAndroidAndJvmOnly
+      applyToAndroidAndJvmOnly = applyToAndroidAndJvmOnly,
+      suppressKotlinVersion = suppressKotlinVersion
     )
   }
 
   fun multiplatform(
     compilerMavenCoordinatesOverride: String? = null,
     compilerOverride: Provider<MinimalExternalModuleDependency>? = null,
-    applyToAndroidAndJvmOnly: Boolean = false
+    applyToAndroidAndJvmOnly: Boolean = false,
+    suppressKotlinVersion: String? = null
   ) {
     if(compilerMavenCoordinatesOverride != null) {
       val coords = compilerMavenCoordinatesOverride.split(":")
@@ -89,5 +95,6 @@ class GradleConventionsCompose {
     }
     compilerOverride?.let { jetbrainsComposeCompilerOverride = it.get() }
     this.applyToAndroidAndJvmOnly = applyToAndroidAndJvmOnly
+    suppressKotlinVersionCompatForJetbrains = suppressKotlinVersion
   }
 }
