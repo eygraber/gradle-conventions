@@ -4,6 +4,7 @@
 # Make an exception for the code style
 !.idea/codeStyles/
 .gradle
+.kotlin
 *.iml
 /build
 */build
