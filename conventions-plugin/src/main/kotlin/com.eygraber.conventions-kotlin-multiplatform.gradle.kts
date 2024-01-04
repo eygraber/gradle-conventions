@@ -43,7 +43,7 @@ with(gradleConventionsExtension) {
           wasmJsNode = webOptions.isNodeEnabled,
           wasmWasi = KmpTarget.WasmWasi in targets,
           watchos = KmpTarget.Watchos in targets,
-          createCommonJsSourceSetIfApplicable = shouldCreateCommonJsSourceSet
+          createCommonJsSourceSet = shouldCreateCommonJsSourceSet
         )
       }
     }
