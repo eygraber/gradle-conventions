@@ -103,8 +103,16 @@ fun KotlinMultiplatformExtension.kmpTargets(
   }
 
   if(android) {
-    androidTarget {
-      publishAllLibraryVariants()
+    project.plugins.withId("com.android.library") {
+      androidTarget {
+        publishAllLibraryVariants()
+      }
+    }
+
+    project.plugins.withId("com.android.application") {
+      androidTarget {
+        publishAllLibraryVariants()
+      }
     }
   }
 
