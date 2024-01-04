@@ -18,33 +18,34 @@ with(gradleConventionsExtension) {
     targets = kotlinMultiplatformDefaults.targets
   }
 
-  awaitKotlinConfigured {
+  awaitKotlinMultiplatformConfigured {
     with(kotlinMultiplatform) {
-      val isLibraryBrowserTestsEnabled = binaryType == BinaryType.Library && webOptions.isLibraryBrowserTestsEnabled
+      if(targets.isNotEmpty()) {
+        val isLibraryBrowserTestsEnabled = binaryType == BinaryType.Library && webOptions.isLibraryBrowserTestsEnabled
 
-      project.kotlinMultiplatform.kmpTargets(
-        project = project,
-        android = KmpTarget.Android in targets,
-        androidNative = KmpTarget.AndroidNative in targets,
-        ios = KmpTarget.Ios in targets,
-        jvm = KmpTarget.Jvm in targets,
-        js = KmpTarget.Js in targets,
-        jsBrowser = isLibraryBrowserTestsEnabled || webOptions.isBrowserEnabled,
-        jsModuleName = webOptions.moduleName,
-        jsNode = webOptions.isNodeEnabled,
-        linux = KmpTarget.Linux in targets,
-        macos = KmpTarget.Macos in targets,
-        mingw = KmpTarget.Mingw in targets,
-        tvos = KmpTarget.Tvos in targets,
-        wasmJs = KmpTarget.WasmJs in targets,
-        wasmJsBrowser = isLibraryBrowserTestsEnabled || webOptions.isBrowserEnabled,
-        wasmJsModuleName = webOptions.moduleName,
-        wasmJsNode = webOptions.isNodeEnabled,
-        wasmWasi = KmpTarget.WasmWasi in targets,
-        watchos = KmpTarget.Watchos in targets,
-        createCommonJsSourceSetIfApplicable = shouldCreateCommonJsSourceSet,
-        requireAtLeastOneTarget = false
-      )
+        project.kotlinMultiplatform.kmpTargets(
+          project = project,
+          android = KmpTarget.Android in targets,
+          androidNative = KmpTarget.AndroidNative in targets,
+          ios = KmpTarget.Ios in targets,
+          jvm = KmpTarget.Jvm in targets,
+          js = KmpTarget.Js in targets,
+          jsBrowser = isLibraryBrowserTestsEnabled || webOptions.isBrowserEnabled,
+          jsModuleName = webOptions.moduleName,
+          jsNode = webOptions.isNodeEnabled,
+          linux = KmpTarget.Linux in targets,
+          macos = KmpTarget.Macos in targets,
+          mingw = KmpTarget.Mingw in targets,
+          tvos = KmpTarget.Tvos in targets,
+          wasmJs = KmpTarget.WasmJs in targets,
+          wasmJsBrowser = isLibraryBrowserTestsEnabled || webOptions.isBrowserEnabled,
+          wasmJsModuleName = webOptions.moduleName,
+          wasmJsNode = webOptions.isNodeEnabled,
+          wasmWasi = KmpTarget.WasmWasi in targets,
+          watchos = KmpTarget.Watchos in targets,
+          createCommonJsSourceSetIfApplicable = shouldCreateCommonJsSourceSet
+        )
+      }
     }
   }
 }
