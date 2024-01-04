@@ -5,6 +5,7 @@ import com.eygraber.conventions.compose.GradleConventionsCompose
 import com.eygraber.conventions.detekt.GradleConventionsDetekt
 import com.eygraber.conventions.github.GradleConventionsGitHub
 import com.eygraber.conventions.kotlin.GradleConventionsKotlin
+import com.eygraber.conventions.kotlin.GradleConventionsKotlinMultiplatform
 import com.eygraber.conventions.project.common.GradleConventionsProjectCommon
 import com.eygraber.conventions.spm.GradleConventionsSpm
 import org.gradle.api.Plugin
@@ -21,6 +22,7 @@ internal abstract class GradleConventionsDefaults : BuildService<None> {
   val detekt = GradleConventionsDetekt()
   val github = GradleConventionsGitHub()
   val kotlin = GradleConventionsKotlin()
+  val kotlinMultiplatform = GradleConventionsKotlinMultiplatform()
   val spm = GradleConventionsSpm()
 }
 
@@ -80,6 +82,13 @@ abstract class GradleConventionsPlugin : Plugin<Project> {
           kotlin.isProgressiveModeEnabled = isProgressiveModeEnabled
           kotlin.freeCompilerArgs = freeCompilerArgs
           kotlin.optIns = optIns
+        }
+
+        awaitKotlinMultiplatformConfigured {
+          kotlinMultiplatform.shouldCreateCommonJsSourceSet = shouldCreateCommonJsSourceSet
+          kotlinMultiplatform.binaryType = binaryType
+          kotlinMultiplatform.webOptions = webOptions
+          kotlinMultiplatform.targets = targets
         }
 
         awaitSpmConfigured {

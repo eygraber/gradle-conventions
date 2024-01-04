@@ -5,6 +5,7 @@ import com.eygraber.conventions.compose.GradleConventionsCompose
 import com.eygraber.conventions.detekt.GradleConventionsDetekt
 import com.eygraber.conventions.github.GradleConventionsGitHub
 import com.eygraber.conventions.kotlin.GradleConventionsKotlin
+import com.eygraber.conventions.kotlin.GradleConventionsKotlinMultiplatform
 import com.eygraber.conventions.project.common.GradleConventionsProjectCommon
 import com.eygraber.conventions.spm.GradleConventionsSpm
 import org.gradle.api.Action
@@ -19,6 +20,7 @@ internal interface GradleConventionsConfigurableListener {
   fun GradleConventionsDetekt.onDetektConfigured(isUserConfigured: Boolean) {}
   fun GradleConventionsGitHub.onGitHubConfigured(isUserConfigured: Boolean) {}
   fun GradleConventionsKotlin.onKotlinConfigured(isUserConfigured: Boolean) {}
+  fun GradleConventionsKotlinMultiplatform.onKotlinMultiplatformConfigured(isUserConfigured: Boolean) {}
   fun GradleConventionsSpm.onSpmConfigured(isUserConfigured: Boolean) {}
 }
 
@@ -86,6 +88,17 @@ abstract class GradleConventionsPluginExtension {
     kotlin.configure(isKotlinConfigured)
     configureListeners += object : GradleConventionsConfigurableListener {
       override fun GradleConventionsKotlin.onKotlinConfigured(isUserConfigured: Boolean) {
+        configure(isUserConfigured)
+      }
+    }
+  }
+
+  internal fun awaitKotlinMultiplatformConfigured(
+    configure: GradleConventionsKotlinMultiplatform.(isConfigured: Boolean) -> Unit
+  ) {
+    kotlinMultiplatform.configure(isKotlinMultiplatformConfigured)
+    configureListeners += object : GradleConventionsConfigurableListener {
+      override fun GradleConventionsKotlinMultiplatform.onKotlinMultiplatformConfigured(isUserConfigured: Boolean) {
         configure(isUserConfigured)
       }
     }
@@ -185,6 +198,25 @@ abstract class GradleConventionsPluginExtension {
     configureListeners.forEach { listener ->
       with(listener) {
         kotlin.onKotlinConfigured(isKotlinConfigured)
+      }
+    }
+  }
+
+  private var wasKotlinMultiplatformUserConfigured: Boolean = false
+  private var isKotlinMultiplatformConfigured: Boolean = false
+  internal val kotlinMultiplatform = GradleConventionsKotlinMultiplatform()
+    get() {
+      wasKotlinMultiplatformUserConfigured = true
+
+      return field
+    }
+
+  fun kotlinMultiplatform(action: Action<GradleConventionsKotlinMultiplatform>) {
+    action.execute(kotlinMultiplatform)
+    isKotlinMultiplatformConfigured = true
+    configureListeners.forEach { listener ->
+      with(listener) {
+        kotlinMultiplatform.onKotlinMultiplatformConfigured(isKotlinMultiplatformConfigured)
       }
     }
   }
