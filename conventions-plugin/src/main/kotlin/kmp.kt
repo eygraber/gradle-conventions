@@ -21,7 +21,7 @@ fun KotlinMultiplatformExtension.allKmpTargets(
   wasmJsNode: Boolean = true,
   wasmJsModuleName: String? = null,
   binaryType: BinaryType = BinaryType.Library,
-  createJsWasmSourceSetIfApplicable: Boolean = true,
+  createCommonJsSourceSetIfApplicable: Boolean = true,
   requireAtLeastOneTarget: Boolean = true,
   useDefaultTargetHierarchy: Boolean = true
 ) {
@@ -46,7 +46,7 @@ fun KotlinMultiplatformExtension.allKmpTargets(
     wasmJsNode = wasmJsNode,
     wasmJsModuleName = wasmJsModuleName,
     binaryType = binaryType,
-    createJsWasmSourceSetIfApplicable = createJsWasmSourceSetIfApplicable,
+    createCommonJsSourceSetIfApplicable = createCommonJsSourceSetIfApplicable,
     requireAtLeastOneTarget = requireAtLeastOneTarget,
     useDefaultTargetHierarchy = useDefaultTargetHierarchy
   )
@@ -73,7 +73,7 @@ fun KotlinMultiplatformExtension.kmpTargets(
   wasmJsNode: Boolean = true,
   wasmJsModuleName: String? = null,
   binaryType: BinaryType = BinaryType.Library,
-  createJsWasmSourceSetIfApplicable: Boolean = true,
+  createCommonJsSourceSetIfApplicable: Boolean = true,
   requireAtLeastOneTarget: Boolean = true,
   useDefaultTargetHierarchy: Boolean = true
 ) {
@@ -93,7 +93,7 @@ fun KotlinMultiplatformExtension.kmpTargets(
   if(useDefaultTargetHierarchy) {
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     applyDefaultHierarchyTemplate {
-      if(createJsWasmSourceSetIfApplicable) {
+      if(createCommonJsSourceSetIfApplicable) {
         group("jsWasm") {
           withJs()
           withWasm()
