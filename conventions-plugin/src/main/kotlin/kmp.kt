@@ -21,9 +21,8 @@ fun KotlinMultiplatformExtension.allKmpTargets(
   wasmJsNode: Boolean = true,
   wasmJsModuleName: String? = null,
   binaryType: BinaryType = BinaryType.Library,
-  createCommonJsSourceSetIfApplicable: Boolean = true,
-  requireAtLeastOneTarget: Boolean = true,
-  useDefaultTargetHierarchy: Boolean = true
+  createCommonJsSourceSet: Boolean = true,
+  requireAtLeastOneTarget: Boolean = true
 ) {
   kmpTargets(
     project = project,
@@ -46,9 +45,8 @@ fun KotlinMultiplatformExtension.allKmpTargets(
     wasmJsNode = wasmJsNode,
     wasmJsModuleName = wasmJsModuleName,
     binaryType = binaryType,
-    createCommonJsSourceSetIfApplicable = createCommonJsSourceSetIfApplicable,
-    requireAtLeastOneTarget = requireAtLeastOneTarget,
-    useDefaultTargetHierarchy = useDefaultTargetHierarchy
+    createCommonJsSourceSet = createCommonJsSourceSet,
+    requireAtLeastOneTarget = requireAtLeastOneTarget
   )
 }
 
@@ -73,9 +71,8 @@ fun KotlinMultiplatformExtension.kmpTargets(
   wasmJsNode: Boolean = true,
   wasmJsModuleName: String? = null,
   binaryType: BinaryType = BinaryType.Library,
-  createCommonJsSourceSetIfApplicable: Boolean = true,
-  requireAtLeastOneTarget: Boolean = true,
-  useDefaultTargetHierarchy: Boolean = true
+  createCommonJsSourceSet: Boolean = true,
+  requireAtLeastOneTarget: Boolean = true
 ) {
   require(project.kotlinToolingVersion.toKotlinVersion().isAtLeast(major = 1, minor = 9, patch = 20)) {
     "A minimum Kotlin version of 1.9.20 is required to use kmpTargets"
@@ -90,16 +87,8 @@ fun KotlinMultiplatformExtension.kmpTargets(
     }
   }
 
-  if(useDefaultTargetHierarchy) {
-    @OptIn(ExperimentalKotlinGradlePluginApi::class)
-    applyDefaultHierarchyTemplate {
-      if(createCommonJsSourceSetIfApplicable) {
-        group("jsWasm") {
-          withJs()
-          withWasm()
-        }
-      }
-    }
+  if(createCommonJsSourceSet) {
+    createCommonJs(project)
   }
 
   if(android) {
@@ -330,14 +319,27 @@ fun KotlinMultiplatformExtension.kmpTargets(
     }
   }
 
-  if(js && wasmJs) {
-    project.registerDetektKmpIntermediateTask(
-      intermediateName = "jsWasm",
-      targets = listOf(targets.getByName("js"), targets.getByName("wasmJs"))
-    )
-  }
-
   if(jvm) {
     jvm()
   }
+}
+
+private fun KotlinMultiplatformExtension.createCommonJs(
+  project: Project
+) {
+  @OptIn(ExperimentalKotlinGradlePluginApi::class)
+  applyDefaultHierarchyTemplate {
+    group("commonJs") {
+      withJs()
+      withWasm()
+    }
+  }
+
+  sourceSets.register("commonJsMain")
+  sourceSets.register("commonJsTest")
+
+  project.registerDetektKmpIntermediateTask(
+    intermediateName = "commonJs",
+    targets = listOfNotNull(targets.findByName("js"), targets.findByName("wasmJs"))
+  )
 }
