@@ -27,7 +27,7 @@ gradleConventionsExtension.awaitComposeConfigured {
         "-P",
         "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=$output",
         "-P",
-        "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=$output"
+        "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=$output",
       )
     }
   }

@@ -31,7 +31,7 @@ public fun Project.configureKgp(
   kotlinApiVersion: KotlinVersion? = null,
   isProgressiveModeEnabled: Boolean = false,
   freeCompilerArgs: List<KotlinFreeCompilerArg> = emptyList(),
-  vararg optIns: KotlinOptIn
+  vararg optIns: KotlinOptIn,
 ): JavaVersion = configureKgp(
   jvmTargetVersion = jvmTargetVersion.get(),
   jdkToolchainVersion.get(),
@@ -43,7 +43,7 @@ public fun Project.configureKgp(
   kotlinApiVersion,
   isProgressiveModeEnabled,
   freeCompilerArgs,
-  *optIns
+  *optIns,
 )
 
 public fun Project.configureKgp(
@@ -57,7 +57,7 @@ public fun Project.configureKgp(
   kotlinApiVersion: KotlinVersion? = null,
   isProgressiveModeEnabled: Boolean = false,
   freeCompilerArgs: List<KotlinFreeCompilerArg> = emptyList(),
-  vararg optIns: KotlinOptIn
+  vararg optIns: KotlinOptIn,
 ): JavaVersion {
   val lowestSupportedJava = JavaVersion.VERSION_17
   val gradleVersion = GradleVersion.current()
@@ -159,20 +159,20 @@ public fun Project.configureKgp(
         else {
           if(isProgressiveModeEnabled) {
             compilerOptions.freeCompilerArgs.addAll(
-              "-progressive"
+              "-progressive",
             )
           }
         }
       }
       compilerOptions.freeCompilerArgs.addAll(
-        freeCompilerArgs.map { freeCompilerArg -> freeCompilerArg.value }
+        freeCompilerArgs.map { freeCompilerArg -> freeCompilerArg.value },
       )
       if(!isKmp) {
         if(project.kotlinToolingVersion.toKotlinVersion().isAtLeast(major = 1, minor = 9)) {
           compilerOptions.optIn.addAll(optIns.map(KotlinOptIn::value))
         } else {
           compilerOptions.freeCompilerArgs.addAll(
-            optIns.map { optIn -> "-opt-in=${optIn.value}" }
+            optIns.map { optIn -> "-opt-in=${optIn.value}" },
           )
         }
       }

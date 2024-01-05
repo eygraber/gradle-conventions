@@ -1,5 +1,6 @@
 import com.eygraber.conventions.detekt.registerDetektKmpIntermediateTask
 import com.eygraber.conventions.detekt.registerSourceSetDetektTask
+import com.eygraber.conventions.gradleConventionsKmpDefaultsService
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -9,10 +10,92 @@ import org.jetbrains.kotlin.tooling.core.toKotlinVersion
 
 enum class BinaryType {
   Library,
-  Executable
+  Executable,
+}
+
+sealed interface KmpTarget {
+  object Android : KmpTarget
+  object AndroidNative : KmpTarget
+  object Ios : KmpTarget
+  object Js : KmpTarget
+  object Jvm : KmpTarget
+  object Linux : KmpTarget
+  object Macos : KmpTarget
+  object Mingw : KmpTarget
+  object Tvos : KmpTarget
+  object WasmJs : KmpTarget
+  object WasmWasi : KmpTarget
+  object Watchos : KmpTarget
+
+  data class WebOptions(
+    val isNodeEnabled: Boolean,
+    val isBrowserEnabled: Boolean,
+    val isLibraryBrowserTestsEnabled: Boolean,
+    val moduleName: String? = null,
+  )
 }
 
 fun KotlinMultiplatformExtension.allKmpTargets(
+  project: Project,
+  webOptions: KmpTarget.WebOptions = project.gradleConventionsKmpDefaultsService.webOptions,
+  binaryType: BinaryType = project.gradleConventionsKmpDefaultsService.binaryType,
+  createCommonJsSourceSet: Boolean = project.gradleConventionsKmpDefaultsService.createCommonJsSourceSet,
+) {
+  val isLibraryBrowserTestsEnabled =
+    binaryType == BinaryType.Library && webOptions.isLibraryBrowserTestsEnabled
+
+  configureAllKmpTargets(
+    project = project,
+    jsBrowser = isLibraryBrowserTestsEnabled || webOptions.isBrowserEnabled,
+    jsModuleName = webOptions.moduleName,
+    jsNode = webOptions.isNodeEnabled,
+    wasmJsBrowser = isLibraryBrowserTestsEnabled || webOptions.isBrowserEnabled,
+    wasmJsModuleName = webOptions.moduleName,
+    wasmJsNode = webOptions.isNodeEnabled,
+    createCommonJsSourceSet = createCommonJsSourceSet,
+  )
+}
+
+fun KotlinMultiplatformExtension.kmpTargets(
+  target: KmpTarget,
+  vararg targets: KmpTarget,
+  project: Project,
+  webOptions: KmpTarget.WebOptions = project.gradleConventionsKmpDefaultsService.webOptions,
+  binaryType: BinaryType = project.gradleConventionsKmpDefaultsService.binaryType,
+  createCommonJsSourceSet: Boolean = project.gradleConventionsKmpDefaultsService.createCommonJsSourceSet,
+) {
+  val finalTargets = project.gradleConventionsKmpDefaultsService.targets + setOf(target) + setOf(*targets)
+
+  if(finalTargets.isNotEmpty()) {
+    val isLibraryBrowserTestsEnabled =
+      binaryType == BinaryType.Library && webOptions.isLibraryBrowserTestsEnabled
+
+    configureKmpTargets(
+      project = project,
+      android = KmpTarget.Android in finalTargets,
+      androidNative = KmpTarget.AndroidNative in finalTargets,
+      ios = KmpTarget.Ios in finalTargets,
+      jvm = KmpTarget.Jvm in finalTargets,
+      js = KmpTarget.Js in finalTargets,
+      jsBrowser = isLibraryBrowserTestsEnabled || webOptions.isBrowserEnabled,
+      jsModuleName = webOptions.moduleName,
+      jsNode = webOptions.isNodeEnabled,
+      linux = KmpTarget.Linux in finalTargets,
+      macos = KmpTarget.Macos in finalTargets,
+      mingw = KmpTarget.Mingw in finalTargets,
+      tvos = KmpTarget.Tvos in finalTargets,
+      wasmJs = KmpTarget.WasmJs in finalTargets,
+      wasmJsBrowser = isLibraryBrowserTestsEnabled || webOptions.isBrowserEnabled,
+      wasmJsModuleName = webOptions.moduleName,
+      wasmJsNode = webOptions.isNodeEnabled,
+      wasmWasi = KmpTarget.WasmWasi in finalTargets,
+      watchos = KmpTarget.Watchos in finalTargets,
+      createCommonJsSourceSet = createCommonJsSourceSet,
+    )
+  }
+}
+
+fun KotlinMultiplatformExtension.configureAllKmpTargets(
   project: Project,
   jsBrowser: Boolean = true,
   jsNode: Boolean = true,
@@ -22,9 +105,8 @@ fun KotlinMultiplatformExtension.allKmpTargets(
   wasmJsModuleName: String? = null,
   binaryType: BinaryType = BinaryType.Library,
   createCommonJsSourceSet: Boolean = true,
-  requireAtLeastOneTarget: Boolean = true
 ) {
-  kmpTargets(
+  configureKmpTargets(
     project = project,
     android = true,
     androidNative = true,
@@ -46,11 +128,11 @@ fun KotlinMultiplatformExtension.allKmpTargets(
     wasmJsModuleName = wasmJsModuleName,
     binaryType = binaryType,
     createCommonJsSourceSet = createCommonJsSourceSet,
-    requireAtLeastOneTarget = requireAtLeastOneTarget
+    requireAtLeastOneTarget = true,
   )
 }
 
-fun KotlinMultiplatformExtension.kmpTargets(
+fun KotlinMultiplatformExtension.configureKmpTargets(
   project: Project,
   android: Boolean = false,
   androidNative: Boolean = false,
@@ -72,7 +154,7 @@ fun KotlinMultiplatformExtension.kmpTargets(
   wasmJsModuleName: String? = null,
   binaryType: BinaryType = BinaryType.Library,
   createCommonJsSourceSet: Boolean = true,
-  requireAtLeastOneTarget: Boolean = true
+  requireAtLeastOneTarget: Boolean = true,
 ) {
   require(project.kotlinToolingVersion.toKotlinVersion().isAtLeast(major = 1, minor = 9, patch = 20)) {
     "A minimum Kotlin version of 1.9.20 is required to use kmpTargets"
@@ -152,7 +234,7 @@ fun KotlinMultiplatformExtension.kmpTargets(
           if(binaryType == BinaryType.Executable) {
             binaries.executable()
           }
-        }
+        },
       )
 
       project.registerDetektKmpIntermediateTask(intermediateName = "ios", targets)
@@ -169,7 +251,7 @@ fun KotlinMultiplatformExtension.kmpTargets(
           if(binaryType == BinaryType.Executable) {
             binaries.executable()
           }
-        }
+        },
       )
 
       project.registerDetektKmpIntermediateTask(intermediateName = "macos", targets)
@@ -191,7 +273,7 @@ fun KotlinMultiplatformExtension.kmpTargets(
           if(binaryType == BinaryType.Executable) {
             binaries.executable()
           }
-        }
+        },
       )
 
       project.registerDetektKmpIntermediateTask(intermediateName = "tvos", targets)
@@ -241,7 +323,7 @@ fun KotlinMultiplatformExtension.kmpTargets(
         if(binaryType == BinaryType.Executable) {
           binaries.executable()
         }
-      }
+      },
     )
 
     project.registerDetektKmpIntermediateTask(intermediateName = "linux", targets)
@@ -253,7 +335,7 @@ fun KotlinMultiplatformExtension.kmpTargets(
         if(binaryType == BinaryType.Executable) {
           binaries.executable()
         }
-      }
+      },
     )
 
     project.registerDetektKmpIntermediateTask(intermediateName = "mingw", targets)
@@ -325,7 +407,7 @@ fun KotlinMultiplatformExtension.kmpTargets(
 }
 
 private fun KotlinMultiplatformExtension.createCommonJs(
-  project: Project
+  project: Project,
 ) {
   @OptIn(ExperimentalKotlinGradlePluginApi::class)
   applyDefaultHierarchyTemplate {
@@ -340,6 +422,6 @@ private fun KotlinMultiplatformExtension.createCommonJs(
 
   project.registerDetektKmpIntermediateTask(
     intermediateName = "commonJs",
-    targets = listOfNotNull(targets.findByName("js"), targets.findByName("wasmJs"))
+    targets = listOfNotNull(targets.findByName("js"), targets.findByName("wasmJs")),
   )
 }

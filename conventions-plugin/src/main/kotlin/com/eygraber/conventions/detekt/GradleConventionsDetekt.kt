@@ -18,13 +18,13 @@ class GradleConventionsDetekt {
   }
 
   fun plugins(
-    vararg dependencies: Provider<MinimalExternalModuleDependency>
+    vararg dependencies: Provider<MinimalExternalModuleDependency>,
   ) {
     detektPluginDependencies.addAll(dependencies)
   }
 
   fun pluginsCoordinates(
-    vararg dependencies: String
+    vararg dependencies: String,
   ) {
     detektPluginDependencies.addAll(dependencies)
   }

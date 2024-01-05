@@ -7,7 +7,7 @@ import org.gradle.api.provider.Provider
 
 data class ProductFlavor(
   val name: String,
-  val enabled: Boolean = true
+  val enabled: Boolean = true,
 )
 
 class GradleConventionsAndroid {
@@ -26,7 +26,7 @@ class GradleConventionsAndroid {
 
   fun sdkVersions(
     compileSdk: Provider<String>,
-    minSdk: Provider<String>
+    minSdk: Provider<String>,
   ) {
     this.compileSdk = compileSdk.get().toInt()
     this.minSdk = minSdk.get().toInt()
@@ -35,7 +35,7 @@ class GradleConventionsAndroid {
   fun sdkVersions(
     compileSdk: Provider<String>,
     targetSdk: Provider<String>,
-    minSdk: Provider<String>
+    minSdk: Provider<String>,
   ) {
     this.compileSdk = compileSdk.get().toInt()
     this.targetSdk = targetSdk.get().toInt()
@@ -43,27 +43,27 @@ class GradleConventionsAndroid {
   }
 
   fun useCoreLibraryDesugaring(
-    dependency: Provider<MinimalExternalModuleDependency>
+    dependency: Provider<MinimalExternalModuleDependency>,
   ) {
     coreLibraryDesugaringDependency = dependency
   }
 
   fun useCoreLibraryDesugaring(
-    dependency: String
+    dependency: String,
   ) {
     coreLibraryDesugaringDependency = dependency
   }
 
   fun addProductFlavors(
     dimension: String,
-    flavors: List<ProductFlavor>
+    flavors: List<ProductFlavor>,
   ) {
     this.flavors += dimension to flavors
   }
 
   fun addOptInsIfDependencyIsPresent(
     optIns: List<KotlinOptIn>,
-    predicate: Dependency.() -> Boolean
+    predicate: Dependency.() -> Boolean,
   ) {
     optInsToDependencyPredicate += optIns to predicate
   }

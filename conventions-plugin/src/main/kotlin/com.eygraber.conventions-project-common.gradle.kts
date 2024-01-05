@@ -24,7 +24,7 @@ ext.awaitProjectCommonConfigured {
                 override val useVersion = { version: Any ->
                   val versionError = {
                     error(
-                      "Version must be either a String or a Provider<String> (was ${version.javaClass.canonicalName})"
+                      "Version must be either a String or a Provider<String> (was ${version.javaClass.canonicalName})",
                     )
                   }
                   when(version) {
@@ -37,7 +37,7 @@ ext.awaitProjectCommonConfigured {
                     else -> versionError()
                   }
                 }
-              }
+              },
             )
           }
         }

@@ -19,7 +19,7 @@ public fun Project.configureDetekt(
   configFiles: ConfigurableFileCollection = files(),
   ignoredAndroidFlavors: List<String> = emptyList(),
   ignoredAndroidVariants: List<String> = emptyList(),
-  configure: Action<DetektExtension> = Actions.doNothing()
+  configure: Action<DetektExtension> = Actions.doNothing(),
 ) {
   configureDetekt(
     jvmTargetVersion.get(),
@@ -28,7 +28,7 @@ public fun Project.configureDetekt(
     configFiles,
     ignoredAndroidFlavors,
     ignoredAndroidVariants,
-    configure
+    configure,
   )
 }
 
@@ -39,7 +39,7 @@ public fun Project.configureDetekt(
   configFiles: ConfigurableFileCollection = files(),
   ignoredAndroidFlavors: List<String> = emptyList(),
   ignoredAndroidVariants: List<String> = emptyList(),
-  configure: Action<DetektExtension> = Actions.doNothing()
+  configure: Action<DetektExtension> = Actions.doNothing(),
 ) {
   detekt {
     source.from("build.gradle.kts")

@@ -19,7 +19,7 @@ public fun RepositoryHandler.addCommonRepositories(
   includeJitpack: Boolean = false,
   jitpack: Action<MavenArtifactRepository> = Actions.doNothing(),
   includeGradlePluginPortal: Boolean = false,
-  gradlePluginPortal: Action<ArtifactRepository> = Actions.doNothing()
+  gradlePluginPortal: Action<ArtifactRepository> = Actions.doNothing(),
 ) {
   if(includeGoogle) {
     google {

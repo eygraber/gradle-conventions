@@ -29,7 +29,7 @@ with(gradleConventionsExtension) {
       explicitApiMode = explicitApiMode,
       configureJavaTargetVersion = configureJavaTargetVersion,
       freeCompilerArgs = freeCompilerArgs.toList(),
-      optIns = optIns.toTypedArray()
+      optIns = optIns.toTypedArray(),
     )
 
     fun CompileOptions.configureJvmTarget() {

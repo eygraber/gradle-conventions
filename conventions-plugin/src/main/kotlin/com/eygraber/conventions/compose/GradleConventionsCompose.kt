@@ -24,7 +24,7 @@ class GradleConventionsCompose {
   fun android(
     compilerVersionOverride: Provider<String>? = null,
     compilerOverride: Provider<MinimalExternalModuleDependency>? = null,
-    enableAndroidCompilerMetrics: Boolean = false
+    enableAndroidCompilerMetrics: Boolean = false,
   ) {
     compilerVersionOverride?.let { androidComposeCompilerVersionOverride = it.get() }
     compilerOverride?.let {
@@ -44,24 +44,24 @@ class GradleConventionsCompose {
   fun multiplatformWithAndroidCompiler(
     androidCompilerVersion: Provider<String>,
     applyToAndroidAndJvmOnly: Boolean = false,
-    suppressKotlinVersion: String? = null
+    suppressKotlinVersion: String? = null,
   ) {
     multiplatform(
       compilerMavenCoordinatesOverride = "$JetpackCompilerArtifact:$androidCompilerVersion",
       applyToAndroidAndJvmOnly = applyToAndroidAndJvmOnly,
-      suppressKotlinVersion = suppressKotlinVersion
+      suppressKotlinVersion = suppressKotlinVersion,
     )
   }
 
   fun multiplatformWithJetbrainsCompiler(
     jetbrainsCompilerVersion: Provider<String>,
     applyToAndroidAndJvmOnly: Boolean = false,
-    suppressKotlinVersion: String? = null
+    suppressKotlinVersion: String? = null,
   ) {
     multiplatform(
       compilerMavenCoordinatesOverride = "$JetbrainsCompilerArtifact:$jetbrainsCompilerVersion",
       applyToAndroidAndJvmOnly = applyToAndroidAndJvmOnly,
-      suppressKotlinVersion = suppressKotlinVersion
+      suppressKotlinVersion = suppressKotlinVersion,
     )
   }
 
@@ -69,7 +69,7 @@ class GradleConventionsCompose {
     compilerMavenCoordinatesOverride: String? = null,
     compilerOverride: Provider<MinimalExternalModuleDependency>? = null,
     applyToAndroidAndJvmOnly: Boolean = false,
-    suppressKotlinVersion: String? = null
+    suppressKotlinVersion: String? = null,
   ) {
     if(compilerMavenCoordinatesOverride != null) {
       val coords = compilerMavenCoordinatesOverride.split(":")
@@ -77,17 +77,17 @@ class GradleConventionsCompose {
         3 -> DefaultMinimalDependency(
           DefaultModuleIdentifier.newId(
             coords[0],
-            coords[1]
+            coords[1],
           ),
-          DefaultMutableVersionConstraint(coords[2])
+          DefaultMutableVersionConstraint(coords[2]),
         )
 
         2 -> DefaultMinimalDependency(
           DefaultModuleIdentifier.newId(
             coords[0],
-            coords[1]
+            coords[1],
           ),
-          DefaultMutableVersionConstraint(DefaultImmutableVersionConstraint.of())
+          DefaultMutableVersionConstraint(DefaultImmutableVersionConstraint.of()),
         )
 
         else -> error("Please specify full maven coordinates for the Compose compiler you'd like to use")

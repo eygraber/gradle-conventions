@@ -157,7 +157,7 @@ ext.awaitAndroidConfigured { isAndroidUserConfigured ->
       onVariants { variant ->
         doOnFirstMatchingIncomingDependencyBeforeResolution(
           configurationName = "${variant.name}RuntimeClasspath",
-          dependencyPredicate = dependencyPredicate
+          dependencyPredicate = dependencyPredicate,
         ) {
           tasks.withType(KotlinCompilationTask::class.java).configureEach {
             compilerOptions {

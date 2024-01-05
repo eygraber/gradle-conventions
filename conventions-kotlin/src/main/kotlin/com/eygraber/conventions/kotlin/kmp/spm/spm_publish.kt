@@ -22,7 +22,7 @@ public fun Project.registerPublishSpm(
   frameworkName: String,
   zipOutputDirectory: Provider<Directory> = layout.buildDirectory.dir("outputs/spm/release"),
   publishTaskFactory: (TaskProvider<Zip>) -> TaskProvider<PublishXCFrameworkTask>,
-  targetPredicate: (KotlinNativeTarget) -> Boolean = { true }
+  targetPredicate: (KotlinNativeTarget) -> Boolean = { true },
 ) {
   val assembleTaskHolder = registerAssembleXCFrameworkTasksFromFrameworks(frameworkName, targetPredicate)
   val packageDotSwiftFile = rootProject.file("Package.swift")
@@ -30,7 +30,7 @@ public fun Project.registerPublishSpm(
   registerPublishDebugSpm(
     frameworkName = frameworkName,
     packageDotSwiftFile = packageDotSwiftFile,
-    assembleXCFrameworkDebugTask = assembleTaskHolder.debug
+    assembleXCFrameworkDebugTask = assembleTaskHolder.debug,
   )
 
   registerPublishReleaseSpm(
@@ -38,7 +38,7 @@ public fun Project.registerPublishSpm(
     packageDotSwiftFile = packageDotSwiftFile,
     assembleXCFrameworkReleaseTask = assembleTaskHolder.release,
     publishTaskFactory = publishTaskFactory,
-    zipOutputDirectory = zipOutputDirectory
+    zipOutputDirectory = zipOutputDirectory,
   )
 }
 
@@ -86,7 +86,7 @@ internal fun Project.registerPublishDebugSpm(
         |        ,
         |    ]
         |)
-        """.trimMargin()
+        """.trimMargin(),
       )
     }
   }
@@ -97,12 +97,12 @@ internal fun Project.registerPublishReleaseSpm(
   packageDotSwiftFile: File,
   assembleXCFrameworkReleaseTask: TaskProvider<XCFrameworkTask>,
   publishTaskFactory: (TaskProvider<Zip>) -> TaskProvider<PublishXCFrameworkTask>,
-  zipOutputDirectory: Provider<Directory>
+  zipOutputDirectory: Provider<Directory>,
 ) {
   val zipTask = registerZipXCFrameworkTask(
     frameworkName = frameworkName,
     assembleXCFrameworkReleaseTask = assembleXCFrameworkReleaseTask,
-    outputDirectory = zipOutputDirectory
+    outputDirectory = zipOutputDirectory,
   )
 
   val publishTask = publishTaskFactory(zipTask)
@@ -154,7 +154,7 @@ internal fun Project.registerPublishReleaseSpm(
         |        ,
         |    ]
         |)
-        """.trimMargin()
+        """.trimMargin(),
       )
     }
   }

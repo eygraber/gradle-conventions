@@ -17,12 +17,12 @@ import java.util.Locale
 
 public class AssembleXCFrameworkTaskHolder(
   public val debug: TaskProvider<XCFrameworkTask>,
-  public val release: TaskProvider<XCFrameworkTask>
+  public val release: TaskProvider<XCFrameworkTask>,
 )
 
 public fun Project.registerAssembleXCFrameworkTasksFromFrameworks(
   frameworkName: String,
-  targetPredicate: (KotlinNativeTarget) -> Boolean = { true }
+  targetPredicate: (KotlinNativeTarget) -> Boolean = { true },
 ): AssembleXCFrameworkTaskHolder {
   plugins.withId("org.jetbrains.kotlin.multiplatform") {
     val xcFrameworkConfig = XCFramework(frameworkName)
@@ -40,14 +40,14 @@ public fun Project.registerAssembleXCFrameworkTasksFromFrameworks(
 
   return AssembleXCFrameworkTaskHolder(
     debug = findXCFrameworkAssembleTask(frameworkName, NativeBuildType.DEBUG),
-    release = findXCFrameworkAssembleTask(frameworkName, NativeBuildType.RELEASE)
+    release = findXCFrameworkAssembleTask(frameworkName, NativeBuildType.RELEASE),
   )
 }
 
 public fun Project.registerZipXCFrameworkTask(
   frameworkName: String,
   assembleXCFrameworkReleaseTask: TaskProvider<XCFrameworkTask>,
-  outputDirectory: Provider<Directory>
+  outputDirectory: Provider<Directory>,
 ): TaskProvider<Zip> =
   tasks.register("zip${frameworkName}ReleaseXCFramework", Zip::class.java) {
     group = "spm"
@@ -65,7 +65,7 @@ public fun Project.registerZipXCFrameworkTask(
 
 private fun Project.findXCFrameworkAssembleTask(
   frameworkName: String,
-  buildType: NativeBuildType
+  buildType: NativeBuildType,
 ): TaskProvider<XCFrameworkTask> {
   @Suppress("Deprecation")
   val buildTypeString = buildType.name.toLowerCase(Locale.US).capitalize()
