@@ -4,8 +4,9 @@ import com.eygraber.conventions.android.GradleConventionsAndroid
 import com.eygraber.conventions.compose.GradleConventionsCompose
 import com.eygraber.conventions.detekt.GradleConventionsDetekt
 import com.eygraber.conventions.github.GradleConventionsGitHub
+import com.eygraber.conventions.kotlin.GradleConventionsKmpDefaultExtension
+import com.eygraber.conventions.kotlin.GradleConventionsKmpDefaults
 import com.eygraber.conventions.kotlin.GradleConventionsKotlin
-import com.eygraber.conventions.kotlin.GradleConventionsKotlinMultiplatform
 import com.eygraber.conventions.project.common.GradleConventionsProjectCommon
 import com.eygraber.conventions.spm.GradleConventionsSpm
 import org.gradle.api.Plugin
@@ -22,7 +23,6 @@ internal abstract class GradleConventionsDefaults : BuildService<None> {
   val detekt = GradleConventionsDetekt()
   val github = GradleConventionsGitHub()
   val kotlin = GradleConventionsKotlin()
-  val kotlinMultiplatform = GradleConventionsKotlinMultiplatform()
   val spm = GradleConventionsSpm()
 }
 
@@ -31,6 +31,8 @@ abstract class GradleConventionsPlugin : Plugin<Project> {
     require(target.rootProject == target) {
       "com.eygraber.conventions plugin should only be applied on the root project"
     }
+
+    target.extensions.create<GradleConventionsKmpDefaultExtension>("gradleConventionsKmpDefaults")
 
     with(target.extensions.create<GradleConventionsPluginExtension>("gradleConventionsDefaults")) {
       with(target.gradleConventionsDefaultsService) {
@@ -84,13 +86,6 @@ abstract class GradleConventionsPlugin : Plugin<Project> {
           kotlin.optIns = optIns
         }
 
-        awaitKotlinMultiplatformConfigured {
-          kotlinMultiplatform.shouldCreateCommonJsSourceSet = shouldCreateCommonJsSourceSet
-          kotlinMultiplatform.binaryType = binaryType
-          kotlinMultiplatform.webOptions = webOptions
-          kotlinMultiplatform.targets = targets
-        }
-
         awaitSpmConfigured {
           spm.frameworkName = frameworkName
           spm.version = version
@@ -103,3 +98,7 @@ abstract class GradleConventionsPlugin : Plugin<Project> {
 
 internal val Project.gradleConventionsDefaultsService
   get() = gradle.sharedServices.registerIfAbsent("gradleConventionsDefaults", GradleConventionsDefaults::class) {}.get()
+
+internal val Project.gradleConventionsKmpDefaultsService
+  get() =
+    gradle.sharedServices.registerIfAbsent("gradleConventionsKmpDefaults", GradleConventionsKmpDefaults::class) {}.get()

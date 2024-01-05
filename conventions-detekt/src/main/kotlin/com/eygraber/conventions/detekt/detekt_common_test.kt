@@ -14,7 +14,7 @@ public fun Project.registerCommonTestDetektTask() {
       // only register the task if it hasn't already been registered
       registerDetektTask(
         name = "metadataTest",
-        sourceSet = kmpSourceSets.getByName("commonTest")
+        sourceSet = kmpSourceSets.getByName("commonTest"),
       )
     }
   }

@@ -26,12 +26,11 @@ with(gradleConventionsExtension) {
         },
         repo = requireNotNull(repoName) {
           "Please set repoName in the gradleConventions github extension"
-        }
+        },
       )
     }
 
     mavenPublishing {
-      @Suppress("UnstableApiUsage")
       signAllPublications()
     }
   }

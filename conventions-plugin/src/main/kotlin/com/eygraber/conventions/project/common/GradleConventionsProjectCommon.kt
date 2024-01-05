@@ -12,7 +12,7 @@ interface ResolutionVersionSelector {
 
 class ConventionDependencyHandler(
   dependencyHandler: DependencyHandler,
-  val project: Project
+  val project: Project,
 ) : DependencyHandler by dependencyHandler {
   fun api(dependencyNotation: Any): Dependency? = add("api", dependencyNotation)
   fun compileOnly(dependencyNotation: Any): Dependency? = add("compileOnly", dependencyNotation)
@@ -25,7 +25,7 @@ class GradleConventionsProjectCommon {
   internal var projectDependencies: MutableList<ConventionDependencyHandler.() -> Unit> = mutableListOf()
 
   fun projectDependencies(
-    dependencies: ConventionDependencyHandler.() -> Unit
+    dependencies: ConventionDependencyHandler.() -> Unit,
   ) {
     projectDependencies += dependencies
   }

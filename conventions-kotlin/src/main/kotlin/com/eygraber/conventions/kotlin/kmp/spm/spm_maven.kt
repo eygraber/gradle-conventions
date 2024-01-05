@@ -18,7 +18,7 @@ public fun Project.registerPublishSpmToMavenTasks(
   frameworkName: String,
   artifactVersion: String,
   zipOutputDirectory: Provider<Directory> = layout.buildDirectory.dir("outputs/spm/release"),
-  targetPredicate: (KotlinNativeTarget) -> Boolean = { true }
+  targetPredicate: (KotlinNativeTarget) -> Boolean = { true },
 ) {
   registerPublishSpm(
     frameworkName = frameworkName,
@@ -27,7 +27,7 @@ public fun Project.registerPublishSpmToMavenTasks(
       val publishTask = createXCFrameworkMavenPublication(
         frameworkName = frameworkName,
         artifactVersion = artifactVersion,
-        zipTask = zipTask
+        zipTask = zipTask,
       )
 
       val artifactName =
@@ -39,18 +39,18 @@ public fun Project.registerPublishSpmToMavenTasks(
         publishedUrl.set(
           publishTask.map { t ->
             "${t.repository.url}/${rootProject.name}/$artifactName/$artifactVersion/$artifactName-$artifactVersion.zip"
-          }
+          },
         )
       }
     },
-    targetPredicate = targetPredicate
+    targetPredicate = targetPredicate,
   )
 }
 
 internal fun Project.createXCFrameworkMavenPublication(
   frameworkName: String,
   artifactVersion: String,
-  zipTask: TaskProvider<Zip>
+  zipTask: TaskProvider<Zip>,
 ): TaskProvider<PublishToMavenRepository> {
   val publicationName = "${frameworkName.capitalize()}ReleaseXCFramework"
   val artifactName = "${CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, frameworkName)}-${project.name}"
@@ -68,7 +68,7 @@ internal fun Project.createXCFrameworkMavenPublication(
         runCatching {
           tasks.named(
             "publish${publicationName}PublicationTo${repo.name.capitalize()}Repository",
-            PublishToMavenRepository::class.java
+            PublishToMavenRepository::class.java,
           )
         }.getOrNull()
       }

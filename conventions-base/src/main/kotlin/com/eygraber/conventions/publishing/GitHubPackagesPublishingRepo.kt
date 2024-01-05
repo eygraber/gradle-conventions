@@ -10,7 +10,7 @@ import java.net.URI
 public fun RepositoryHandler.githubPackagesPublishing(
   owner: String,
   repo: String,
-  action: Action<MavenArtifactRepository> = Actions.doNothing()
+  action: Action<MavenArtifactRepository> = Actions.doNothing(),
 ) {
   maven {
     name = "githubPackages"

@@ -33,13 +33,13 @@ gradleConventionsExtension.awaitComposeConfigured {
 
   jetbrainsComposeCompilerOverride?.apply {
     compose.kotlinCompilerPlugin.set(
-      "$group:$name${if(version == null) "" else ":$version"}"
+      "$group:$name${if(version == null) "" else ":$version"}",
     )
   }
 
   if(suppressKotlinVersionCompatForJetbrains != null) {
     compose.kotlinCompilerPluginArgs.add(
-      "suppressKotlinVersionCompatibilityCheck=$suppressKotlinVersionCompatForJetbrains"
+      "suppressKotlinVersionCompatibilityCheck=$suppressKotlinVersionCompatForJetbrains",
     )
   }
 }

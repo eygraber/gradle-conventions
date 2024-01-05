@@ -16,19 +16,19 @@ import java.util.Locale
 
 public fun Project.registerDetektKmpIntermediateTask(
   intermediateName: String,
-  targets: List<KotlinTarget>
+  targets: List<KotlinTarget>,
 ) {
   plugins.withType(KotlinMultiplatformPluginWrapper::class.java) {
     val sourceSets = kmpSourceSets
 
     val mainDetektTask = registerDetektTask(
       name = "${intermediateName}Main",
-      sourceSet = sourceSets.getByName("${intermediateName}Main")
+      sourceSet = sourceSets.getByName("${intermediateName}Main"),
     )
 
     val testDetektTask = registerDetektTask(
       name = "${intermediateName}Test",
-      sourceSet = sourceSets.getByName("${intermediateName}Test")
+      sourceSet = sourceSets.getByName("${intermediateName}Test"),
     )
 
     targets.map { target -> target.name.capitalize() }.forEach { name ->
@@ -40,18 +40,18 @@ public fun Project.registerDetektKmpIntermediateTask(
 
 public fun Project.registerSourceSetDetektTask(
   sourceSetName: String,
-  vararg dependsOnSourceSetNames: String
+  vararg dependsOnSourceSetNames: String,
 ) {
   val sourceSets = kmpSourceSets
 
   val mainDetektTask = registerDetektTask(
     name = "${sourceSetName}Main",
-    sourceSet = sourceSets.getByName("${sourceSetName}Main")
+    sourceSet = sourceSets.getByName("${sourceSetName}Main"),
   )
 
   val testDetektTask = registerDetektTask(
     name = "${sourceSetName}Test",
-    sourceSet = sourceSets.getByName("${sourceSetName}Test")
+    sourceSet = sourceSets.getByName("${sourceSetName}Test"),
   )
 
   for(dependsOnSourceSetName in dependsOnSourceSetNames) {
@@ -67,7 +67,7 @@ public fun Project.registerSourceSetDetektTask(
 // https://github.com/detekt/detekt/blob/main/detekt-gradle-plugin/src/main/kotlin/io/gitlab/arturbosch/detekt/internal/DetektMultiplatform.kt
 public fun Project.registerDetektTask(
   name: String,
-  sourceSet: KotlinSourceSet
+  sourceSet: KotlinSourceSet,
 ): TaskProvider<Detekt> = tasks.register("detekt${name.capitalize()}", Detekt::class.java) {
   val detekt = detekt
 
@@ -98,14 +98,14 @@ private fun Project.setReportOutputConvention(
   extension: DetektExtension,
   report: DetektReport,
   name: String,
-  format: String
+  format: String,
 ) {
   report.outputLocation.convention(
     layout.projectDirectory.file(
       providers.provider {
         File(extension.reportsDir, "$name.$format").absolutePath
-      }
-    )
+      },
+    ),
   )
 }
 

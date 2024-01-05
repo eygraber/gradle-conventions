@@ -22,7 +22,7 @@ ext.awaitKotlinConfigured { isKotlinUserConfigured ->
     if(jvmTargetVersion == null && !isKotlinUserConfigured) return@awaitDetektConfigured
 
     configureDetekt(
-      jvmTargetVersion = jvmTargetVersion
+      jvmTargetVersion = jvmTargetVersion,
     )
 
     dependencies {

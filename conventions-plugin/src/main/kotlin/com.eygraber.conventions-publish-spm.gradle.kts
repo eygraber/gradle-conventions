@@ -38,7 +38,7 @@ with(gradleConventionsExtension) {
       publishing {
         repositories.githubPackagesPublishing(
           owner = owner,
-          repo = repoName
+          repo = repoName,
         )
       }
 
@@ -55,7 +55,7 @@ with(gradleConventionsExtension) {
 
         registerPublishSpmToMavenTasks(
           frameworkName = frameworkName,
-          artifactVersion = version
+          artifactVersion = version,
         ) {
           !it.name.startsWith("macos") || includeMacos
         }

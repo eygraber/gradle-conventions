@@ -5,7 +5,6 @@ import com.eygraber.conventions.compose.GradleConventionsCompose
 import com.eygraber.conventions.detekt.GradleConventionsDetekt
 import com.eygraber.conventions.github.GradleConventionsGitHub
 import com.eygraber.conventions.kotlin.GradleConventionsKotlin
-import com.eygraber.conventions.kotlin.GradleConventionsKotlinMultiplatform
 import com.eygraber.conventions.project.common.GradleConventionsProjectCommon
 import com.eygraber.conventions.spm.GradleConventionsSpm
 import org.gradle.api.Action
@@ -20,7 +19,6 @@ internal interface GradleConventionsConfigurableListener {
   fun GradleConventionsDetekt.onDetektConfigured(isUserConfigured: Boolean) {}
   fun GradleConventionsGitHub.onGitHubConfigured(isUserConfigured: Boolean) {}
   fun GradleConventionsKotlin.onKotlinConfigured(isUserConfigured: Boolean) {}
-  fun GradleConventionsKotlinMultiplatform.onKotlinMultiplatformConfigured(isUserConfigured: Boolean) {}
   fun GradleConventionsSpm.onSpmConfigured(isUserConfigured: Boolean) {}
 }
 
@@ -28,7 +26,7 @@ abstract class GradleConventionsPluginExtension {
   private val configureListeners = CopyOnWriteArrayList<GradleConventionsConfigurableListener>()
 
   internal fun awaitAndroidConfigured(
-    configure: GradleConventionsAndroid.(isConfigured: Boolean) -> Unit
+    configure: GradleConventionsAndroid.(isConfigured: Boolean) -> Unit,
   ) {
     android.configure(isAndroidConfigured)
     configureListeners += object : GradleConventionsConfigurableListener {
@@ -39,7 +37,7 @@ abstract class GradleConventionsPluginExtension {
   }
 
   internal fun awaitComposeConfigured(
-    configure: GradleConventionsCompose.(isConfigured: Boolean) -> Unit
+    configure: GradleConventionsCompose.(isConfigured: Boolean) -> Unit,
   ) {
     compose.configure(isComposeConfigured)
     configureListeners += object : GradleConventionsConfigurableListener {
@@ -50,7 +48,7 @@ abstract class GradleConventionsPluginExtension {
   }
 
   internal fun awaitProjectCommonConfigured(
-    configure: GradleConventionsProjectCommon.(isConfigured: Boolean) -> Unit
+    configure: GradleConventionsProjectCommon.(isConfigured: Boolean) -> Unit,
   ) {
     projectCommon.configure(isProjectCommonConfigured)
     configureListeners += object : GradleConventionsConfigurableListener {
@@ -61,7 +59,7 @@ abstract class GradleConventionsPluginExtension {
   }
 
   internal fun awaitDetektConfigured(
-    configure: GradleConventionsDetekt.(isConfigured: Boolean) -> Unit
+    configure: GradleConventionsDetekt.(isConfigured: Boolean) -> Unit,
   ) {
     detekt.configure(isDetektConfigured)
     configureListeners += object : GradleConventionsConfigurableListener {
@@ -72,7 +70,7 @@ abstract class GradleConventionsPluginExtension {
   }
 
   internal fun awaitGitHubConfigured(
-    configure: GradleConventionsGitHub.(isConfigured: Boolean) -> Unit
+    configure: GradleConventionsGitHub.(isConfigured: Boolean) -> Unit,
   ) {
     github.configure(isGitHubConfigured)
     configureListeners += object : GradleConventionsConfigurableListener {
@@ -83,7 +81,7 @@ abstract class GradleConventionsPluginExtension {
   }
 
   internal fun awaitKotlinConfigured(
-    configure: GradleConventionsKotlin.(isConfigured: Boolean) -> Unit
+    configure: GradleConventionsKotlin.(isConfigured: Boolean) -> Unit,
   ) {
     kotlin.configure(isKotlinConfigured)
     configureListeners += object : GradleConventionsConfigurableListener {
@@ -93,19 +91,8 @@ abstract class GradleConventionsPluginExtension {
     }
   }
 
-  internal fun awaitKotlinMultiplatformConfigured(
-    configure: GradleConventionsKotlinMultiplatform.(isConfigured: Boolean) -> Unit
-  ) {
-    kotlinMultiplatform.configure(isKotlinMultiplatformConfigured)
-    configureListeners += object : GradleConventionsConfigurableListener {
-      override fun GradleConventionsKotlinMultiplatform.onKotlinMultiplatformConfigured(isUserConfigured: Boolean) {
-        configure(isUserConfigured)
-      }
-    }
-  }
-
   internal fun awaitSpmConfigured(
-    configure: GradleConventionsSpm.(isConfigured: Boolean) -> Unit
+    configure: GradleConventionsSpm.(isConfigured: Boolean) -> Unit,
   ) {
     spm.configure(isSpmConfigured)
     configureListeners += object : GradleConventionsConfigurableListener {
@@ -198,25 +185,6 @@ abstract class GradleConventionsPluginExtension {
     configureListeners.forEach { listener ->
       with(listener) {
         kotlin.onKotlinConfigured(isKotlinConfigured)
-      }
-    }
-  }
-
-  private var wasKotlinMultiplatformUserConfigured: Boolean = false
-  private var isKotlinMultiplatformConfigured: Boolean = false
-  internal val kotlinMultiplatform = GradleConventionsKotlinMultiplatform()
-    get() {
-      wasKotlinMultiplatformUserConfigured = true
-
-      return field
-    }
-
-  fun kotlinMultiplatform(action: Action<GradleConventionsKotlinMultiplatform>) {
-    action.execute(kotlinMultiplatform)
-    isKotlinMultiplatformConfigured = true
-    configureListeners.forEach { listener ->
-      with(listener) {
-        kotlinMultiplatform.onKotlinMultiplatformConfigured(isKotlinMultiplatformConfigured)
       }
     }
   }

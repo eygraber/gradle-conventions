@@ -17,7 +17,7 @@ public fun RepositoryHandler.gitHubPackages(
   repo: String,
   username: String,
   password: String,
-  action: Action<MavenArtifactRepository> = Actions.doNothing()
+  action: Action<MavenArtifactRepository> = Actions.doNothing(),
 ) {
   maven {
     url = URI("https://maven.pkg.github.com/$owner/$repo")
@@ -38,7 +38,7 @@ public fun RepositoryHandler.gitHubPackages(
   ejsonJsonKey: String = "github_packages_pat",
   ejsonPrivateKey: String? = null,
   ejsonPrivateKeyEnvVar: String = "EJSON_PRIVATE_KEY",
-  action: Action<MavenArtifactRepository> = Actions.doNothing()
+  action: Action<MavenArtifactRepository> = Actions.doNothing(),
 ) {
   gitHubPackages(
     owner = owner,
@@ -46,14 +46,14 @@ public fun RepositoryHandler.gitHubPackages(
     username = username,
     password = Ejson().decryptSecrets(
       secretsFile = ejsonSecretsFile.toPath(),
-      userSuppliedPrivateKey = ejsonPrivateKey ?: System.getenv(ejsonPrivateKeyEnvVar)
+      userSuppliedPrivateKey = ejsonPrivateKey ?: System.getenv(ejsonPrivateKeyEnvVar),
     ) { json ->
       requireNotNull(
         json[ejsonJsonKey]
           ?.jsonPrimitive
-          ?.contentOrNull
+          ?.contentOrNull,
       )
     },
-    action = action
+    action = action,
   )
 }

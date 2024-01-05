@@ -6,7 +6,7 @@ import org.gradle.api.artifacts.Dependency
 public fun Project.doOnFirstMatchingIncomingDependencyBeforeResolution(
   configurationName: String,
   dependencyPredicate: Dependency.() -> Boolean,
-  onMatch: (Dependency) -> Unit
+  onMatch: (Dependency) -> Unit,
 ) {
   configurations.named(configurationName).configure {
     incoming.beforeResolve {

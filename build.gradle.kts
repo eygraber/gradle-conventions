@@ -20,7 +20,7 @@ gradleConventionsDefaults {
   detekt {
     plugins(
       libs.detektEygraber.formatting,
-      libs.detektEygraber.style
+      libs.detektEygraber.style,
     )
   }
   kotlin {

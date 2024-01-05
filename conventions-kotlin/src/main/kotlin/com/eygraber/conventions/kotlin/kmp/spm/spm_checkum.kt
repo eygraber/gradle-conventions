@@ -17,7 +17,7 @@ internal fun Project.findSpmChecksum(zipFile: File): String {
       "swift",
       "package",
       "compute-checksum",
-      zipFile.path
+      zipFile.path,
     )
     .start()
     .let { process ->
@@ -29,7 +29,7 @@ internal fun Project.findSpmChecksum(zipFile: File): String {
         throw GradleException(
           error.ifBlank {
             "Running swift package compute-checksum ${zipFile.path} failed with code ${process.exitValue()}"
-          }
+          },
         )
       }
       else {

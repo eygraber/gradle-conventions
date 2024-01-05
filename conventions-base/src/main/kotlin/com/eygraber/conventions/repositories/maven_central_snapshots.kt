@@ -7,7 +7,7 @@ import org.gradle.internal.Actions
 
 @JvmOverloads
 public fun RepositoryHandler.mavenCentralSnapshots(
-  action: Action<MavenArtifactRepository> = Actions.doNothing()
+  action: Action<MavenArtifactRepository> = Actions.doNothing(),
 ) {
   maven {
     setUrl("https://oss.sonatype.org/content/repositories/snapshots")
@@ -22,7 +22,7 @@ public fun RepositoryHandler.mavenCentralSnapshots(
 
 @JvmOverloads
 public fun RepositoryHandler.mavenCentralSnapshotsS01(
-  action: Action<MavenArtifactRepository> = Actions.doNothing()
+  action: Action<MavenArtifactRepository> = Actions.doNothing(),
 ) {
   maven {
     setUrl("https://s01.oss.sonatype.org/content/repositories/snapshots")
