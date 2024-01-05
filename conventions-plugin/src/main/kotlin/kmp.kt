@@ -35,6 +35,27 @@ sealed interface KmpTarget {
   )
 }
 
+fun KotlinMultiplatformExtension.defaultKmpTargets(
+  project: Project,
+  webOptions: KmpTarget.WebOptions = project.gradleConventionsKmpDefaultsService.webOptions,
+  binaryType: BinaryType = project.gradleConventionsKmpDefaultsService.binaryType,
+  createCommonJsSourceSet: Boolean = project.gradleConventionsKmpDefaultsService.createCommonJsSourceSet,
+) {
+  val defaultTargets = project.gradleConventionsKmpDefaultsService.targets
+  require(defaultTargets.isNotEmpty()) {
+    "defaultKmpTargets doesn't have any effect if default targets haven't been specified in the root project"
+  }
+
+  kmpTargets(
+    target = defaultTargets.take(1).first(),
+    project = project,
+    webOptions = webOptions,
+    binaryType = binaryType,
+    createCommonJsSourceSet = createCommonJsSourceSet,
+    ignoreDefaultTargets = false,
+  )
+}
+
 fun KotlinMultiplatformExtension.allKmpTargets(
   project: Project,
   webOptions: KmpTarget.WebOptions = project.gradleConventionsKmpDefaultsService.webOptions,
@@ -415,19 +436,24 @@ fun KotlinMultiplatformExtension.configureKmpTargets(
 private fun KotlinMultiplatformExtension.createCommonJs(
   project: Project,
 ) {
-  @OptIn(ExperimentalKotlinGradlePluginApi::class)
-  applyDefaultHierarchyTemplate {
-    group("commonJs") {
-      withJs()
-      withWasm()
+  val js = targets.findByName("js")
+  val wasmJs = targets.findByName("wasmJs")
+
+  if(js != null || wasmJs != null) {
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    applyDefaultHierarchyTemplate {
+      group("commonJs") {
+        withJs()
+        withWasm()
+      }
     }
+
+    sourceSets.register("commonJsMain")
+    sourceSets.register("commonJsTest")
+
+    project.registerDetektKmpIntermediateTask(
+      intermediateName = "commonJs",
+      targets = listOfNotNull(js, wasmJs),
+    )
   }
-
-  sourceSets.register("commonJsMain")
-  sourceSets.register("commonJsTest")
-
-  project.registerDetektKmpIntermediateTask(
-    intermediateName = "commonJs",
-    targets = listOfNotNull(targets.findByName("js"), targets.findByName("wasmJs")),
-  )
 }
