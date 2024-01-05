@@ -63,8 +63,14 @@ fun KotlinMultiplatformExtension.kmpTargets(
   webOptions: KmpTarget.WebOptions = project.gradleConventionsKmpDefaultsService.webOptions,
   binaryType: BinaryType = project.gradleConventionsKmpDefaultsService.binaryType,
   createCommonJsSourceSet: Boolean = project.gradleConventionsKmpDefaultsService.createCommonJsSourceSet,
+  ignoreDefaultTargets: Boolean = false,
 ) {
-  val finalTargets = project.gradleConventionsKmpDefaultsService.targets + setOf(target) + setOf(*targets)
+  val finalTargets = if(ignoreDefaultTargets) {
+    setOf(target) + setOf(*targets)
+  }
+  else {
+    project.gradleConventionsKmpDefaultsService.targets + setOf(target) + setOf(*targets)
+  }
 
   if(finalTargets.isNotEmpty()) {
     val isLibraryBrowserTestsEnabled =
