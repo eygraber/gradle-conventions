@@ -22,12 +22,7 @@ internal abstract class GradleConventionsKmpDefaults : BuildService<BuildService
   override var createCommonJsSourceSet: Boolean = true
 
   override var binaryType: BinaryType = BinaryType.Library
-  override var webOptions = KmpTarget.WebOptions(
-    isNodeEnabled = true,
-    isBrowserEnabled = true,
-    isLibraryBrowserTestsEnabled = false,
-    moduleName = null,
-  )
+  override var webOptions = KmpTarget.WebOptions()
 
   internal var targets = mutableSetOf<KmpTarget>()
 

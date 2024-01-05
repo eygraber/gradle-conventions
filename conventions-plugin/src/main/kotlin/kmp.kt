@@ -28,9 +28,10 @@ sealed interface KmpTarget {
   object Watchos : KmpTarget
 
   data class WebOptions(
-    val isNodeEnabled: Boolean,
-    val isBrowserEnabled: Boolean,
-    val isLibraryBrowserTestsEnabled: Boolean,
+    val isNodeEnabled: Boolean = true,
+    val isBrowserEnabled: Boolean = false,
+    val isBrowserEnabledForLibraryTests: Boolean = false,
+    val isBrowserEnabledForExecutables: Boolean = true,
     val moduleName: String? = null,
   )
 }
@@ -62,15 +63,17 @@ fun KotlinMultiplatformExtension.allKmpTargets(
   binaryType: BinaryType = project.gradleConventionsKmpDefaultsService.binaryType,
   createCommonJsSourceSet: Boolean = project.gradleConventionsKmpDefaultsService.createCommonJsSourceSet,
 ) {
-  val isLibraryBrowserTestsEnabled =
-    binaryType == BinaryType.Library && webOptions.isLibraryBrowserTestsEnabled
+  val isBrowserEnabled = when(binaryType) {
+    BinaryType.Executable -> webOptions.isBrowserEnabled || webOptions.isBrowserEnabledForExecutables
+    BinaryType.Library -> webOptions.isBrowserEnabled || webOptions.isBrowserEnabledForLibraryTests
+  }
 
   configureAllKmpTargets(
     project = project,
-    jsBrowser = isLibraryBrowserTestsEnabled || webOptions.isBrowserEnabled,
+    jsBrowser = isBrowserEnabled,
     jsModuleName = webOptions.moduleName,
     jsNode = webOptions.isNodeEnabled,
-    wasmJsBrowser = isLibraryBrowserTestsEnabled || webOptions.isBrowserEnabled,
+    wasmJsBrowser = isBrowserEnabled,
     wasmJsModuleName = webOptions.moduleName,
     wasmJsNode = webOptions.isNodeEnabled,
     createCommonJsSourceSet = createCommonJsSourceSet,
@@ -94,8 +97,10 @@ fun KotlinMultiplatformExtension.kmpTargets(
   }
 
   if(finalTargets.isNotEmpty()) {
-    val isLibraryBrowserTestsEnabled =
-      binaryType == BinaryType.Library && webOptions.isLibraryBrowserTestsEnabled
+    val isBrowserEnabled = when(binaryType) {
+      BinaryType.Executable -> webOptions.isBrowserEnabled || webOptions.isBrowserEnabledForExecutables
+      BinaryType.Library -> webOptions.isBrowserEnabled || webOptions.isBrowserEnabledForLibraryTests
+    }
 
     configureKmpTargets(
       project = project,
@@ -104,7 +109,7 @@ fun KotlinMultiplatformExtension.kmpTargets(
       ios = KmpTarget.Ios in finalTargets,
       jvm = KmpTarget.Jvm in finalTargets,
       js = KmpTarget.Js in finalTargets,
-      jsBrowser = isLibraryBrowserTestsEnabled || webOptions.isBrowserEnabled,
+      jsBrowser = isBrowserEnabled,
       jsModuleName = webOptions.moduleName,
       jsNode = webOptions.isNodeEnabled,
       linux = KmpTarget.Linux in finalTargets,
@@ -112,7 +117,7 @@ fun KotlinMultiplatformExtension.kmpTargets(
       mingw = KmpTarget.Mingw in finalTargets,
       tvos = KmpTarget.Tvos in finalTargets,
       wasmJs = KmpTarget.WasmJs in finalTargets,
-      wasmJsBrowser = isLibraryBrowserTestsEnabled || webOptions.isBrowserEnabled,
+      wasmJsBrowser = isBrowserEnabled,
       wasmJsModuleName = webOptions.moduleName,
       wasmJsNode = webOptions.isNodeEnabled,
       wasmWasi = KmpTarget.WasmWasi in finalTargets,
