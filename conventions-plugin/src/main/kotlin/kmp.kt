@@ -83,6 +83,7 @@ fun KotlinMultiplatformExtension.allKmpTargets(
     wasmJsBrowser = isBrowserEnabled,
     wasmJsModuleName = webOptions.moduleName,
     wasmJsNode = webOptions.isNodeEnabled,
+    binaryType = binaryType,
     createCommonJsSourceSet = createCommonJsSourceSet,
     applyDefaultHierarchy = applyDefaultHierarchy,
   )
@@ -131,6 +132,7 @@ fun KotlinMultiplatformExtension.kmpTargets(
       wasmJsNode = webOptions.isNodeEnabled,
       wasmWasi = KmpTarget.WasmWasi in finalTargets,
       watchos = KmpTarget.Watchos in finalTargets,
+      binaryType = binaryType,
       createCommonJsSourceSet = createCommonJsSourceSet,
       applyDefaultHierarchy = applyDefaultHierarchy,
     )
