@@ -510,3 +510,15 @@ public val NamedDomainObjectContainer<KotlinSourceSet>.commonJsMain: NamedDomain
  */
 public val NamedDomainObjectContainer<KotlinSourceSet>.commonJsTest: NamedDomainObjectProvider<KotlinSourceSet>
   get() = named<KotlinSourceSet>("commonJsTest")
+
+/**
+ * Provides the existing [webMain][KotlinSourceSet] element.
+ */
+public val NamedDomainObjectContainer<KotlinSourceSet>.webMain: NamedDomainObjectProvider<KotlinSourceSet>
+  get() = named<KotlinSourceSet>("webMain")
+
+/**
+ * Provides the existing [webTest][KotlinSourceSet] element.
+ */
+public val NamedDomainObjectContainer<KotlinSourceSet>.webTest: NamedDomainObjectProvider<KotlinSourceSet>
+  get() = named<KotlinSourceSet>("webTest")
