@@ -466,9 +466,11 @@ private fun KotlinMultiplatformExtension.createCommonJs(
   if(js != null || wasmJs != null) {
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     applyDefaultHierarchyTemplate {
-      group("commonJs") {
-        withJs()
-        withWasm()
+      common {
+        group("commonJs") {
+          withJs()
+          withWasm()
+        }
       }
     }
 
