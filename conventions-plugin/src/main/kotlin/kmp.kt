@@ -453,12 +453,16 @@ fun KotlinMultiplatformExtension.configureKmpTargets(
   }
 
   if(createCommonJsSourceSet) {
-    createCommonJs(project)
+    createJsHierarchyGroups(
+      project = project,
+      isBrowserEnabled = jsBrowser,
+    )
   }
 }
 
-private fun KotlinMultiplatformExtension.createCommonJs(
+private fun KotlinMultiplatformExtension.createJsHierarchyGroups(
   project: Project,
+  isBrowserEnabled: Boolean,
 ) {
   val js = targets.findByName("js")
   val wasmJs = targets.findByName("wasmJs")
@@ -471,6 +475,13 @@ private fun KotlinMultiplatformExtension.createCommonJs(
           withJs()
           withWasm()
         }
+
+        if(isBrowserEnabled) {
+          group("web") {
+            withJs()
+            withWasm()
+          }
+        }
       }
     }
 
@@ -478,6 +489,13 @@ private fun KotlinMultiplatformExtension.createCommonJs(
       intermediateName = "commonJs",
       targets = listOfNotNull(js, wasmJs),
     )
+
+    if(isBrowserEnabled) {
+      project.registerDetektKmpIntermediateTask(
+        intermediateName = "web",
+        targets = listOfNotNull(js, wasmJs),
+      )
+    }
   }
 }
 
