@@ -8,7 +8,7 @@ compose-jetbrains = "1.6.0"
 detekt = "1.23.5"
 detektEygraber = "1.0.11"
 
-dokka = "1.9.10"
+dokka = "1.9.20"
 
 ejson = "1.0.8"
 
