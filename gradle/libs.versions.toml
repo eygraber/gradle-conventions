@@ -10,7 +10,7 @@ detektEygraber = "1.0.11"
 
 dokka = "1.9.20"
 
-ejson = "1.0.8"
+ejson = "1.0.9"
 
 gradleConventions = "0.0.69"
 
