@@ -1,64 +1,83 @@
 package com.eygraber.conventions.detekt
 
-import com.eygraber.conventions.kotlin.kmp.kmpSourceSets
 import com.eygraber.conventions.tasks.dependsOn
 import io.gitlab.arturbosch.detekt.Detekt
+import io.gitlab.arturbosch.detekt.DetektPlugin
 import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 import io.gitlab.arturbosch.detekt.extensions.DetektReport
 import io.gitlab.arturbosch.detekt.extensions.DetektReports
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
+import org.gradle.kotlin.dsl.named
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import java.io.File
 import java.util.Locale
 
-public fun Project.registerDetektKmpIntermediateTask(
-  intermediateName: String,
-  targets: List<KotlinTarget>,
+public fun Project.configureDetektForMultiplatform(
+  targets: Collection<KotlinTarget>,
+  sourceSets: Set<KotlinSourceSet>,
 ) {
-  plugins.withType(KotlinMultiplatformPluginWrapper::class.java) {
-    val sourceSets = kmpSourceSets
+  val detektAll = tasks.register("detektAll")
 
-    val mainDetektTask = registerDetektTask(
-      name = "${intermediateName}Main",
-      sourceSet = sourceSets.getByName("${intermediateName}Main"),
-    )
+  val sourceSetsUsedForTypeResolution = HashSet<KotlinSourceSet>()
+  val targetSourceSets = HashSet<KotlinSourceSet>()
 
-    val testDetektTask = registerDetektTask(
-      name = "${intermediateName}Test",
-      sourceSet = sourceSets.getByName("${intermediateName}Test"),
-    )
+  targets.forEach { target ->
+    val nameForTask = target.name.capitalize()
 
-    targets.map { target -> target.name.capitalize() }.forEach { name ->
-      mainDetektTask.dependsOn("detekt${name}Main")
-      testDetektTask.dependsOn("detekt${name}Test")
+    target.compilations.forEach { compilation ->
+      val compilationName = compilation.name.capitalize()
+      val ancestorSourceSets = compilation.ancestorSourceSets
+      targetSourceSets.addAll(compilation.kotlinSourceSets)
+
+      if(target.isTypeResolutionSupported) {
+        if(ancestorSourceSets.isNotEmpty()) {
+          includeAncestorSourcesInTargetDetektTask(
+            taskName = "${DetektPlugin.DETEKT_TASK_NAME}${nameForTask}$compilationName",
+            ancestorSourceSets = ancestorSourceSets,
+            sourceSetsUsedForTypeResolution = sourceSetsUsedForTypeResolution,
+          )
+        }
+      }
     }
   }
-}
 
-public fun Project.registerSourceSetDetektTask(
-  sourceSetName: String,
-  vararg dependsOnSourceSetNames: String,
-) {
-  val sourceSets = kmpSourceSets
+  val sourceSetToDependantTaskProviders = HashMap<KotlinSourceSet, HashSet<TaskProvider<*>>>()
 
-  val mainDetektTask = registerDetektTask(
-    name = "${sourceSetName}Main",
-    sourceSet = sourceSets.getByName("${sourceSetName}Main"),
-  )
+  sourceSets.forEach { sourceSet ->
+    val taskName = sourceSet.taskName
+    val taskProvider = when(sourceSet) {
+      in targetSourceSets -> runCatching { tasks.named(taskName) }.getOrNull()
 
-  val testDetektTask = registerDetektTask(
-    name = "${sourceSetName}Test",
-    sourceSet = sourceSets.getByName("${sourceSetName}Test"),
-  )
+      in sourceSetsUsedForTypeResolution -> tasks.register(taskName).also {
+        detektAll.dependsOn(taskName)
+      }
 
-  for(dependsOnSourceSetName in dependsOnSourceSetNames) {
-    val capitalizedName = dependsOnSourceSetName.capitalize()
-    if(sourceSets.findByName("${dependsOnSourceSetName}Main") != null) {
-      mainDetektTask.dependsOn("detekt${capitalizedName}Main")
-      testDetektTask.dependsOn("detekt${capitalizedName}Test")
+      else -> registerDetektTask(
+        name = sourceSet.name,
+        sourceSet = sourceSet,
+      ).also {
+        detektAll.dependsOn(taskName)
+      }
+    }
+
+    if(taskProvider != null) {
+      sourceSet.dependsOn.forEach { sourceSetDependency ->
+        sourceSetToDependantTaskProviders.getOrPut(sourceSetDependency) { HashSet() }.add(taskProvider)
+      }
+    }
+  }
+
+  sourceSetToDependantTaskProviders.forEach { (sourceSet, dependentTaskProviders) ->
+    val taskName = sourceSet.taskName
+
+    tasks.named(taskName).configure {
+      dependentTaskProviders.forEach { dependentTaskProvider ->
+        dependsOn(dependentTaskProvider)
+      }
     }
   }
 }
@@ -85,6 +104,35 @@ public fun Project.registerDetektTask(
   setReportOutputConventions(reports, detekt, name)
   description = "Run detekt analysis for source set $name"
 }
+
+private val KotlinCompilation<*>.ancestorSourceSets: Set<KotlinSourceSet> get() = allKotlinSourceSets - kotlinSourceSets
+
+private val KotlinTarget.isTypeResolutionSupported: Boolean
+  get() = platformType in setOf(
+    KotlinPlatformType.androidJvm,
+    KotlinPlatformType.jvm,
+  )
+
+private fun Project.includeAncestorSourcesInTargetDetektTask(
+  taskName: String,
+  ancestorSourceSets: Set<KotlinSourceSet>,
+  sourceSetsUsedForTypeResolution: MutableSet<KotlinSourceSet>,
+) {
+  tasks.named<Detekt>(taskName).configure {
+    ancestorSourceSets.forEach { ancestorSourceSet ->
+      if(sourceSetsUsedForTypeResolution.add(ancestorSourceSet)) {
+        source(ancestorSourceSet.kotlin.sourceDirectories)
+      }
+    }
+  }
+}
+
+private val KotlinSourceSet.taskName
+  get() = when(name) {
+    "commonMain" -> "${DetektPlugin.DETEKT_TASK_NAME}MetadataMain"
+    "commonTest" -> "${DetektPlugin.DETEKT_TASK_NAME}MetadataTest"
+    else -> "${DetektPlugin.DETEKT_TASK_NAME}${name.capitalize()}"
+  }
 
 private fun Project.setReportOutputConventions(reports: DetektReports, detekt: DetektExtension, name: String) {
   setReportOutputConvention(detekt, reports.xml, name, "xml")

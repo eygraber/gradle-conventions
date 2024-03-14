@@ -1,5 +1,4 @@
-import com.eygraber.conventions.detekt.registerDetektKmpIntermediateTask
-import com.eygraber.conventions.detekt.registerSourceSetDetektTask
+import com.eygraber.conventions.detekt.configureDetektForMultiplatform
 import com.eygraber.conventions.gradleConventionsKmpDefaultsService
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectProvider
@@ -99,11 +98,9 @@ fun KotlinMultiplatformExtension.kmpTargets(
   ignoreDefaultTargets: Boolean = false,
   applyDefaultHierarchy: Boolean = true,
 ) {
-  val finalTargets = if(ignoreDefaultTargets) {
-    setOf(target) + setOf(*targets)
-  }
-  else {
-    project.gradleConventionsKmpDefaultsService.targets + setOf(target) + setOf(*targets)
+  val finalTargets = when {
+    ignoreDefaultTargets -> setOf(target) + setOf(*targets)
+    else -> project.gradleConventionsKmpDefaultsService.targets + setOf(target) + setOf(*targets)
   }
 
   if(finalTargets.isNotEmpty()) {
@@ -261,131 +258,113 @@ fun KotlinMultiplatformExtension.configureKmpTargets(
   }
 
   if(apple) {
-    project.afterEvaluate {
-      project.registerSourceSetDetektTask("apple", "ios", "macos", "tvos", "watchos")
-    }
-
     if(ios) {
-      val targets = listOf(
-        iosX64 {
-          if(binaryType == BinaryType.Executable) {
-            binaries.executable()
-          }
-        },
-        iosArm64 {
-          if(binaryType == BinaryType.Executable) {
-            binaries.executable()
-          }
-        },
-        iosSimulatorArm64 {
-          if(binaryType == BinaryType.Executable) {
-            binaries.executable()
-          }
-        },
-      )
+      iosX64 {
+        if(binaryType == BinaryType.Executable) {
+          binaries.executable()
+        }
+      }
 
-      project.registerDetektKmpIntermediateTask(intermediateName = "ios", targets)
+      iosArm64 {
+        if(binaryType == BinaryType.Executable) {
+          binaries.executable()
+        }
+      }
+
+      iosSimulatorArm64 {
+        if(binaryType == BinaryType.Executable) {
+          binaries.executable()
+        }
+      }
     }
 
     if(macos) {
-      val targets = listOf(
-        macosX64 {
-          if(binaryType == BinaryType.Executable) {
-            binaries.executable()
-          }
-        },
-        macosArm64 {
-          if(binaryType == BinaryType.Executable) {
-            binaries.executable()
-          }
-        },
-      )
+      macosX64 {
+        if(binaryType == BinaryType.Executable) {
+          binaries.executable()
+        }
+      }
 
-      project.registerDetektKmpIntermediateTask(intermediateName = "macos", targets)
+      macosArm64 {
+        if(binaryType == BinaryType.Executable) {
+          binaries.executable()
+        }
+      }
     }
 
     if(tvos) {
-      val targets = listOf(
-        tvosX64 {
-          if(binaryType == BinaryType.Executable) {
-            binaries.executable()
-          }
-        },
-        tvosArm64 {
-          if(binaryType == BinaryType.Executable) {
-            binaries.executable()
-          }
-        },
-        tvosSimulatorArm64 {
-          if(binaryType == BinaryType.Executable) {
-            binaries.executable()
-          }
-        },
-      )
+      tvosX64 {
+        if(binaryType == BinaryType.Executable) {
+          binaries.executable()
+        }
+      }
 
-      project.registerDetektKmpIntermediateTask(intermediateName = "tvos", targets)
+      tvosArm64 {
+        if(binaryType == BinaryType.Executable) {
+          binaries.executable()
+        }
+      }
+
+      tvosSimulatorArm64 {
+        if(binaryType == BinaryType.Executable) {
+          binaries.executable()
+        }
+      }
     }
 
     if(watchos) {
-      val targets = listOf(
-        watchosX64 {
-          if(binaryType == BinaryType.Executable) {
-            binaries.executable()
-          }
-        },
-        watchosArm32 {
-          if(binaryType == BinaryType.Executable) {
-            binaries.executable()
-          }
-        },
-        watchosArm64 {
-          if(binaryType == BinaryType.Executable) {
-            binaries.executable()
-          }
-        },
-        watchosDeviceArm64 {
-          if(binaryType == BinaryType.Executable) {
-            binaries.executable()
-          }
-        },
-        watchosSimulatorArm64 {
-          if(binaryType == BinaryType.Executable) {
-            binaries.executable()
-          }
-        },
-      )
+      watchosX64 {
+        if(binaryType == BinaryType.Executable) {
+          binaries.executable()
+        }
+      }
 
-      project.registerDetektKmpIntermediateTask(intermediateName = "watchos", targets)
+      watchosArm32 {
+        if(binaryType == BinaryType.Executable) {
+          binaries.executable()
+        }
+      }
+
+      watchosArm64 {
+        if(binaryType == BinaryType.Executable) {
+          binaries.executable()
+        }
+      }
+
+      watchosDeviceArm64 {
+        if(binaryType == BinaryType.Executable) {
+          binaries.executable()
+        }
+      }
+
+      watchosSimulatorArm64 {
+        if(binaryType == BinaryType.Executable) {
+          binaries.executable()
+        }
+      }
     }
   }
 
   if(linux) {
-    val targets = listOf(
-      linuxX64 {
-        if(binaryType == BinaryType.Executable) {
-          binaries.executable()
-        }
-      },
-      linuxArm64 {
-        if(binaryType == BinaryType.Executable) {
-          binaries.executable()
-        }
-      },
-    )
+    linuxX64 {
+      if(binaryType == BinaryType.Executable) {
+        binaries.executable()
+      }
+    }
 
-    project.registerDetektKmpIntermediateTask(intermediateName = "linux", targets)
+    linuxArm64 {
+      if(binaryType == BinaryType.Executable) {
+        binaries.executable()
+      }
+    }
   }
 
   if(mingw) {
-    val targets = listOf(
-      mingwX64 {
-        if(binaryType == BinaryType.Executable) {
-          binaries.executable()
-        }
-      },
-    )
-
-    project.registerDetektKmpIntermediateTask(intermediateName = "mingw", targets)
+    mingwX64 {
+      if(binaryType == BinaryType.Executable) {
+        binaries.executable()
+      }
+    }
   }
 
   if(wasmJs || wasmWasi) {
@@ -454,14 +433,19 @@ fun KotlinMultiplatformExtension.configureKmpTargets(
 
   if(createCommonJsSourceSet) {
     createJsHierarchyGroups(
-      project = project,
       isBrowserEnabled = jsBrowser,
+    )
+  }
+
+  project.afterEvaluate {
+    project.configureDetektForMultiplatform(
+      targets = targets,
+      sourceSets = sourceSets,
     )
   }
 }
 
 private fun KotlinMultiplatformExtension.createJsHierarchyGroups(
-  project: Project,
   isBrowserEnabled: Boolean,
 ) {
   val js = targets.findByName("js")
@@ -483,18 +467,6 @@ private fun KotlinMultiplatformExtension.createJsHierarchyGroups(
           }
         }
       }
-    }
-
-    project.registerDetektKmpIntermediateTask(
-      intermediateName = "commonJs",
-      targets = listOfNotNull(js, wasmJs),
-    )
-
-    if(isBrowserEnabled) {
-      project.registerDetektKmpIntermediateTask(
-        intermediateName = "web",
-        targets = listOfNotNull(js, wasmJs),
-      )
     }
   }
 }
