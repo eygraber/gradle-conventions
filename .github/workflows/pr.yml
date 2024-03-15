@@ -63,7 +63,7 @@ jobs:
           gradle-version: wrapper
           gradle-home-cache-cleanup: true
 
-      - name: Ensure project builds
+      - name: Run detekt with type resolution
         run: ./gradlew :conventions-base:detektMain :conventions-detekt:detektMain :conventions-kotlin:detektMain
 
   ktlint:
