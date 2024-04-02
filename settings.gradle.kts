@@ -37,7 +37,7 @@ dependencyResolutionManagement {
 rootProject.name = "gradle-conventions"
 
 plugins {
-  id("com.gradle.enterprise") version "3.17"
+  id("com.gradle.develocity") version "3.17"
 }
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
@@ -47,12 +47,13 @@ include("conventions-detekt")
 include("conventions-kotlin")
 include("conventions-plugin")
 
-gradleEnterprise {
+develocity {
+  val isCI = System.getenv("CI") != null
   buildScan {
-    termsOfServiceUrl = "https://gradle.com/terms-of-service"
-    if(System.getenv("CI") != null) {
-      termsOfServiceAgree = "yes"
-      publishAlways()
+    termsOfUseUrl = "https://gradle.com/terms-of-service"
+    publishing.onlyIf { isCI }
+    if(isCI) {
+      termsOfUseAgree = "yes"
     }
   }
 }
