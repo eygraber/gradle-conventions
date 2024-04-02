@@ -48,7 +48,7 @@ include("conventions-kotlin")
 include("conventions-plugin")
 
 develocity {
-  val isCI = System.getenv("CI") != null)
+  val isCI = System.getenv("CI") != null
   buildScan {
     termsOfUseUrl = "https://gradle.com/terms-of-service"
     publishing.onlyIf { isCI }
