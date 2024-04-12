@@ -51,15 +51,15 @@ public fun Project.configureDetekt(
 
     val rootConfig = rootProject.file("detekt.yml")
     if(useRootConfigFile && rootConfig.exists()) {
-      configFiles.setFrom(rootConfig)
+      configFiles.from(rootConfig)
     }
 
     val projectConfig = project.file("detekt.yml")
     if(useProjectConfigFile && projectConfig.exists()) {
-      configFiles.setFrom(projectConfig)
+      configFiles.from(projectConfig)
     }
 
-    config.setFrom(configFiles)
+    config.from(configFiles)
 
     ignoredFlavors = ignoredFlavors + ignoredAndroidFlavors
     ignoredVariants = ignoredVariants + ignoredAndroidVariants
