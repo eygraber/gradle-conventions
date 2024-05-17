@@ -32,12 +32,14 @@ gradleConventionsExtension.awaitComposeConfigured {
   }
 
   jetbrainsComposeCompilerOverride?.apply {
+    @Suppress("DEPRECATION")
     compose.kotlinCompilerPlugin.set(
       "$group:$name${if(version == null) "" else ":$version"}",
     )
   }
 
   if(suppressKotlinVersionCompatForJetbrains != null) {
+    @Suppress("DEPRECATION")
     compose.kotlinCompilerPluginArgs.add(
       "suppressKotlinVersionCompatibilityCheck=$suppressKotlinVersionCompatForJetbrains",
     )
