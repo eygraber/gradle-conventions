@@ -14,7 +14,7 @@ ejson = "1.0.9"
 
 gradleConventions = "0.0.71"
 
-kotlin = "1.9.24"
+kotlin = "2.0.0"
 
 ktlint = "1.2.1"
 
@@ -30,6 +30,7 @@ publish = { id = "com.vanniktech.maven.publish", version.ref = "publish" }
 [libraries]
 buildscript-android = { module = "com.android.tools.build:gradle", version.ref = "android-plugin" }
 buildscript-androidCacheFix = { module = "gradle.plugin.org.gradle.android:android-cache-fix-gradle-plugin", version.ref = "android-cacheFix" }
+buildscript-compose-compiler = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 buildscript-compose-jetbrains = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "compose-jetbrains" }
 buildscript-detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 buildscript-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }

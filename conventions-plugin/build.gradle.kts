@@ -21,6 +21,7 @@ dependencies {
 
   compileOnly(libs.buildscript.android)
   compileOnly(libs.buildscript.androidCacheFix)
+  compileOnly(libs.buildscript.compose.compiler)
   compileOnly(libs.buildscript.compose.jetbrains)
   compileOnly(libs.buildscript.detekt)
   compileOnly(libs.buildscript.dokka)
