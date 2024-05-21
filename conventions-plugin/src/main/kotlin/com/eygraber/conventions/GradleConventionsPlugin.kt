@@ -47,13 +47,16 @@ abstract class GradleConventionsPlugin : Plugin<Project> {
         }
 
         awaitComposeConfigured {
-          compose.androidComposeCompilerVersionOverride = androidComposeCompilerVersionOverride
-          compose.enableAndroidCompilerMetrics = enableAndroidCompilerMetrics
-          compose.applyToAndroidAndJvmOnly = applyToAndroidAndJvmOnly
-          compose.jetbrainsComposeCompilerOverride = jetbrainsComposeCompilerOverride
-          compose.useAndroidComposeCompilerVersionForJetbrainsComposeCompilerVersion =
-            useAndroidComposeCompilerVersionForJetbrainsComposeCompilerVersion
-          compose.suppressKotlinVersionCompatForJetbrains = suppressKotlinVersionCompatForJetbrains
+          compose.generateFunctionKeyMetaClasses = generateFunctionKeyMetaClasses
+          compose.includeSourceInformation = includeSourceInformation
+          compose.metricsDestination = metricsDestination
+          compose.reportsDestination = reportsDestination
+          compose.enableIntrinsicRemember = enableIntrinsicRemember
+          compose.enableNonSkippingGroupOptimization = enableNonSkippingGroupOptimization
+          compose.enableStrongSkippingMode = enableStrongSkippingMode
+          compose.stabilityConfigurationFile = stabilityConfigurationFile
+          compose.includeTraceMarkers = includeTraceMarkers
+          compose.targetKotlinPlatforms = targetKotlinPlatforms
         }
 
         awaitProjectCommonConfigured {

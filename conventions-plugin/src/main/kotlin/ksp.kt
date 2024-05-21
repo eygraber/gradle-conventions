@@ -1,9 +1,8 @@
 import com.eygraber.conventions.capitalize
 import io.gitlab.arturbosch.detekt.Detekt
+import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
-import org.jetbrains.kotlin.gradle.kpm.external.project
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
@@ -30,8 +29,10 @@ fun KotlinMultiplatformExtension.kspDependenciesForAllTargets(block: KspDependen
   }
 }
 
-@OptIn(ExternalVariantApi::class)
-fun KotlinMultiplatformExtension.commonMainKspDependencies(block: KspDependencies.() -> Unit) {
+fun KotlinMultiplatformExtension.commonMainKspDependencies(
+  project: Project,
+  block: KspDependencies.() -> Unit,
+) {
   project.dependencies {
     object : KspDependencies {
       override fun ksp(dependencyNotation: Any) {

@@ -457,13 +457,13 @@ private fun KotlinMultiplatformExtension.createJsHierarchyGroups(
       common {
         group("commonJs") {
           withJs()
-          withWasm()
+          withWasmJs()
         }
 
         if(isBrowserEnabled) {
           group("web") {
             withJs()
-            withWasm()
+            withWasmJs()
           }
         }
       }
