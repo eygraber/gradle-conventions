@@ -66,7 +66,10 @@ ext.awaitAndroidConfigured { isAndroidUserConfigured ->
     }
 
     defaultConfig {
-      consumerProguardFile(project.file("consumer-rules.pro"))
+      val consumerRulesProFile = layout.projectDirectory.file("consumer-rules.pro")
+      if(consumerRulesProFile.asFile.exists()) {
+        consumerProguardFile(consumerRulesProFile)
+      }
 
       minSdk = androidMinSdk
 
