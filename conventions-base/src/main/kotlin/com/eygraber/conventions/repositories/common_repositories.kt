@@ -14,8 +14,8 @@ public fun RepositoryHandler.addCommonRepositories(
   mavenCentralSnapshots: Action<MavenArtifactRepository> = Actions.doNothing(),
   includeGoogle: Boolean = false,
   google: Action<MavenArtifactRepository> = Actions.doNothing(),
-  includeJetbrainsCompose: Boolean = false,
-  jetbrainsCompose: Action<MavenArtifactRepository> = Actions.doNothing(),
+  includeJetbrainsComposeDev: Boolean = false,
+  jetbrainsComposeDev: Action<MavenArtifactRepository> = Actions.doNothing(),
   includeJitpack: Boolean = false,
   jitpack: Action<MavenArtifactRepository> = Actions.doNothing(),
   includeGradlePluginPortal: Boolean = false,
@@ -33,13 +33,13 @@ public fun RepositoryHandler.addCommonRepositories(
     }
   }
 
-  if(includeJetbrainsCompose) {
+  if(includeJetbrainsComposeDev) {
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev") {
       content {
         includeGroupByRegex("org\\.jetbrains.*")
       }
 
-      jetbrainsCompose.execute(this)
+      jetbrainsComposeDev.execute(this)
     }
   }
 
