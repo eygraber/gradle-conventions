@@ -28,27 +28,3 @@ public val NamedDomainObjectContainer<KotlinSourceSet>.androidUnitTest: NamedDom
 @Suppress("ktlint:standard:max-line-length")
 public val NamedDomainObjectContainer<KotlinSourceSet>.androidInstrumentedTest: NamedDomainObjectProvider<KotlinSourceSet>
   get() = named<KotlinSourceSet>("androidInstrumentedTest")
-
-/**
- * Provides the existing [wasmJsMain][KotlinSourceSet] element.
- */
-public val NamedDomainObjectContainer<KotlinSourceSet>.wasmJsMain: NamedDomainObjectProvider<KotlinSourceSet>
-  get() = named<KotlinSourceSet>("wasmJsMain")
-
-/**
- * Provides the existing [wasmJsTest][KotlinSourceSet] element.
- */
-public val NamedDomainObjectContainer<KotlinSourceSet>.wasmJsTest: NamedDomainObjectProvider<KotlinSourceSet>
-  get() = named<KotlinSourceSet>("wasmJsTest")
-
-/**
- * Provides the existing [wasmWasiMain][KotlinSourceSet] element.
- */
-public val NamedDomainObjectContainer<KotlinSourceSet>.wasmWasiMain: NamedDomainObjectProvider<KotlinSourceSet>
-  get() = named<KotlinSourceSet>("wasmWasiMain")
-
-/**
- * Provides the existing [wasmWasiTest][KotlinSourceSet] element.
- */
-public val NamedDomainObjectContainer<KotlinSourceSet>.wasmWasiTest: NamedDomainObjectProvider<KotlinSourceSet>
-  get() = named<KotlinSourceSet>("wasmWasiTest")
