@@ -25,6 +25,11 @@ public fun Project.configureDetektForMultiplatform(
   val sourceSetsUsedForTypeResolution = HashSet<KotlinSourceSet>()
   val targetSourceSets = HashSet<KotlinSourceSet>()
 
+  // for some reason the metadata target doesn't
+  // have a compilation that includes the commonTest source set
+  // https://slack-chats.kotlinlang.org/t/22308802/is-it-expected-that-the-metadata-kmp-target-doesn-t-have-com
+  sourceSets.find { it.name == "commonTest" }?.let { targetSourceSets += it }
+
   targets.forEach { target ->
     val nameForTask = target.name.capitalize()
 
