@@ -62,6 +62,7 @@ public fun Project.configureKgp(
   val lowestSupportedJava = JavaVersion.VERSION_17
   val gradleVersion = GradleVersion.current()
   val highestSupportedJava: JavaVersion = when {
+    gradleVersion >= GradleVersion.version("8.10") -> JavaVersion.VERSION_23
     gradleVersion >= GradleVersion.version("8.8") -> JavaVersion.VERSION_22
     gradleVersion >= GradleVersion.version("8.5") -> JavaVersion.VERSION_21
     else -> JavaVersion.VERSION_20
