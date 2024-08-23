@@ -13,9 +13,7 @@ ext.compose.generateFunctionKeyMetaClasses = composeDefaults.generateFunctionKey
 ext.compose.includeSourceInformation = composeDefaults.includeSourceInformation
 ext.compose.metricsDestination = composeDefaults.metricsDestination
 ext.compose.reportsDestination = composeDefaults.reportsDestination
-ext.compose.enableIntrinsicRemember = composeDefaults.enableIntrinsicRemember
-ext.compose.enableNonSkippingGroupOptimization = composeDefaults.enableNonSkippingGroupOptimization
-ext.compose.enableStrongSkippingMode = composeDefaults.enableStrongSkippingMode
+ext.compose.featureFlags = composeDefaults.featureFlags
 ext.compose.stabilityConfigurationFile = composeDefaults.stabilityConfigurationFile
 ext.compose.includeTraceMarkers = composeDefaults.includeTraceMarkers
 ext.compose.targetKotlinPlatforms = composeDefaults.targetKotlinPlatforms
@@ -26,11 +24,10 @@ ext.awaitComposeConfigured {
     ext.compose.includeSourceInformation?.let { includeSourceInformation = it }
     ext.compose.metricsDestination?.let { metricsDestination = it }
     ext.compose.reportsDestination?.let { reportsDestination = it }
-    ext.compose.enableIntrinsicRemember?.let { enableIntrinsicRemember = it }
-    ext.compose.enableNonSkippingGroupOptimization?.let { enableNonSkippingGroupOptimization = it }
-    ext.compose.enableStrongSkippingMode?.let { enableStrongSkippingMode = it }
     ext.compose.stabilityConfigurationFile?.let { stabilityConfigurationFile = it }
     ext.compose.includeTraceMarkers?.let { includeTraceMarkers = it }
     ext.compose.targetKotlinPlatforms?.let { targetKotlinPlatforms = it }
+
+    ext.compose.featureFlags?.let { featureFlags = it }
   }
 }

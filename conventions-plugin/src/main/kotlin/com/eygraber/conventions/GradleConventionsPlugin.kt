@@ -51,9 +51,7 @@ abstract class GradleConventionsPlugin : Plugin<Project> {
           compose.includeSourceInformation = includeSourceInformation
           compose.metricsDestination = metricsDestination
           compose.reportsDestination = reportsDestination
-          compose.enableIntrinsicRemember = enableIntrinsicRemember
-          compose.enableNonSkippingGroupOptimization = enableNonSkippingGroupOptimization
-          compose.enableStrongSkippingMode = enableStrongSkippingMode
+          compose.featureFlags = featureFlags
           compose.stabilityConfigurationFile = stabilityConfigurationFile
           compose.includeTraceMarkers = includeTraceMarkers
           compose.targetKotlinPlatforms = targetKotlinPlatforms
