@@ -17,6 +17,8 @@ val kotlinDefaults = gradleConventionsDefaultsService.kotlin
 ext.android.compileSdk = androidDefaults.compileSdk
 ext.android.targetSdk = androidDefaults.targetSdk
 ext.android.minSdk = androidDefaults.minSdk
+ext.android.sourceCompatibility = androidDefaults.sourceCompatibility
+ext.android.targetCompatibility = androidDefaults.targetCompatibility
 ext.android.publishEverything = androidDefaults.publishEverything
 ext.android.coreLibraryDesugaringDependency = androidDefaults.coreLibraryDesugaringDependency
 ext.android.flavors = androidDefaults.flavors
@@ -76,9 +78,17 @@ ext.awaitAndroidConfigured { isAndroidUserConfigured ->
       testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    val androidSourceCompatibility = sourceCompatibility
+    val androidTargetCompatibility = targetCompatibility
+
     compileOptions {
       if(coreLibraryDesugaringDependency != null) {
         isCoreLibraryDesugaringEnabled = true
+      }
+
+      if(androidSourceCompatibility != null) {
+        sourceCompatibility = androidSourceCompatibility
+        targetCompatibility = androidTargetCompatibility ?: androidSourceCompatibility
       }
     }
 
