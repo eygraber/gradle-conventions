@@ -1,6 +1,7 @@
 package com.eygraber.conventions.android
 
 import com.eygraber.conventions.kotlin.KotlinOptIn
+import org.gradle.api.JavaVersion
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.MinimalExternalModuleDependency
 import org.gradle.api.provider.Provider
@@ -14,6 +15,9 @@ class GradleConventionsAndroid {
   var compileSdk: Int = 0
   var targetSdk: Int = 0
   var minSdk: Int = 0
+
+  var sourceCompatibility: JavaVersion? = null
+  var targetCompatibility: JavaVersion? = null
 
   var publishEverything: Boolean = true
 
@@ -66,5 +70,13 @@ class GradleConventionsAndroid {
     predicate: Dependency.() -> Boolean,
   ) {
     optInsToDependencyPredicate += optIns to predicate
+  }
+
+  fun javaVersionCompatibility(
+    sourceCompatibility: Provider<String>,
+    targetCompatibility: Provider<String> = sourceCompatibility,
+  ) {
+    this.sourceCompatibility = JavaVersion.toVersion(sourceCompatibility.get().toInt())
+    this.targetCompatibility = JavaVersion.toVersion(targetCompatibility.get().toInt())
   }
 }

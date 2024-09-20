@@ -40,6 +40,8 @@ abstract class GradleConventionsPlugin : Plugin<Project> {
           android.compileSdk = compileSdk
           android.targetSdk = targetSdk
           android.minSdk = minSdk
+          android.sourceCompatibility = sourceCompatibility
+          android.targetCompatibility = targetCompatibility
           android.publishEverything = publishEverything
           android.coreLibraryDesugaringDependency = coreLibraryDesugaringDependency
           android.flavors = flavors
