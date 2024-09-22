@@ -21,6 +21,17 @@ class GradleConventionsAndroid {
 
   var publishEverything: Boolean = true
 
+  /**
+   * By default, AGP will run `lintRelease` when running a release task. If this is set to `true`, that
+   * behavior will be disabled.
+   *
+   * It can make sense to set this to `true` if you run the `lintRelease` task as part of your release process.
+   * Otherwise you will be running lint twice.
+   *
+   * [See Lint#checkReleaseBuilds](https://developer.android.com/reference/tools/gradle-api/8.2/com/android/build/api/dsl/Lint#checkReleaseBuilds())
+   */
+  var doNotRunLintWhenRunningReleaseBuildTasks: Boolean? = null
+
   internal var coreLibraryDesugaringDependency: Any? = null
 
   internal var flavors: MutableList<Pair<String, List<ProductFlavor>>> = mutableListOf()
