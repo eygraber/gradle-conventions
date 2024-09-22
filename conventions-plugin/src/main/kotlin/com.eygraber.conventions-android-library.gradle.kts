@@ -17,6 +17,7 @@ val kotlinDefaults = gradleConventionsDefaultsService.kotlin
 ext.android.compileSdk = androidDefaults.compileSdk
 ext.android.targetSdk = androidDefaults.targetSdk
 ext.android.minSdk = androidDefaults.minSdk
+ext.android.doNotRunLintWhenRunningReleaseBuildTasks = androidDefaults.doNotRunLintWhenRunningReleaseBuildTasks
 ext.android.sourceCompatibility = androidDefaults.sourceCompatibility
 ext.android.targetCompatibility = androidDefaults.targetCompatibility
 ext.android.publishEverything = androidDefaults.publishEverything
@@ -114,6 +115,12 @@ ext.awaitAndroidConfigured { isAndroidUserConfigured ->
         runCatching {
           productFlavors.register(flavor.name)
         }
+      }
+    }
+
+    if(doNotRunLintWhenRunningReleaseBuildTasks == true) {
+      lint {
+        checkReleaseBuilds = false
       }
     }
 
