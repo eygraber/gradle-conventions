@@ -55,7 +55,7 @@ abstract class GradleConventionsPlugin : Plugin<Project> {
           compose.metricsDestination = metricsDestination
           compose.reportsDestination = reportsDestination
           compose.featureFlags = featureFlags
-          compose.stabilityConfigurationFile = stabilityConfigurationFile
+          compose.stabilityConfigurationFiles = stabilityConfigurationFiles
           compose.includeTraceMarkers = includeTraceMarkers
           compose.targetKotlinPlatforms = targetKotlinPlatforms
         }
