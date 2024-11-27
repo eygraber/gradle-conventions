@@ -22,8 +22,9 @@ public fun Project.configureDetektForMultiplatform(
 ) {
   val detektAll = tasks.register("detektAll")
 
-  val sourceSetsUsedForTypeResolution = HashSet<KotlinSourceSet>()
+  val ancestorSourceSetsUsedForTypeResolution = HashSet<KotlinSourceSet>()
   val targetSourceSets = HashSet<KotlinSourceSet>()
+  val targetSourceSetsWithoutAncestorSourceSets = HashSet<KotlinSourceSet>()
 
   // for some reason the metadata target doesn't
   // have a compilation that includes the commonTest source set
@@ -38,12 +39,19 @@ public fun Project.configureDetektForMultiplatform(
       val ancestorSourceSets = compilation.ancestorSourceSets
       targetSourceSets.addAll(compilation.kotlinSourceSets)
 
+      if(ancestorSourceSets.isEmpty()) {
+        targetSourceSetsWithoutAncestorSourceSets.addAll(compilation.kotlinSourceSets)
+      }
+      else if(ancestorSourceSets.size == 1 && ancestorSourceSets.first().name in setOf("commonMain", "commonTest")) {
+        targetSourceSetsWithoutAncestorSourceSets.addAll(compilation.kotlinSourceSets)
+      }
+
       if(target.isTypeResolutionSupported) {
         if(ancestorSourceSets.isNotEmpty()) {
           includeAncestorSourcesInTargetDetektTask(
             taskName = "${DetektPlugin.DETEKT_TASK_NAME}${nameForTask}$compilationName",
             ancestorSourceSets = ancestorSourceSets,
-            sourceSetsUsedForTypeResolution = sourceSetsUsedForTypeResolution,
+            sourceSetsUsedForTypeResolution = ancestorSourceSetsUsedForTypeResolution,
           )
         }
       }
@@ -55,9 +63,11 @@ public fun Project.configureDetektForMultiplatform(
   sourceSets.forEach { sourceSet ->
     val taskName = sourceSet.taskName
     val taskProvider = when(sourceSet) {
-      in targetSourceSets -> runCatching { tasks.named(taskName) }.getOrNull()
+      in targetSourceSets -> runCatching { tasks.named(taskName) }.getOrNull()?.also {
+        detektAll.dependsOn(taskName)
+      }
 
-      in sourceSetsUsedForTypeResolution -> tasks.register(taskName).also {
+      in ancestorSourceSetsUsedForTypeResolution -> tasks.register(taskName).also {
         detektAll.dependsOn(taskName)
       }
 
