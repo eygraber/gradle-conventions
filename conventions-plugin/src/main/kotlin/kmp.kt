@@ -396,8 +396,10 @@ fun KotlinMultiplatformExtension.configureKmpTargets(
     if(wasmWasi) {
       @OptIn(ExperimentalWasmDsl::class)
       wasmWasi {
-        if(binaryType == BinaryType.Executable) {
-          binaries.executable()
+        nodejs {
+          if(binaryType == BinaryType.Executable) {
+            binaries.executable()
+          }
         }
       }
     }

@@ -14,7 +14,7 @@ ext.compose.includeSourceInformation = composeDefaults.includeSourceInformation
 ext.compose.metricsDestination = composeDefaults.metricsDestination
 ext.compose.reportsDestination = composeDefaults.reportsDestination
 ext.compose.featureFlags = composeDefaults.featureFlags
-ext.compose.stabilityConfigurationFile = composeDefaults.stabilityConfigurationFile
+ext.compose.stabilityConfigurationFiles = composeDefaults.stabilityConfigurationFiles
 ext.compose.includeTraceMarkers = composeDefaults.includeTraceMarkers
 ext.compose.targetKotlinPlatforms = composeDefaults.targetKotlinPlatforms
 
@@ -24,7 +24,7 @@ ext.awaitComposeConfigured {
     ext.compose.includeSourceInformation?.let { includeSourceInformation = it }
     ext.compose.metricsDestination?.let { metricsDestination = it }
     ext.compose.reportsDestination?.let { reportsDestination = it }
-    ext.compose.stabilityConfigurationFile?.let { stabilityConfigurationFile = it }
+    ext.compose.stabilityConfigurationFiles?.let { stabilityConfigurationFiles.addAll(it) }
     ext.compose.includeTraceMarkers?.let { includeTraceMarkers = it }
     ext.compose.targetKotlinPlatforms?.let { targetKotlinPlatforms = it }
 
