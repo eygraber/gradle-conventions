@@ -32,7 +32,7 @@ dependencyResolutionManagement {
 rootProject.name = "gradle-conventions"
 
 plugins {
-  id("com.gradle.develocity") version "3.18.2"
+  id("com.gradle.develocity") version "3.19"
 }
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
