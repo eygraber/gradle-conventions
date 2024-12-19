@@ -3,7 +3,7 @@ android-cacheFix = "3.0.1"
 
 android-plugin = "8.7.3"
 
-compose-jetbrains = "1.7.1"
+compose-jetbrains = "1.7.3"
 
 detekt = "1.23.7"
 detektEygraber = "1.0.11"
