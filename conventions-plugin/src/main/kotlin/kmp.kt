@@ -372,7 +372,7 @@ fun KotlinMultiplatformExtension.configureKmpTargets(
       @OptIn(ExperimentalWasmDsl::class)
       wasmJs {
         if(wasmJsModuleName != null) {
-          moduleName = wasmJsModuleName
+          outputModuleName.set(wasmJsModuleName)
         }
 
         if(wasmJsBrowser) {
@@ -408,7 +408,7 @@ fun KotlinMultiplatformExtension.configureKmpTargets(
   if(js) {
     js(IR) {
       if(jsModuleName != null) {
-        moduleName = jsModuleName
+        outputModuleName.set(jsModuleName)
       }
 
       if(jsBrowser) {

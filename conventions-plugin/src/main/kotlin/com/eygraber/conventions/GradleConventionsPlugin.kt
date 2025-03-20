@@ -50,7 +50,6 @@ abstract class GradleConventionsPlugin : Plugin<Project> {
         }
 
         awaitComposeConfigured {
-          compose.generateFunctionKeyMetaClasses = generateFunctionKeyMetaClasses
           compose.includeSourceInformation = includeSourceInformation
           compose.metricsDestination = metricsDestination
           compose.reportsDestination = reportsDestination

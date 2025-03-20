@@ -9,7 +9,6 @@ plugins {
 val ext = gradleConventionsExtension
 val composeDefaults = gradleConventionsDefaultsService.compose
 
-ext.compose.generateFunctionKeyMetaClasses = composeDefaults.generateFunctionKeyMetaClasses
 ext.compose.includeSourceInformation = composeDefaults.includeSourceInformation
 ext.compose.metricsDestination = composeDefaults.metricsDestination
 ext.compose.reportsDestination = composeDefaults.reportsDestination
@@ -20,7 +19,6 @@ ext.compose.targetKotlinPlatforms = composeDefaults.targetKotlinPlatforms
 
 ext.awaitComposeConfigured {
   with(extensions.getByType<ComposeCompilerGradlePluginExtension>()) {
-    ext.compose.generateFunctionKeyMetaClasses?.let { generateFunctionKeyMetaClasses = it }
     ext.compose.includeSourceInformation?.let { includeSourceInformation = it }
     ext.compose.metricsDestination?.let { metricsDestination = it }
     ext.compose.reportsDestination?.let { reportsDestination = it }

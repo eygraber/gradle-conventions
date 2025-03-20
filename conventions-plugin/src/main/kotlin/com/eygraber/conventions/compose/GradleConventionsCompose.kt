@@ -8,7 +8,6 @@ import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 
 class GradleConventionsCompose {
-  var generateFunctionKeyMetaClasses: Boolean? = null
   var includeSourceInformation: Boolean? = null
   var metricsDestination: DirectoryProperty? = null
   var reportsDestination: DirectoryProperty? = null
