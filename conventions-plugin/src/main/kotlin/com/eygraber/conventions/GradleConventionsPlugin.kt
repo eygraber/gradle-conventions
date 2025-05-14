@@ -8,6 +8,7 @@ import com.eygraber.conventions.kotlin.GradleConventionsKmpDefaultExtension
 import com.eygraber.conventions.kotlin.GradleConventionsKmpDefaults
 import com.eygraber.conventions.kotlin.GradleConventionsKotlin
 import com.eygraber.conventions.project.common.GradleConventionsProjectCommon
+import com.eygraber.conventions.publish.GradleConventionsPublish
 import com.eygraber.conventions.spm.GradleConventionsSpm
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -20,6 +21,7 @@ internal abstract class GradleConventionsDefaults : BuildService<None> {
   val android = GradleConventionsAndroid()
   val compose = GradleConventionsCompose()
   val projectCommon = GradleConventionsProjectCommon()
+  val publish = GradleConventionsPublish()
   val detekt = GradleConventionsDetekt()
   val github = GradleConventionsGitHub()
   val kotlin = GradleConventionsKotlin()
@@ -62,6 +64,10 @@ abstract class GradleConventionsPlugin : Plugin<Project> {
         awaitProjectCommonConfigured {
           projectCommon.resolutionVersionSelector = resolutionVersionSelector
           projectCommon.projectDependencies = projectDependencies
+        }
+
+        awaitPublishConfigured {
+          publish.host = host
         }
 
         awaitDetektConfigured {

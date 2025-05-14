@@ -6,6 +6,7 @@ import com.eygraber.conventions.detekt.GradleConventionsDetekt
 import com.eygraber.conventions.github.GradleConventionsGitHub
 import com.eygraber.conventions.kotlin.GradleConventionsKotlin
 import com.eygraber.conventions.project.common.GradleConventionsProjectCommon
+import com.eygraber.conventions.publish.GradleConventionsPublish
 import com.eygraber.conventions.spm.GradleConventionsSpm
 import org.gradle.api.Action
 import org.gradle.api.Project
@@ -16,6 +17,7 @@ internal interface GradleConventionsConfigurableListener {
   fun GradleConventionsAndroid.onAndroidConfigured(isUserConfigured: Boolean) {}
   fun GradleConventionsCompose.onComposeConfigured(isUserConfigured: Boolean) {}
   fun GradleConventionsProjectCommon.onProjectCommonConfigured(isUserConfigured: Boolean) {}
+  fun GradleConventionsPublish.onPublishConfigured(isUserConfigured: Boolean) {}
   fun GradleConventionsDetekt.onDetektConfigured(isUserConfigured: Boolean) {}
   fun GradleConventionsGitHub.onGitHubConfigured(isUserConfigured: Boolean) {}
   fun GradleConventionsKotlin.onKotlinConfigured(isUserConfigured: Boolean) {}
@@ -42,17 +44,6 @@ abstract class GradleConventionsPluginExtension {
     compose.configure(isComposeConfigured)
     configureListeners += object : GradleConventionsConfigurableListener {
       override fun GradleConventionsCompose.onComposeConfigured(isUserConfigured: Boolean) {
-        configure(isUserConfigured)
-      }
-    }
-  }
-
-  internal fun awaitProjectCommonConfigured(
-    configure: GradleConventionsProjectCommon.(isConfigured: Boolean) -> Unit,
-  ) {
-    projectCommon.configure(isProjectCommonConfigured)
-    configureListeners += object : GradleConventionsConfigurableListener {
-      override fun GradleConventionsProjectCommon.onProjectCommonConfigured(isUserConfigured: Boolean) {
         configure(isUserConfigured)
       }
     }
@@ -86,6 +77,28 @@ abstract class GradleConventionsPluginExtension {
     kotlin.configure(isKotlinConfigured)
     configureListeners += object : GradleConventionsConfigurableListener {
       override fun GradleConventionsKotlin.onKotlinConfigured(isUserConfigured: Boolean) {
+        configure(isUserConfigured)
+      }
+    }
+  }
+
+  internal fun awaitProjectCommonConfigured(
+    configure: GradleConventionsProjectCommon.(isConfigured: Boolean) -> Unit,
+  ) {
+    projectCommon.configure(isProjectCommonConfigured)
+    configureListeners += object : GradleConventionsConfigurableListener {
+      override fun GradleConventionsProjectCommon.onProjectCommonConfigured(isUserConfigured: Boolean) {
+        configure(isUserConfigured)
+      }
+    }
+  }
+
+  internal fun awaitPublishConfigured(
+    configure: GradleConventionsPublish.(isConfigured: Boolean) -> Unit,
+  ) {
+    publish.configure(isPublishConfigured)
+    configureListeners += object : GradleConventionsConfigurableListener {
+      override fun GradleConventionsPublish.onPublishConfigured(isUserConfigured: Boolean) {
         configure(isUserConfigured)
       }
     }
@@ -137,6 +150,19 @@ abstract class GradleConventionsPluginExtension {
     configureListeners.forEach { listener ->
       with(listener) {
         projectCommon.onProjectCommonConfigured(isProjectCommonConfigured)
+      }
+    }
+  }
+
+  private var isPublishConfigured: Boolean = false
+  internal val publish = GradleConventionsPublish()
+
+  fun publish(action: Action<GradleConventionsPublish>) {
+    action.execute(publish)
+    isPublishConfigured = true
+    configureListeners.forEach { listener ->
+      with(listener) {
+        publish.onPublishConfigured(isPublishConfigured)
       }
     }
   }
