@@ -34,3 +34,22 @@ public fun RepositoryHandler.mavenCentralSnapshotsS01(
     action.execute(this)
   }
 }
+
+/**
+ * see [here](https://central.sonatype.org/publish/publish-portal-snapshots/#consuming-via-gradle)
+ */
+@JvmOverloads
+public fun RepositoryHandler.mavenCentralPublishSnapshots(
+  action: Action<MavenArtifactRepository> = Actions.doNothing(),
+) {
+  maven {
+    name = "Central Portal Snapshots"
+    setUrl("https://central.sonatype.com/repository/maven-snapshots/")
+
+    mavenContent {
+      snapshotsOnly()
+    }
+
+    action.execute(this)
+  }
+}
