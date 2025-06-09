@@ -1,5 +1,4 @@
 import com.eygraber.conventions.kotlin.KotlinOptIn
-import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 buildscript {
@@ -29,9 +28,5 @@ gradleConventionsDefaults {
     jvmTargetVersion = JvmTarget.JVM_17
     allWarningsAsErrors = true
     optIns = setOf(KotlinOptIn.RequiresOptIn)
-  }
-
-  publish {
-    host = SonatypeHost.CENTRAL_PORTAL
   }
 }
