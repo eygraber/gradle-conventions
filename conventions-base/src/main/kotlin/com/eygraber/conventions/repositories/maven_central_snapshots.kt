@@ -39,7 +39,7 @@ public fun RepositoryHandler.mavenCentralSnapshotsS01(
  * see [here](https://central.sonatype.org/publish/publish-portal-snapshots/#consuming-via-gradle)
  */
 @JvmOverloads
-public fun RepositoryHandler.mavenCentralPublishSnapshots(
+public fun RepositoryHandler.mavenCentralPortalSnapshots(
   action: Action<MavenArtifactRepository> = Actions.doNothing(),
 ) {
   maven {

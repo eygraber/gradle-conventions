@@ -66,9 +66,7 @@ abstract class GradleConventionsPlugin : Plugin<Project> {
           projectCommon.projectDependencies = projectDependencies
         }
 
-        awaitPublishConfigured {
-          publish.host = host
-        }
+        awaitPublishConfigured {}
 
         awaitDetektConfigured {
           detekt.ignoredAndroidFlavors = ignoredAndroidFlavors
