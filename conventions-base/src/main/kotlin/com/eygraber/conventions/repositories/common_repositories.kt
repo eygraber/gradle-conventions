@@ -46,6 +46,7 @@ public fun RepositoryHandler.addCommonRepositories(
   if(includeMavenCentralSnapshots) {
     mavenCentralSnapshots(mavenCentralSnapshots)
     mavenCentralSnapshotsS01(mavenCentralSnapshots)
+    mavenCentralPortalSnapshots(mavenCentralSnapshots)
   }
 
   if(includeMavenCentral) {
