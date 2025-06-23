@@ -220,13 +220,15 @@ fun KotlinMultiplatformExtension.configureKmpTargets(
   if(android) {
     project.plugins.withId("com.android.library") {
       androidTarget {
-        publishAllLibraryVariants()
+        // publishAllLibraryVariants() was deprecated in Kotlin 2.2.0
+        publishLibraryVariants = null
       }
     }
 
     project.plugins.withId("com.android.application") {
       androidTarget {
-        publishAllLibraryVariants()
+        // publishAllLibraryVariants() was deprecated in Kotlin 2.2.0
+        publishLibraryVariants = null
       }
     }
   }
