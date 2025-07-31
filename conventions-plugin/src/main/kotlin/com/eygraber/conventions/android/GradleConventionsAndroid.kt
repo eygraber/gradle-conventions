@@ -32,6 +32,11 @@ class GradleConventionsAndroid {
    */
   var doNotRunLintWhenRunningReleaseBuildTasks: Boolean? = null
 
+  /**
+   * If this is `true` then there will be test sources even if there are no tests, which will cause an error in Gradle 9
+   */
+  var isIncludeAndroidResources: Boolean = false
+
   internal var coreLibraryDesugaringDependency: Any? = null
 
   internal var flavors: MutableList<Pair<String, List<ProductFlavor>>> = mutableListOf()
