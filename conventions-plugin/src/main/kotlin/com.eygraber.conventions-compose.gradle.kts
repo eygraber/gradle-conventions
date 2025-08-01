@@ -18,14 +18,15 @@ ext.compose.includeTraceMarkers = composeDefaults.includeTraceMarkers
 ext.compose.targetKotlinPlatforms = composeDefaults.targetKotlinPlatforms
 
 ext.awaitComposeConfigured {
+  val gceExt = ext
   with(extensions.getByType<ComposeCompilerGradlePluginExtension>()) {
-    ext.compose.includeSourceInformation?.let { includeSourceInformation = it }
-    ext.compose.metricsDestination?.let { metricsDestination = it }
-    ext.compose.reportsDestination?.let { reportsDestination = it }
-    ext.compose.stabilityConfigurationFiles?.let { stabilityConfigurationFiles.addAll(it) }
-    ext.compose.includeTraceMarkers?.let { includeTraceMarkers = it }
-    ext.compose.targetKotlinPlatforms?.let { targetKotlinPlatforms = it }
+    gceExt.compose.includeSourceInformation?.let { includeSourceInformation = it }
+    gceExt.compose.metricsDestination?.let { metricsDestination = it }
+    gceExt.compose.reportsDestination?.let { reportsDestination = it }
+    gceExt.compose.stabilityConfigurationFiles?.let { stabilityConfigurationFiles.addAll(it) }
+    gceExt.compose.includeTraceMarkers?.let { includeTraceMarkers = it }
+    gceExt.compose.targetKotlinPlatforms?.let { targetKotlinPlatforms = it }
 
-    ext.compose.featureFlags?.let { featureFlags = it }
+    gceExt.compose.featureFlags?.let { featureFlags = it }
   }
 }

@@ -15,9 +15,9 @@ gradlePlugin {
 }
 
 dependencies {
-  api(project(":conventions-base"))
-  api(project(":conventions-detekt"))
-  api(project(":conventions-kotlin"))
+  api(projects.conventionsBase)
+  api(projects.conventionsDetekt)
+  api(projects.conventionsKotlin)
 
   compileOnly(libs.buildscript.android)
   compileOnly(libs.buildscript.androidCacheFix)
