@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 public fun Project.configureDetekt(
-  jvmTargetVersion: Provider<JvmTarget?>,
+  jvmTargetVersion: Provider<JvmTarget>,
   useRootConfigFile: Boolean = true,
   useProjectConfigFile: Boolean = true,
   configFiles: ConfigurableFileCollection = files(),
@@ -22,7 +22,7 @@ public fun Project.configureDetekt(
   configure: Action<DetektExtension> = Actions.doNothing(),
 ) {
   configureDetekt(
-    jvmTargetVersion.get(),
+    jvmTargetVersion.orNull,
     useRootConfigFile,
     useProjectConfigFile,
     configFiles,
@@ -67,26 +67,28 @@ public fun Project.configureDetekt(
     configure.execute(this)
   }
 
-  tasks.withType(Detekt::class.java).configureEach {
-    // Target version of the generated JVM bytecode. It is used for type resolution.
-    if(jvmTargetVersion == null) {
-      var jvmTargetSet = false
-      tasks.withType(KotlinCompilationTask::class.java).configureEach {
-        if(this is KotlinJvmCompile && !jvmTargetSet) {
-          jvmTarget = compilerOptions.jvmTarget.get().target
-          jvmTargetSet = true
+  tasks.withType(Detekt::class.java).configureEach { task ->
+    with(task) {
+      // Target version of the generated JVM bytecode. It is used for type resolution.
+      if(jvmTargetVersion == null) {
+        var jvmTargetSet = false
+        tasks.withType(KotlinCompilationTask::class.java).configureEach {
+          if(this is KotlinJvmCompile && !jvmTargetSet) {
+            jvmTarget = compilerOptions.jvmTarget.get().target
+            jvmTargetSet = true
+          }
         }
       }
-    }
-    else {
-      jvmTarget = jvmTargetVersion.target
-    }
+      else {
+        jvmTarget = jvmTargetVersion.target
+      }
 
-    val projectDir = projectDir
-    val buildDir = project.layout.buildDirectory.asFile.get()
+      val projectDir = projectDir
+      val buildDir = project.layout.buildDirectory.asFile.get()
 
-    exclude {
-      it.file.relativeTo(projectDir).startsWith(buildDir.relativeTo(projectDir))
+      exclude {
+        it.file.relativeTo(projectDir).startsWith(buildDir.relativeTo(projectDir))
+      }
     }
   }
 }

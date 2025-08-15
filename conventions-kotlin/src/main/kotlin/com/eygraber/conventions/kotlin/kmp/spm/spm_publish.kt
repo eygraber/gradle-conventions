@@ -49,19 +49,20 @@ internal fun Project.registerPublishDebugSpm(
 ) {
   val rootFile = rootDir
 
-  tasks.register("publish${frameworkName}DebugSPM") {
-    group = "spm"
+  tasks.register("publish${frameworkName}DebugSPM") { task ->
+    with(task) {
+      group = "spm"
 
-    onlyIf { HostManager.hostIsMac }
+      onlyIf { HostManager.hostIsMac }
 
-    val xcFrameworkDir = assembleXCFrameworkDebugTask.map { task -> task.outputs.files.first() }
-    inputs.files(xcFrameworkDir)
+      val xcFrameworkDir = assembleXCFrameworkDebugTask.map { task -> task.outputs.files.first() }
+      inputs.files(xcFrameworkDir)
 
-    outputs.files(packageDotSwiftFile)
+      outputs.files(packageDotSwiftFile)
 
-    doLast {
-      packageDotSwiftFile.writeText(
-        """
+      doLast {
+        packageDotSwiftFile.writeText(
+          """
         |// swift-tools-version:5.3
         |import PackageDescription
         |
@@ -86,8 +87,9 @@ internal fun Project.registerPublishDebugSpm(
         |        ,
         |    ]
         |)
-        """.trimMargin(),
-      )
+          """.trimMargin(),
+        )
+      }
     }
   }
 }
@@ -107,28 +109,29 @@ internal fun Project.registerPublishReleaseSpm(
 
   val publishTask = publishTaskFactory(zipTask)
 
-  tasks.register("publish${frameworkName}ReleaseSPM") {
-    group = "spm"
+  tasks.register("publish${frameworkName}ReleaseSPM") { task ->
+    with(task) {
+      group = "spm"
 
-    onlyIf { HostManager.hostIsMac }
+      onlyIf { HostManager.hostIsMac }
 
-    dependsOn(publishTask)
+      dependsOn(publishTask)
 
-    val publishedUrl = publishTask.flatMap { task -> task.publishedUrl }
-    val zipFile = zipTask.flatMap { task -> task.archiveFile }
+      val publishedUrl = publishTask.flatMap { task -> task.publishedUrl }
+      val zipFile = zipTask.flatMap { task -> task.archiveFile }
 
-    inputs.property("publishedUrl", publishedUrl)
-    inputs.files(zipFile)
+      inputs.property("publishedUrl", publishedUrl)
+      inputs.files(zipFile)
 
-    outputs.files(packageDotSwiftFile)
+      outputs.files(packageDotSwiftFile)
 
-    doLast {
-      require(publishedUrl.isPresent) {
-        "The PublishXCFrameworkTask did not populate the publishedUrl property"
-      }
+      doLast {
+        require(publishedUrl.isPresent) {
+          "The PublishXCFrameworkTask did not populate the publishedUrl property"
+        }
 
-      packageDotSwiftFile.writeText(
-        """
+        packageDotSwiftFile.writeText(
+          """
         |// swift-tools-version:5.3
         |import PackageDescription
         |
@@ -154,8 +157,9 @@ internal fun Project.registerPublishReleaseSpm(
         |        ,
         |    ]
         |)
-        """.trimMargin(),
-      )
+          """.trimMargin(),
+        )
+      }
     }
   }
 }
