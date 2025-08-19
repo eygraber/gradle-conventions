@@ -9,7 +9,6 @@ import org.gradle.api.services.BuildServiceParameters
 import javax.inject.Inject
 
 interface GradleConventionsKmp {
-  var createCommonJsSourceSet: Boolean
   var webOptions: KmpTarget.WebOptions
 
   var binaryType: BinaryType
@@ -19,8 +18,6 @@ interface GradleConventionsKmp {
 }
 
 internal abstract class GradleConventionsKmpDefaults : BuildService<BuildServiceParameters.None>, GradleConventionsKmp {
-  override var createCommonJsSourceSet: Boolean = true
-
   override var binaryType: BinaryType = BinaryType.Library
   override var webOptions = KmpTarget.WebOptions()
 
