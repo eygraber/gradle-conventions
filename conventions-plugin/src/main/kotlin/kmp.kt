@@ -1,13 +1,8 @@
 import com.eygraber.conventions.detekt.configureDetektForMultiplatform
 import com.eygraber.conventions.gradleConventionsKmpDefaultsService
-import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.named
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
 import org.jetbrains.kotlin.tooling.core.toKotlinVersion
 
@@ -43,7 +38,6 @@ fun KotlinMultiplatformExtension.defaultKmpTargets(
   project: Project,
   webOptions: KmpTarget.WebOptions = project.gradleConventionsKmpDefaultsService.webOptions,
   binaryType: BinaryType = project.gradleConventionsKmpDefaultsService.binaryType,
-  createCommonJsSourceSet: Boolean = project.gradleConventionsKmpDefaultsService.createCommonJsSourceSet,
   applyDefaultHierarchy: Boolean = true,
 ) {
   val defaultTargets = project.gradleConventionsKmpDefaultsService.targets
@@ -56,7 +50,6 @@ fun KotlinMultiplatformExtension.defaultKmpTargets(
     project = project,
     webOptions = webOptions,
     binaryType = binaryType,
-    createCommonJsSourceSet = createCommonJsSourceSet,
     ignoreDefaultTargets = false,
     applyDefaultHierarchy = applyDefaultHierarchy,
   )
@@ -66,7 +59,6 @@ fun KotlinMultiplatformExtension.allKmpTargets(
   project: Project,
   webOptions: KmpTarget.WebOptions = project.gradleConventionsKmpDefaultsService.webOptions,
   binaryType: BinaryType = project.gradleConventionsKmpDefaultsService.binaryType,
-  createCommonJsSourceSet: Boolean = project.gradleConventionsKmpDefaultsService.createCommonJsSourceSet,
   applyDefaultHierarchy: Boolean = true,
 ) {
   val isBrowserEnabled = when(binaryType) {
@@ -83,7 +75,6 @@ fun KotlinMultiplatformExtension.allKmpTargets(
     wasmJsModuleName = webOptions.moduleName,
     wasmJsNode = webOptions.isNodeEnabled,
     binaryType = binaryType,
-    createCommonJsSourceSet = createCommonJsSourceSet,
     applyDefaultHierarchy = applyDefaultHierarchy,
   )
 }
@@ -94,7 +85,6 @@ fun KotlinMultiplatformExtension.kmpTargets(
   project: Project,
   webOptions: KmpTarget.WebOptions = project.gradleConventionsKmpDefaultsService.webOptions,
   binaryType: BinaryType = project.gradleConventionsKmpDefaultsService.binaryType,
-  createCommonJsSourceSet: Boolean = project.gradleConventionsKmpDefaultsService.createCommonJsSourceSet,
   ignoreDefaultTargets: Boolean = false,
   applyDefaultHierarchy: Boolean = true,
 ) {
@@ -130,7 +120,6 @@ fun KotlinMultiplatformExtension.kmpTargets(
       wasmWasi = KmpTarget.WasmWasi in finalTargets,
       watchos = KmpTarget.Watchos in finalTargets,
       binaryType = binaryType,
-      createCommonJsSourceSet = createCommonJsSourceSet,
       applyDefaultHierarchy = applyDefaultHierarchy,
     )
   }
@@ -145,7 +134,6 @@ fun KotlinMultiplatformExtension.configureAllKmpTargets(
   wasmJsNode: Boolean = true,
   wasmJsModuleName: String? = null,
   binaryType: BinaryType = BinaryType.Library,
-  createCommonJsSourceSet: Boolean = true,
   applyDefaultHierarchy: Boolean = true,
 ) {
   configureKmpTargets(
@@ -169,7 +157,6 @@ fun KotlinMultiplatformExtension.configureAllKmpTargets(
     wasmJsNode = wasmJsNode,
     wasmJsModuleName = wasmJsModuleName,
     binaryType = binaryType,
-    createCommonJsSourceSet = createCommonJsSourceSet,
     requireAtLeastOneTarget = true,
     applyDefaultHierarchy = applyDefaultHierarchy,
   )
@@ -196,7 +183,6 @@ fun KotlinMultiplatformExtension.configureKmpTargets(
   wasmJsNode: Boolean = true,
   wasmJsModuleName: String? = null,
   binaryType: BinaryType = BinaryType.Library,
-  createCommonJsSourceSet: Boolean = true,
   requireAtLeastOneTarget: Boolean = true,
   applyDefaultHierarchy: Boolean = true,
 ) {
@@ -435,12 +421,6 @@ fun KotlinMultiplatformExtension.configureKmpTargets(
     jvm()
   }
 
-  if(createCommonJsSourceSet) {
-    createJsHierarchyGroups(
-      isBrowserEnabled = jsBrowser,
-    )
-  }
-
   project.afterEvaluate {
     project.configureDetektForMultiplatform(
       targets = targets,
@@ -448,53 +428,3 @@ fun KotlinMultiplatformExtension.configureKmpTargets(
     )
   }
 }
-
-private fun KotlinMultiplatformExtension.createJsHierarchyGroups(
-  isBrowserEnabled: Boolean,
-) {
-  val js = targets.findByName("js")
-  val wasmJs = targets.findByName("wasmJs")
-
-  if(js != null || wasmJs != null) {
-    @OptIn(ExperimentalKotlinGradlePluginApi::class)
-    applyDefaultHierarchyTemplate {
-      common {
-        group("commonJs") {
-          withJs()
-          withWasmJs()
-        }
-
-        if(isBrowserEnabled) {
-          group("web") {
-            withJs()
-            withWasmJs()
-          }
-        }
-      }
-    }
-  }
-}
-
-/**
- * Provides the existing [commonJsMain][KotlinSourceSet] element.
- */
-public val NamedDomainObjectContainer<KotlinSourceSet>.commonJsMain: NamedDomainObjectProvider<KotlinSourceSet>
-  get() = named<KotlinSourceSet>("commonJsMain")
-
-/**
- * Provides the existing [commonJsTest][KotlinSourceSet] element.
- */
-public val NamedDomainObjectContainer<KotlinSourceSet>.commonJsTest: NamedDomainObjectProvider<KotlinSourceSet>
-  get() = named<KotlinSourceSet>("commonJsTest")
-
-/**
- * Provides the existing [webMain][KotlinSourceSet] element.
- */
-public val NamedDomainObjectContainer<KotlinSourceSet>.webMain: NamedDomainObjectProvider<KotlinSourceSet>
-  get() = named<KotlinSourceSet>("webMain")
-
-/**
- * Provides the existing [webTest][KotlinSourceSet] element.
- */
-public val NamedDomainObjectContainer<KotlinSourceSet>.webTest: NamedDomainObjectProvider<KotlinSourceSet>
-  get() = named<KotlinSourceSet>("webTest")
