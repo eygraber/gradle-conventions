@@ -1,7 +1,7 @@
 package com.eygraber.conventions.detekt
 
-import io.gitlab.arturbosch.detekt.Detekt
-import io.gitlab.arturbosch.detekt.extensions.DetektExtension
+import dev.detekt.gradle.Detekt
+import dev.detekt.gradle.extensions.DetektExtension
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
@@ -44,10 +44,10 @@ public fun Project.configureDetekt(
   detekt {
     source.from("build.gradle.kts")
 
-    autoCorrect = true
-    parallel = true
+    autoCorrect.set(true)
+    parallel.set(true)
 
-    buildUponDefaultConfig = true
+    buildUponDefaultConfig.set(true)
 
     val rootConfig = rootProject.file("detekt.yml")
     if(useRootConfigFile && rootConfig.exists()) {
@@ -61,8 +61,8 @@ public fun Project.configureDetekt(
 
     config.from(configFiles)
 
-    ignoredFlavors = ignoredFlavors + ignoredAndroidFlavors
-    ignoredVariants = ignoredVariants + ignoredAndroidVariants
+    ignoredFlavors.addAll(ignoredAndroidFlavors)
+    ignoredVariants.addAll(ignoredAndroidVariants)
 
     configure.execute(this)
   }
@@ -73,13 +73,12 @@ public fun Project.configureDetekt(
       var jvmTargetSet = false
       tasks.withType(KotlinCompilationTask::class.java).configureEach {
         if(this is KotlinJvmCompile && !jvmTargetSet) {
-          jvmTarget = compilerOptions.jvmTarget.get().target
+          jvmTarget.set(compilerOptions.jvmTarget.map { it.target })
           jvmTargetSet = true
         }
       }
-    }
-    else {
-      jvmTarget = jvmTargetVersion.target
+    } else {
+      jvmTarget.set(jvmTargetVersion.target)
     }
 
     val projectDir = projectDir
