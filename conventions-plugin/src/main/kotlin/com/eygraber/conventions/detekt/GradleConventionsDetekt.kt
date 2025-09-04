@@ -9,6 +9,12 @@ class GradleConventionsDetekt {
 
   internal var detektPluginDependencies: MutableList<Any> = mutableListOf()
 
+  var autoCorrect: Boolean = true
+  var parallel: Boolean = true
+  var debug: Boolean = false
+  var enableCompilerPlugin: Boolean = true
+  var buildUponDefaultConfig: Boolean = true
+
   fun ignoreAndroidFlavors(vararg flavors: String) {
     ignoredAndroidFlavors += flavors
   }
