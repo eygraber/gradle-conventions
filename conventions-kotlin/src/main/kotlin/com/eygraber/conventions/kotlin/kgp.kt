@@ -9,6 +9,7 @@ import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JvmVendorSpec
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
+import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
@@ -141,6 +142,12 @@ public fun Project.configureKgp(
           }
         }
       }
+
+      if(this is HasConfigurableKotlinCompilerOptions<*>) {
+        compilerOptions.freeCompilerArgs.addAll(
+          freeCompilerArgs.map { freeCompilerArg -> freeCompilerArg.value },
+        )
+      }
     }
 
     tasks.withType(KotlinCompilationTask::class.java).configureEach {
@@ -167,9 +174,6 @@ public fun Project.configureKgp(
           }
         }
       }
-      compilerOptions.freeCompilerArgs.addAll(
-        freeCompilerArgs.map { freeCompilerArg -> freeCompilerArg.value },
-      )
       if(!isKmp) {
         if(project.kotlinToolingVersion.toKotlinVersion().isAtLeast(major = 1, minor = 9)) {
           compilerOptions.optIn.addAll(optIns.map(KotlinOptIn::value))
