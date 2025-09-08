@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.tooling.core.toKotlinVersion
 
 public fun Project.configureKgp(
-  jvmTargetVersion: Provider<JvmTarget?>,
-  jdkToolchainVersion: Provider<JavaLanguageVersion?>,
+  jvmTargetVersion: Provider<JvmTarget>,
+  jdkToolchainVersion: Provider<JavaLanguageVersion>,
   jvmDistribution: JvmVendorSpec? = null,
   allWarningsAsErrors: Boolean = true,
   explicitApiMode: ExplicitApiMode = ExplicitApiMode.Disabled,
@@ -34,8 +34,8 @@ public fun Project.configureKgp(
   freeCompilerArgs: List<KotlinFreeCompilerArg> = emptyList(),
   vararg optIns: KotlinOptIn,
 ): JavaVersion = configureKgp(
-  jvmTargetVersion = jvmTargetVersion.get(),
-  jdkToolchainVersion.get(),
+  jvmTargetVersion = jvmTargetVersion.orNull,
+  jdkToolchainVersion.orNull,
   jvmDistribution,
   allWarningsAsErrors,
   explicitApiMode,
@@ -100,9 +100,9 @@ public fun Project.configureKgp(
   }
 
   if(configureJavaTargetVersion && jvmTargetVersion != null) {
-    tasks.withType(JavaCompile::class.java) {
-      sourceCompatibility = jvmTargetVersion.target
-      targetCompatibility = jvmTargetVersion.target
+    tasks.withType(JavaCompile::class.java) { java ->
+      java.sourceCompatibility = jvmTargetVersion.target
+      java.targetCompatibility = jvmTargetVersion.target
     }
   }
 
@@ -118,27 +118,27 @@ public fun Project.configureKgp(
       if(jdkToolchainVersion == null) {
         if(JavaVersion.current() != buildJavaVersion) {
           plugins.withType(JavaBasePlugin::class.java) {
-            jvmToolchain {
-              languageVersion.set(JavaLanguageVersion.of(buildJavaVersion.majorVersion.toInt()))
+            jvmToolchain { toolchain ->
+              toolchain.languageVersion.set(JavaLanguageVersion.of(buildJavaVersion.majorVersion.toInt()))
             }
           }
         }
       }
       else {
         plugins.withType(JavaBasePlugin::class.java) {
-          jvmToolchain {
-            languageVersion.set(jdkToolchainVersion)
+          jvmToolchain { toolchain ->
+            toolchain.languageVersion.set(jdkToolchainVersion)
             if(jvmDistribution != null) {
-              vendor.set(jvmDistribution)
+              toolchain.vendor.set(jvmDistribution)
             }
           }
         }
       }
 
       if(isKmp) {
-        sourceSets.configureEach {
+        sourceSets.configureEach { sourceSet ->
           for(optIn in optIns) {
-            languageSettings.optIn(optIn.value)
+            sourceSet.languageSettings.optIn(optIn.value)
           }
         }
       }
@@ -150,37 +150,39 @@ public fun Project.configureKgp(
       }
     }
 
-    tasks.withType(KotlinCompilationTask::class.java).configureEach {
-      compilerOptions.allWarningsAsErrors.set(allWarningsAsErrors)
-      if(this is KotlinJvmCompile) {
-        if(jvmTargetVersion != null) {
-          compilerOptions.jvmTarget.set(jvmTargetVersion)
-        }
-        if(kotlinLanguageVersion != null) {
-          compilerOptions.languageVersion.set(kotlinLanguageVersion)
-        }
-        if(kotlinApiVersion != null) {
-          compilerOptions.apiVersion.set(kotlinApiVersion)
-        }
+    tasks.withType(KotlinCompilationTask::class.java).configureEach { task ->
+      with(task) {
+        compilerOptions.allWarningsAsErrors.set(allWarningsAsErrors)
+        if(this is KotlinJvmCompile) {
+          if(jvmTargetVersion != null) {
+            compilerOptions.jvmTarget.set(jvmTargetVersion)
+          }
+          if(kotlinLanguageVersion != null) {
+            compilerOptions.languageVersion.set(kotlinLanguageVersion)
+          }
+          if(kotlinApiVersion != null) {
+            compilerOptions.apiVersion.set(kotlinApiVersion)
+          }
 
-        if(project.kotlinToolingVersion.toKotlinVersion().isAtLeast(major = 1, minor = 9)) {
-          compilerOptions.progressiveMode.set(isProgressiveModeEnabled)
-        }
-        else {
-          if(isProgressiveModeEnabled) {
-            compilerOptions.freeCompilerArgs.addAll(
-              "-progressive",
-            )
+          if(project.kotlinToolingVersion.toKotlinVersion().isAtLeast(major = 1, minor = 9)) {
+            compilerOptions.progressiveMode.set(isProgressiveModeEnabled)
+          }
+          else {
+            if(isProgressiveModeEnabled) {
+              compilerOptions.freeCompilerArgs.addAll(
+                "-progressive",
+              )
+            }
           }
         }
-      }
-      if(!isKmp) {
-        if(project.kotlinToolingVersion.toKotlinVersion().isAtLeast(major = 1, minor = 9)) {
-          compilerOptions.optIn.addAll(optIns.map(KotlinOptIn::value))
-        } else {
-          compilerOptions.freeCompilerArgs.addAll(
-            optIns.map { optIn -> "-opt-in=${optIn.value}" },
-          )
+        if(!isKmp) {
+          if(project.kotlinToolingVersion.toKotlinVersion().isAtLeast(major = 1, minor = 9)) {
+            compilerOptions.optIn.addAll(optIns.map(KotlinOptIn::value))
+          } else {
+            compilerOptions.freeCompilerArgs.addAll(
+              optIns.map { optIn -> "-opt-in=${optIn.value}" },
+            )
+          }
         }
       }
     }

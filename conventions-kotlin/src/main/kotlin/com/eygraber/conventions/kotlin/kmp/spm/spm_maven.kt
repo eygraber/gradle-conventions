@@ -33,10 +33,10 @@ public fun Project.registerPublishSpmToMavenTasks(
       val artifactName =
         "${CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, frameworkName)}-${project.name}"
 
-      tasks.register("publish${frameworkName}ToMaven", PublishXCFrameworkTask::class.java) {
-        dependsOn(publishTask)
+      tasks.register("publish${frameworkName}ToMaven", PublishXCFrameworkTask::class.java) { task ->
+        task.dependsOn(publishTask)
 
-        publishedUrl.set(
+        task.publishedUrl.set(
           publishTask.map { t ->
             "${t.repository.url}/${rootProject.name}/$artifactName/$artifactVersion/$artifactName-$artifactVersion.zip"
           },
@@ -56,10 +56,10 @@ internal fun Project.createXCFrameworkMavenPublication(
   val artifactName = "${CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, frameworkName)}-${project.name}"
 
   val publishTasks = with(extensions.getByType(PublishingExtension::class.java)) {
-    publications.create(publicationName, MavenPublication::class.java) {
-      version = artifactVersion
-      artifactId = artifactName
-      artifact(zipTask.flatMap { task -> task.archiveFile })
+    publications.create(publicationName, MavenPublication::class.java) { publication ->
+      publication.version = artifactVersion
+      publication.artifactId = artifactName
+      publication.artifact(zipTask.flatMap { task -> task.archiveFile })
     }
 
     repositories
@@ -82,7 +82,7 @@ internal fun Project.createXCFrameworkMavenPublication(
     "There are no publishing tasks for $publicationName; do you have any remote Maven repositories defined?"
   }.also { task ->
     task.configure {
-      onlyIf { HostManager.hostIsMac }
+      it.onlyIf { HostManager.hostIsMac }
     }
   }
 }

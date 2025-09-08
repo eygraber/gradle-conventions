@@ -8,7 +8,6 @@ import io.gitlab.arturbosch.detekt.extensions.DetektReport
 import io.gitlab.arturbosch.detekt.extensions.DetektReports
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -89,9 +88,9 @@ public fun Project.configureDetektForMultiplatform(
   sourceSetToDependantTaskProviders.forEach { (sourceSet, dependentTaskProviders) ->
     val taskName = sourceSet.taskName
 
-    tasks.named(taskName).configure {
+    tasks.named(taskName).configure { task ->
       dependentTaskProviders.forEach { dependentTaskProvider ->
-        dependsOn(dependentTaskProvider)
+        task.dependsOn(dependentTaskProvider)
       }
     }
   }
@@ -102,22 +101,24 @@ public fun Project.configureDetektForMultiplatform(
 public fun Project.registerDetektTask(
   name: String,
   sourceSet: KotlinSourceSet,
-): TaskProvider<Detekt> = tasks.register("detekt${name.capitalize()}", Detekt::class.java) {
+): TaskProvider<Detekt> = tasks.register("detekt${name.capitalize()}", Detekt::class.java) { task ->
   val detekt = detekt
 
-  debug = detekt.debug
-  parallel = detekt.parallel
-  disableDefaultRuleSets = detekt.disableDefaultRuleSets
-  buildUponDefaultConfig = detekt.buildUponDefaultConfig
-  autoCorrect = detekt.autoCorrect
-  config.setFrom(detekt.config)
-  ignoreFailures = detekt.ignoreFailures
-  detekt.basePath?.let { detektBasePath -> basePath = detektBasePath }
-  allRules = detekt.allRules
+  with(task) {
+    debug = detekt.debug
+    parallel = detekt.parallel
+    disableDefaultRuleSets = detekt.disableDefaultRuleSets
+    buildUponDefaultConfig = detekt.buildUponDefaultConfig
+    autoCorrect = detekt.autoCorrect
+    config.setFrom(detekt.config)
+    ignoreFailures = detekt.ignoreFailures
+    detekt.basePath?.let { detektBasePath -> basePath = detektBasePath }
+    allRules = detekt.allRules
 
-  setSource(sourceSet.kotlin.sourceDirectories)
-  setReportOutputConventions(reports, detekt, name)
-  description = "Run detekt analysis for source set $name"
+    setSource(sourceSet.kotlin.sourceDirectories)
+    setReportOutputConventions(reports, detekt, name)
+    description = "Run detekt analysis for source set $name"
+  }
 }
 
 private val KotlinCompilation<*>.ancestorSourceSets: Set<KotlinSourceSet> get() = allKotlinSourceSets - kotlinSourceSets
@@ -133,10 +134,10 @@ private fun Project.includeAncestorSourcesInTargetDetektTask(
   ancestorSourceSets: Set<KotlinSourceSet>,
   sourceSetsUsedForTypeResolution: MutableSet<KotlinSourceSet>,
 ) {
-  tasks.named<Detekt>(taskName).configure {
+  tasks.named(taskName, Detekt::class.java).configure { task ->
     ancestorSourceSets.forEach { ancestorSourceSet ->
       if(sourceSetsUsedForTypeResolution.add(ancestorSourceSet)) {
-        source(ancestorSourceSet.kotlin.sourceDirectories)
+        task.source(ancestorSourceSet.kotlin.sourceDirectories)
       }
     }
   }

@@ -8,9 +8,9 @@ public fun Project.doOnFirstMatchingIncomingDependencyBeforeResolution(
   dependencyPredicate: Dependency.() -> Boolean,
   onMatch: (Dependency) -> Unit,
 ) {
-  configurations.named(configurationName).configure {
-    incoming.beforeResolve {
-      for(dependency in dependencies) {
+  configurations.named(configurationName).configure { configuration ->
+    configuration.incoming.beforeResolve {
+      for(dependency in configuration.dependencies) {
         if(dependencyPredicate(dependency)) {
           onMatch(dependency)
           break

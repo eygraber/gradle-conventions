@@ -49,18 +49,20 @@ public fun Project.registerZipXCFrameworkTask(
   assembleXCFrameworkReleaseTask: TaskProvider<XCFrameworkTask>,
   outputDirectory: Provider<Directory>,
 ): TaskProvider<Zip> =
-  tasks.register("zip${frameworkName}ReleaseXCFramework", Zip::class.java) {
-    group = "spm"
+  tasks.register("zip${frameworkName}ReleaseXCFramework", Zip::class.java) { task ->
+    with(task) {
+      group = "spm"
 
-    onlyIf { HostManager.hostIsMac }
+      onlyIf { HostManager.hostIsMac }
 
-    dependsOn(assembleXCFrameworkReleaseTask)
+      dependsOn(assembleXCFrameworkReleaseTask)
 
-    from(assembleXCFrameworkReleaseTask.map { task -> task.outputs.files })
-    into("$frameworkName.xcframework")
+      from(assembleXCFrameworkReleaseTask.map { task -> task.outputs.files })
+      into("$frameworkName.xcframework")
 
-    destinationDirectory.set(outputDirectory)
-    archiveFileName.set("$frameworkName.xcframework.zip")
+      destinationDirectory.set(outputDirectory)
+      archiveFileName.set("$frameworkName.xcframework.zip")
+    }
   }
 
 private fun Project.findXCFrameworkAssembleTask(
@@ -68,7 +70,7 @@ private fun Project.findXCFrameworkAssembleTask(
   buildType: NativeBuildType,
 ): TaskProvider<XCFrameworkTask> {
   @Suppress("Deprecation")
-  val buildTypeString = buildType.name.toLowerCase(Locale.US).capitalize()
+  val buildTypeString = buildType.name.lowercase(Locale.US).capitalize()
 
   val taskName = when(project.name) {
     frameworkName -> "assemble${buildTypeString}XCFramework"
