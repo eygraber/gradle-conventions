@@ -1,11 +1,10 @@
 package com.eygraber.conventions.detekt
 
 import com.eygraber.conventions.tasks.dependsOn
-import io.gitlab.arturbosch.detekt.Detekt
-import io.gitlab.arturbosch.detekt.DetektPlugin
-import io.gitlab.arturbosch.detekt.extensions.DetektExtension
-import io.gitlab.arturbosch.detekt.extensions.DetektReport
-import io.gitlab.arturbosch.detekt.extensions.DetektReports
+import dev.detekt.gradle.Detekt
+import dev.detekt.gradle.extensions.DetektExtension
+import dev.detekt.gradle.extensions.DetektReport
+import dev.detekt.gradle.extensions.DetektReports
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -48,7 +47,7 @@ public fun Project.configureDetektForMultiplatform(
       if(target.isTypeResolutionSupported) {
         if(ancestorSourceSets.isNotEmpty()) {
           includeAncestorSourcesInTargetDetektTask(
-            taskName = "${DetektPlugin.DETEKT_TASK_NAME}${nameForTask}$compilationName",
+            taskName = "detekt${nameForTask}$compilationName",
             ancestorSourceSets = ancestorSourceSets,
             sourceSetsUsedForTypeResolution = ancestorSourceSetsUsedForTypeResolution,
           )
@@ -105,15 +104,15 @@ public fun Project.registerDetektTask(
   val detekt = detekt
 
   with(task) {
-    debug = detekt.debug
-    parallel = detekt.parallel
-    disableDefaultRuleSets = detekt.disableDefaultRuleSets
-    buildUponDefaultConfig = detekt.buildUponDefaultConfig
-    autoCorrect = detekt.autoCorrect
+    debug.set(detekt.debug)
+    parallel.set(detekt.parallel)
+    disableDefaultRuleSets.set(detekt.disableDefaultRuleSets)
+    buildUponDefaultConfig.set(detekt.buildUponDefaultConfig)
+    autoCorrect.set(detekt.autoCorrect)
     config.setFrom(detekt.config)
-    ignoreFailures = detekt.ignoreFailures
-    detekt.basePath?.let { detektBasePath -> basePath = detektBasePath }
-    allRules = detekt.allRules
+    ignoreFailures.set(detekt.ignoreFailures)
+    basePath.set(detekt.basePath.map { it.asFile.absolutePath })
+    allRules.set(detekt.allRules)
 
     setSource(sourceSet.kotlin.sourceDirectories)
     setReportOutputConventions(reports, detekt, name)
@@ -145,17 +144,16 @@ private fun Project.includeAncestorSourcesInTargetDetektTask(
 
 private val KotlinSourceSet.taskName
   get() = when(name) {
-    "commonMain" -> "${DetektPlugin.DETEKT_TASK_NAME}MetadataMain"
-    "commonTest" -> "${DetektPlugin.DETEKT_TASK_NAME}MetadataTest"
-    else -> "${DetektPlugin.DETEKT_TASK_NAME}${name.capitalize()}"
+    "commonMain" -> "detektMetadataMain"
+    "commonTest" -> "detektMetadataTest"
+    else -> "detekt${name.capitalize()}"
   }
 
 private fun Project.setReportOutputConventions(reports: DetektReports, detekt: DetektExtension, name: String) {
-  setReportOutputConvention(detekt, reports.xml, name, "xml")
+  setReportOutputConvention(detekt, reports.checkstyle, name, "xml")
   setReportOutputConvention(detekt, reports.html, name, "html")
-  setReportOutputConvention(detekt, reports.txt, name, "txt")
   setReportOutputConvention(detekt, reports.sarif, name, "sarif")
-  setReportOutputConvention(detekt, reports.md, name, "md")
+  setReportOutputConvention(detekt, reports.markdown, name, "md")
 }
 
 private fun Project.setReportOutputConvention(
@@ -166,9 +164,9 @@ private fun Project.setReportOutputConvention(
 ) {
   report.outputLocation.convention(
     layout.projectDirectory.file(
-      providers.provider {
-        File(extension.reportsDir, "$name.$format").absolutePath
-      },
+      extension.reportsDir.map { reportsDir ->
+        File(reportsDir.asFile, "$name.$format").absolutePath
+      }
     ),
   )
 }
