@@ -126,8 +126,10 @@ ext.awaitAndroidConfigured { isAndroidUserConfigured ->
     }
 
     testOptions {
+      val isIncludeAndroidResourceConvention = isIncludeAndroidResources
+
       unitTests {
-        isIncludeAndroidResources = isIncludeAndroidResources
+        isIncludeAndroidResources = isIncludeAndroidResourceConvention
       }
     }
 
