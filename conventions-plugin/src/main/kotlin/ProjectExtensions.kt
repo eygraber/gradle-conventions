@@ -1,9 +1,8 @@
 @file:Suppress("NOTHING_TO_INLINE")
 
+import com.android.build.api.dsl.ApplicationExtension
+import com.android.build.api.dsl.LibraryExtension
 import com.android.build.api.variant.LibraryAndroidComponentsExtension
-import com.android.build.gradle.AppExtension
-import com.android.build.gradle.BaseExtension
-import com.android.build.gradle.LibraryExtension
 import com.vanniktech.maven.publish.MavenPublishBaseExtension
 import org.gradle.api.Action
 import org.gradle.api.Project
@@ -14,12 +13,8 @@ import org.gradle.api.publish.PublishingExtension
 import org.jetbrains.compose.ComposeExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
-internal inline fun Project.android(action: Action<BaseExtension>) {
-  action.execute(extensions.getByType(BaseExtension::class.java))
-}
-
-internal inline fun Project.androidApp(action: Action<AppExtension>) {
-  action.execute(extensions.getByType(AppExtension::class.java))
+internal inline fun Project.androidApp(action: Action<ApplicationExtension>) {
+  action.execute(extensions.getByType(ApplicationExtension::class.java))
 }
 
 internal inline fun Project.androidLibraryComponents(action: Action<LibraryAndroidComponentsExtension>) {
