@@ -34,7 +34,7 @@ ext.awaitKotlinConfigured { isKotlinUserConfigured ->
       parallel = parallel,
       debug = debug,
       enableCompilerPlugin = enableCompilerPlugin,
-      buildUponDefaultConfig = buildUponDefaultConfig
+      buildUponDefaultConfig = buildUponDefaultConfig,
     )
 
     dependencies {

@@ -93,7 +93,7 @@ public fun Project.configureDetekt2(
             jvmTarget.set(
               compilerOptions.jvmTarget.map { compilerOptionJvmTarget ->
                 compilerOptionJvmTarget.target
-              }
+              },
             )
             isJvmTargetSet = true
           }
