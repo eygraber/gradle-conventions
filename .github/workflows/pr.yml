@@ -56,7 +56,7 @@ jobs:
           gradle-version: wrapper
 
       - name: Run detekt with type resolution
-        run: ./gradlew :conventions-base:detektMain :conventions-detekt:detektMain :conventions-kotlin:detektMain
+        run: ./gradlew detekt detektMain detektTest
 
   ktlint:
     runs-on: ubuntu-latest
@@ -65,7 +65,6 @@ jobs:
 
       - name: Run ktlint
         run: ./format --no-format
-
 
 env:
   GRADLE_OPTS: -Dorg.gradle.daemon=false -Dkotlin.incremental=false -Dorg.gradle.jvmargs="-Xmx16g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8 -XX:MaxMetaspaceSize=1024m"

@@ -1,6 +1,7 @@
 name: Publish a snapshot release
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master

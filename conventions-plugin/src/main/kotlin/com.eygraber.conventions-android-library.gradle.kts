@@ -161,15 +161,13 @@ ext.awaitAndroidConfigured { isAndroidUserConfigured ->
       (dimension to disabledFlavors).takeIf { disabledFlavors.isNotEmpty() }
     }
     if(disabledFlavors.isNotEmpty()) {
-      val selector = selector().let {
-        var s = it
-        for((dimension, disabled) in disabledFlavors) {
-          for(disabledFlavor in disabled) {
-            s = s.withFlavor(dimension to disabledFlavor.name)
-          }
+      var s = selector()
+      for((dimension, disabled) in disabledFlavors) {
+        for(disabledFlavor in disabled) {
+          s = s.withFlavor(dimension to disabledFlavor.name)
         }
-        s
       }
+      val selector = s
 
       beforeVariants(selector) { variant ->
         variant.enable = false

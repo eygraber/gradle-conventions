@@ -1,7 +1,7 @@
 plugins {
   `kotlin-dsl`
   id("com.eygraber.conventions-kotlin-library")
-  id("com.eygraber.conventions-detekt")
+  //id("com.eygraber.conventions-detekt2")
   id("com.eygraber.conventions-publish-maven-central")
 }
 
@@ -24,6 +24,7 @@ dependencies {
   compileOnly(libs.buildscript.compose.compiler)
   compileOnly(libs.buildscript.compose.jetbrains)
   compileOnly(libs.buildscript.detekt)
+  compileOnly(libs.buildscript.detekt2)
   compileOnly(libs.buildscript.dokka)
   compileOnly(libs.buildscript.kotlin)
   compileOnly(libs.buildscript.publish)

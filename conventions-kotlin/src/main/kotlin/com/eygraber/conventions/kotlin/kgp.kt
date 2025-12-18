@@ -35,16 +35,16 @@ public fun Project.configureKgp(
   vararg optIns: KotlinOptIn,
 ): JavaVersion = configureKgp(
   jvmTargetVersion = jvmTargetVersion.orNull,
-  jdkToolchainVersion.orNull,
-  jvmDistribution,
-  allWarningsAsErrors,
-  explicitApiMode,
-  configureJavaTargetVersion,
-  kotlinLanguageVersion,
-  kotlinApiVersion,
-  isProgressiveModeEnabled,
-  freeCompilerArgs,
-  *optIns,
+  jdkToolchainVersion = jdkToolchainVersion.orNull,
+  jvmDistribution = jvmDistribution,
+  allWarningsAsErrors = allWarningsAsErrors,
+  explicitApiMode = explicitApiMode,
+  configureJavaTargetVersion = configureJavaTargetVersion,
+  kotlinLanguageVersion = kotlinLanguageVersion,
+  kotlinApiVersion = kotlinApiVersion,
+  isProgressiveModeEnabled = isProgressiveModeEnabled,
+  freeCompilerArgs = freeCompilerArgs,
+  optIns = optIns,
 )
 
 public fun Project.configureKgp(
@@ -72,13 +72,16 @@ public fun Project.configureKgp(
   }
 
   val targetJavaVersion = jvmTargetVersion?.target?.let(JavaVersion::toVersion)
-  val actualLowestSupportedJava: JavaVersion = when(targetJavaVersion) {
-    null -> lowestSupportedJava
-    else -> when {
-      targetJavaVersion > lowestSupportedJava -> targetJavaVersion
-      else -> lowestSupportedJava
+  val actualLowestSupportedJava: JavaVersion =
+    if(targetJavaVersion == null) {
+      lowestSupportedJava
     }
-  }
+    else {
+      when {
+        targetJavaVersion > lowestSupportedJava -> targetJavaVersion
+        else -> lowestSupportedJava
+      }
+    }
 
   require(actualLowestSupportedJava <= highestSupportedJava) {
     val error = """
@@ -167,8 +170,7 @@ public fun Project.configureKgp(
 
           if(project.kotlinToolingVersion.toKotlinVersion().isAtLeast(major = 1, minor = 9)) {
             compilerOptions.progressiveMode.set(isProgressiveModeEnabled)
-          }
-          else {
+          } else {
             if(isProgressiveModeEnabled) {
               compilerOptions.freeCompilerArgs.addAll(
                 "-progressive",

@@ -1,3 +1,5 @@
+@file:Suppress("MissingPackageDeclaration")
+
 import com.eygraber.conventions.detekt.configureDetektForMultiplatform
 import com.eygraber.conventions.gradleConventionsKmpDefaultsService
 import org.gradle.api.Project
