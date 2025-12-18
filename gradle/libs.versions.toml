@@ -6,7 +6,7 @@ android-plugin = "8.13.2"
 compose-jetbrains = "1.9.3"
 
 detekt = "1.23.8"
-detektEygraber = "1.0.12"
+detektEygraber = "1.0.14"
 
 dokka = "2.1.0"
 
