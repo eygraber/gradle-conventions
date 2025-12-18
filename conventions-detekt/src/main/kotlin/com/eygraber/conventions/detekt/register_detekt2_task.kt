@@ -1,5 +1,6 @@
 package com.eygraber.conventions.detekt
 
+import com.eygraber.conventions.capitalize
 import com.eygraber.conventions.tasks.dependsOn
 import dev.detekt.gradle.Detekt
 import dev.detekt.gradle.extensions.DetektExtension
@@ -7,91 +8,36 @@ import dev.detekt.gradle.extensions.DetektReport
 import dev.detekt.gradle.extensions.DetektReports
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import java.io.File
-import java.util.Locale
 
 public fun Project.configureDetekt2ForMultiplatform(
   targets: Collection<KotlinTarget>,
   sourceSets: Set<KotlinSourceSet>,
 ) {
   val detektAll = tasks.register("detektAll")
-
-  val ancestorSourceSetsUsedForTypeResolution = HashSet<KotlinSourceSet>()
-  val targetSourceSets = HashSet<KotlinSourceSet>()
-  val targetSourceSetsWithoutAncestorSourceSets = HashSet<KotlinSourceSet>()
-
-  // for some reason the metadata target doesn't
-  // have a compilation that includes the commonTest source set
-  // https://slack-chats.kotlinlang.org/t/22308802/is-it-expected-that-the-metadata-kmp-target-doesn-t-have-com
-  sourceSets.find { it.name == "commonTest" }?.let { targetSourceSets += it }
-
-  targets.forEach { target ->
-    val nameForTask = target.name.capitalize()
-
-    target.compilations.forEach { compilation ->
-      val compilationName = compilation.name.capitalize()
-      val ancestorSourceSets = compilation.ancestorSourceSets
-      targetSourceSets.addAll(compilation.kotlinSourceSets)
-
-      if(ancestorSourceSets.isEmpty()) {
-        targetSourceSetsWithoutAncestorSourceSets.addAll(compilation.kotlinSourceSets)
-      }
-      else if(ancestorSourceSets.size == 1 && ancestorSourceSets.first().name in setOf("commonMain", "commonTest")) {
-        targetSourceSetsWithoutAncestorSourceSets.addAll(compilation.kotlinSourceSets)
-      }
-
-      if(target.isTypeResolutionSupported) {
-        if(ancestorSourceSets.isNotEmpty()) {
-          includeAncestorSourcesInTargetDetekt2Task(
-            taskName = "detekt${nameForTask}$compilationName",
-            ancestorSourceSets = ancestorSourceSets,
-            sourceSetsUsedForTypeResolution = ancestorSourceSetsUsedForTypeResolution,
-          )
-        }
-      }
-    }
-  }
-
-  val sourceSetToDependantTaskProviders = HashMap<KotlinSourceSet, HashSet<TaskProvider<*>>>()
-
   sourceSets.forEach { sourceSet ->
-    val taskName = sourceSet.taskName
-    val taskProvider = when(sourceSet) {
-      in targetSourceSets -> runCatching { tasks.named(taskName) }.getOrNull()?.also {
-        detektAll.dependsOn(taskName)
-      }
+    detektAll.dependsOn("detekt${sourceSet.name.capitalize()}SourceSet")
+  }
+  detektAll.dependsOn("detektMetadataTest")
 
-      in ancestorSourceSetsUsedForTypeResolution -> tasks.register(taskName).also {
-        detektAll.dependsOn(taskName)
-      }
+  val hasAndroidTarget = targets.any { it.platformType == KotlinPlatformType.androidJvm }
+  val hasJvmTarget = targets.any { it.platformType == KotlinPlatformType.jvm }
 
-      else -> registerDetektTask(
-        name = sourceSet.name,
-        sourceSet = sourceSet,
-      ).also {
-        detektAll.dependsOn(taskName)
-      }
-    }
-
-    if(taskProvider != null) {
-      sourceSet.dependsOn.forEach { sourceSetDependency ->
-        sourceSetToDependantTaskProviders.getOrPut(sourceSetDependency) { HashSet() }.add(taskProvider)
-      }
-    }
+  if(hasAndroidTarget) {
+    detektAll.dependsOn("detektDebugAndroidTestAndroid")
+    detektAll.dependsOn("detektDebugUnitTestAndroid")
+    detektAll.dependsOn("detektDebugAndroid")
+    detektAll.dependsOn("detektReleaseUnitTestAndroid")
+    detektAll.dependsOn("detektReleaseAndroid")
   }
 
-  sourceSetToDependantTaskProviders.forEach { (sourceSet, dependentTaskProviders) ->
-    val taskName = sourceSet.taskName
-
-    tasks.named(taskName).configure { task ->
-      dependentTaskProviders.forEach { dependentTaskProvider ->
-        task.dependsOn(dependentTaskProvider)
-      }
-    }
+  if(hasJvmTarget) {
+    detektAll.dependsOn("detektDevJvm")
+    detektAll.dependsOn("detektMainJvm")
+    detektAll.dependsOn("detektTestJvm")
   }
 }
 
@@ -119,35 +65,6 @@ public fun Project.registerDetekt2Task(
     description = "Run detekt analysis for source set $name"
   }
 }
-
-private val KotlinCompilation<*>.ancestorSourceSets: Set<KotlinSourceSet> get() = allKotlinSourceSets - kotlinSourceSets
-
-private val KotlinTarget.isTypeResolutionSupported: Boolean
-  get() = platformType in setOf(
-    KotlinPlatformType.androidJvm,
-    KotlinPlatformType.jvm,
-  )
-
-private fun Project.includeAncestorSourcesInTargetDetekt2Task(
-  taskName: String,
-  ancestorSourceSets: Set<KotlinSourceSet>,
-  sourceSetsUsedForTypeResolution: MutableSet<KotlinSourceSet>,
-) {
-  tasks.named(taskName, Detekt::class.java).configure { task ->
-    ancestorSourceSets.forEach { ancestorSourceSet ->
-      if(sourceSetsUsedForTypeResolution.add(ancestorSourceSet)) {
-        task.source(ancestorSourceSet.kotlin.sourceDirectories)
-      }
-    }
-  }
-}
-
-private val KotlinSourceSet.taskName
-  get() = when(name) {
-    "commonMain" -> "detektMetadataMain"
-    "commonTest" -> "detektMetadataTest"
-    else -> "detekt${name.capitalize()}"
-  }
 
 private fun Project.setReportOutputConventions2(reports: DetektReports, detekt: DetektExtension, name: String) {
   setReportOutputConvention2(
@@ -196,6 +113,3 @@ private fun Project.setReportOutputConvention2(
 
 private val Project.detekt2: DetektExtension
   get() = extensions.getByType(DetektExtension::class.java)
-
-@Suppress("Deprecation")
-private fun String.capitalize(): String = capitalize(Locale.US)

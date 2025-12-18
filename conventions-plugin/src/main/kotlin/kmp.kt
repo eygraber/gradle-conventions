@@ -1,5 +1,6 @@
 @file:Suppress("MissingPackageDeclaration")
 
+import com.eygraber.conventions.detekt.configureDetekt2ForMultiplatform
 import com.eygraber.conventions.detekt.configureDetektForMultiplatform
 import com.eygraber.conventions.gradleConventionsKmpDefaultsService
 import org.gradle.api.Project
@@ -424,9 +425,17 @@ fun KotlinMultiplatformExtension.configureKmpTargets(
   }
 
   project.afterEvaluate {
-    project.configureDetektForMultiplatform(
-      targets = targets,
-      sourceSets = sourceSets,
-    )
+    if(project.plugins.hasPlugin("io.gitlab.arturbosch.detekt")) {
+      project.configureDetektForMultiplatform(
+        targets = targets,
+        sourceSets = sourceSets,
+      )
+    }
+    else if(project.plugins.hasPlugin("dev.detekt")) {
+      project.configureDetekt2ForMultiplatform(
+        targets = targets,
+        sourceSets = sourceSets,
+      )
+    }
   }
 }
