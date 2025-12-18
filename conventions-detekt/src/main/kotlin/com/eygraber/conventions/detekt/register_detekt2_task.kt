@@ -189,7 +189,7 @@ private fun Project.setReportOutputConvention2(
     layout.projectDirectory.file(
       extension.reportsDir.map { reportsDir ->
         File(reportsDir.asFile, "$name.$format").absolutePath
-      }
+      },
     ),
   )
 }
