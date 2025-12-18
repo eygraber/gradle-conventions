@@ -30,7 +30,7 @@ public fun Project.registerPublishSpm(
   registerPublishDebugSpm(
     frameworkName = frameworkName,
     packageDotSwiftFile = packageDotSwiftFile,
-    assembleXCFrameworkDebugTask = assembleTaskHolder.debug,
+    assembleXCFrameworkDebugTaskProvider = assembleTaskHolder.debug,
   )
 
   registerPublishReleaseSpm(
@@ -45,17 +45,17 @@ public fun Project.registerPublishSpm(
 internal fun Project.registerPublishDebugSpm(
   frameworkName: String,
   packageDotSwiftFile: File,
-  assembleXCFrameworkDebugTask: TaskProvider<XCFrameworkTask>,
+  assembleXCFrameworkDebugTaskProvider: TaskProvider<XCFrameworkTask>,
 ) {
   val rootFile = rootDir
 
-  tasks.register("publish${frameworkName}DebugSPM") { task ->
-    with(task) {
+  tasks.register("publish${frameworkName}DebugSPM") { publishSpmTask ->
+    with(publishSpmTask) {
       group = "spm"
 
       onlyIf { HostManager.hostIsMac }
 
-      val xcFrameworkDir = assembleXCFrameworkDebugTask.map { task -> task.outputs.files.first() }
+      val xcFrameworkDir = assembleXCFrameworkDebugTaskProvider.map { task -> task.outputs.files.first() }
       inputs.files(xcFrameworkDir)
 
       outputs.files(packageDotSwiftFile)
@@ -63,30 +63,30 @@ internal fun Project.registerPublishDebugSpm(
       doLast {
         packageDotSwiftFile.writeText(
           """
-        |// swift-tools-version:5.3
-        |import PackageDescription
-        |
-        |let packageName = "$frameworkName"
-        |
-        |let package = Package(
-        |    name: packageName,
-        |    platforms: [
-        |        .iOS(.v13)
-        |    ],
-        |    products: [
-        |        .library(
-        |            name: packageName,
-        |            targets: [packageName]
-        |        ),
-        |    ],
-        |    targets: [
-        |        .binaryTarget(
-        |            name: packageName,
-        |            path: "./${xcFrameworkDir.get().relativeTo(rootFile).path}"
-        |        )
-        |        ,
-        |    ]
-        |)
+          |// swift-tools-version:5.3
+          |import PackageDescription
+          |
+          |let packageName = "$frameworkName"
+          |
+          |let package = Package(
+          |    name: packageName,
+          |    platforms: [
+          |        .iOS(.v13)
+          |    ],
+          |    products: [
+          |        .library(
+          |            name: packageName,
+          |            targets: [packageName]
+          |        ),
+          |    ],
+          |    targets: [
+          |        .binaryTarget(
+          |            name: packageName,
+          |            path: "./${xcFrameworkDir.get().relativeTo(rootFile).path}"
+          |        )
+          |        ,
+          |    ]
+          |)
           """.trimMargin(),
         )
       }
@@ -101,24 +101,24 @@ internal fun Project.registerPublishReleaseSpm(
   publishTaskFactory: (TaskProvider<Zip>) -> TaskProvider<PublishXCFrameworkTask>,
   zipOutputDirectory: Provider<Directory>,
 ) {
-  val zipTask = registerZipXCFrameworkTask(
+  val zipTaskProvider = registerZipXCFrameworkTask(
     frameworkName = frameworkName,
     assembleXCFrameworkReleaseTask = assembleXCFrameworkReleaseTask,
     outputDirectory = zipOutputDirectory,
   )
 
-  val publishTask = publishTaskFactory(zipTask)
+  val publishTaskProvider = publishTaskFactory(zipTaskProvider)
 
-  tasks.register("publish${frameworkName}ReleaseSPM") { task ->
-    with(task) {
+  tasks.register("publish${frameworkName}ReleaseSPM") { publishSpmTask ->
+    with(publishSpmTask) {
       group = "spm"
 
       onlyIf { HostManager.hostIsMac }
 
-      dependsOn(publishTask)
+      dependsOn(publishTaskProvider)
 
-      val publishedUrl = publishTask.flatMap { task -> task.publishedUrl }
-      val zipFile = zipTask.flatMap { task -> task.archiveFile }
+      val publishedUrl = publishTaskProvider.flatMap { task -> task.publishedUrl }
+      val zipFile = zipTaskProvider.flatMap { task -> task.archiveFile }
 
       inputs.property("publishedUrl", publishedUrl)
       inputs.files(zipFile)
@@ -132,31 +132,31 @@ internal fun Project.registerPublishReleaseSpm(
 
         packageDotSwiftFile.writeText(
           """
-        |// swift-tools-version:5.3
-        |import PackageDescription
-        |
-        |let packageName = "$frameworkName"
-        |
-        |let package = Package(
-        |    name: packageName,
-        |    platforms: [
-        |        .iOS(.v13)
-        |    ],
-        |    products: [
-        |        .library(
-        |            name: packageName,
-        |            targets: [packageName]
-        |        ),
-        |    ],
-        |    targets: [
-        |        .binaryTarget(
-        |            name: packageName,
-        |            url: "${publishedUrl.get()}",
-        |            checksum: "${findSpmChecksum(zipFile.get().asFile)}"
-        |        )
-        |        ,
-        |    ]
-        |)
+          |// swift-tools-version:5.3
+          |import PackageDescription
+          |
+          |let packageName = "$frameworkName"
+          |
+          |let package = Package(
+          |    name: packageName,
+          |    platforms: [
+          |        .iOS(.v13)
+          |    ],
+          |    products: [
+          |        .library(
+          |            name: packageName,
+          |            targets: [packageName]
+          |        ),
+          |    ],
+          |    targets: [
+          |        .binaryTarget(
+          |            name: packageName,
+          |            url: "${publishedUrl.get()}",
+          |            checksum: "${findSpmChecksum(zipFile.get().asFile)}"
+          |        )
+          |        ,
+          |    ]
+          |)
           """.trimMargin(),
         )
       }

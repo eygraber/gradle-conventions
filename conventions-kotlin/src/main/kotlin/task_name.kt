@@ -1,3 +1,5 @@
+@file:Suppress("MissingPackageDeclaration")
+
 import java.util.Locale
 
 @Suppress("Deprecation")

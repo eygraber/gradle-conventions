@@ -70,6 +70,12 @@ abstract class GradleConventionsPlugin : Plugin<Project> {
         awaitPublishConfigured {}
 
         awaitDetektConfigured {
+          detekt.autoCorrect = autoCorrect
+          detekt.parallel = parallel
+          detekt.debug = debug
+          detekt.enableCompilerPlugin = enableCompilerPlugin
+          detekt.buildUponDefaultConfig = buildUponDefaultConfig
+
           detekt.ignoredAndroidFlavors = ignoredAndroidFlavors
           detekt.ignoredAndroidVariants = ignoredAndroidVariants
           detekt.detektPluginDependencies = detektPluginDependencies

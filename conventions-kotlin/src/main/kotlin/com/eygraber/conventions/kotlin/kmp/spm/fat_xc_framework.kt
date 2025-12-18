@@ -30,6 +30,7 @@ public fun Project.registerAssembleXCFrameworkTasksFromFrameworks(
     kotlinMultiplatform
       .targets
       .withType(KotlinNativeTarget::class.java)
+      .asSequence()
       .filter { target -> target.konanTarget.family.isAppleFamily }
       .filter(targetPredicate)
       .flatMap { target -> target.binaries.filterIsInstance<Framework>() }
@@ -49,8 +50,8 @@ public fun Project.registerZipXCFrameworkTask(
   assembleXCFrameworkReleaseTask: TaskProvider<XCFrameworkTask>,
   outputDirectory: Provider<Directory>,
 ): TaskProvider<Zip> =
-  tasks.register("zip${frameworkName}ReleaseXCFramework", Zip::class.java) { task ->
-    with(task) {
+  tasks.register("zip${frameworkName}ReleaseXCFramework", Zip::class.java) { zipTask ->
+    with(zipTask) {
       group = "spm"
 
       onlyIf { HostManager.hostIsMac }

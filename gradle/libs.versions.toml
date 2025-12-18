@@ -6,13 +6,14 @@ android-plugin = "8.13.2"
 compose-jetbrains = "1.9.3"
 
 detekt = "1.23.8"
-detektEygraber = "1.0.12"
+detekt2 = "2.0.0-alpha.1"
+detektEygraber = "1.0.14"
 
 dokka = "2.1.0"
 
 ejson = "1.0.9"
 
-gradleConventions = "0.0.89"
+gradleConventions = "0.0.89-detekt2"
 
 kotlin = "2.2.21"
 
@@ -21,7 +22,8 @@ ktlint = "1.8.0"
 publish = "0.35.0"
 
 [plugins]
-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+detekt = { id = "dev.detekt", version.ref = "detekt" }
+detekt2 = { id = "dev.detekt", version.ref = "detekt2" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 gradleConventions = { id = "com.eygraber.conventions", version.ref = "gradleConventions" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -33,6 +35,7 @@ buildscript-androidCacheFix = { module = "gradle.plugin.org.gradle.android:andro
 buildscript-compose-compiler = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 buildscript-compose-jetbrains = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "compose-jetbrains" }
 buildscript-detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
+buildscript-detekt2 = { module = "dev.detekt:detekt-gradle-plugin", version.ref = "detekt2" }
 buildscript-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 buildscript-ejson = { module = "com.eygraber:ejson-gradle", version.ref = "ejson" }
 buildscript-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }

@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 buildscript {
   dependencies {
     classpath(libs.buildscript.detekt)
+    classpath(libs.buildscript.detekt2)
     classpath(libs.buildscript.dokka)
     with(libs.buildscript.kotlin.get()) {
       classpath("$group:$name:$embeddedKotlinVersion")

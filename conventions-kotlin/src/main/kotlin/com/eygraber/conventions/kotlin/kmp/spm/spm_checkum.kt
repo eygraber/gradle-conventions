@@ -6,9 +6,9 @@ import java.io.File
 
 internal fun Project.findSpmChecksum(zipFile: File): String {
   val packageSwiftFile = rootProject.file("Package.swift")
-  val hadPackageSwift = packageSwiftFile.exists()
+  val hasPackageSwift = packageSwiftFile.exists()
 
-  if(!hadPackageSwift) {
+  if(!hasPackageSwift) {
     packageSwiftFile.writeText("")
   }
 
@@ -41,7 +41,7 @@ internal fun Project.findSpmChecksum(zipFile: File): String {
       }
     }
     .also {
-      if(!hadPackageSwift) {
+      if(!hasPackageSwift) {
         packageSwiftFile.delete()
       }
     }
