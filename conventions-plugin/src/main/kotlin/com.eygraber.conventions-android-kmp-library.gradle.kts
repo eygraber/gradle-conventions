@@ -1,7 +1,9 @@
 @file:Suppress("UnstableApiUsage")
 
+import com.android.build.api.dsl.androidLibrary
 import com.eygraber.conventions.gradleConventionsDefaultsService
 import com.eygraber.conventions.gradleConventionsExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 plugins {
   id("com.android.kotlin.multiplatform.library")
@@ -34,33 +36,37 @@ ext.awaitAndroidConfigured { isAndroidUserConfigured ->
   val androidCompileSdk = compileSdk
   val androidMinSdk = minSdk
 
-  androidKmpLibrary {
-    compileSdk = androidCompileSdk
-    minSdk = androidMinSdk
+  plugins.withId("com.android.kotlin.multiplatform.library") {
+    extensions.getByType<KotlinMultiplatformExtension>().apply {
+      androidLibrary {
+        compileSdk = androidCompileSdk
+        minSdk = androidMinSdk
 
-    optimization {
-      val consumerRulesProFile = layout.projectDirectory.file("consumer-rules.pro").asFile
-      if(consumerRulesProFile.exists()) {
-        consumerKeepRules.files += consumerRulesProFile
+        optimization {
+          val consumerRulesProFile = layout.projectDirectory.file("consumer-rules.pro").asFile
+          if(consumerRulesProFile.exists()) {
+            consumerKeepRules.files += consumerRulesProFile
+          }
+        }
+
+        if(coreLibraryDesugaringDependency != null) {
+          enableCoreLibraryDesugaring = true
+        }
+
+        packaging {
+          resources.pickFirsts += "META-INF/*"
+        }
+
+        if(doNotRunLintWhenRunningReleaseBuildTasks == true) {
+          lint {
+            checkReleaseBuilds = false
+          }
+        }
+
+        coreLibraryDesugaringDependency?.let { desugaringDependency ->
+          dependencies.add("coreLibraryDesugaring", desugaringDependency)
+        }
       }
-    }
-
-    if(coreLibraryDesugaringDependency != null) {
-      enableCoreLibraryDesugaring = true
-    }
-
-    packaging {
-      resources.pickFirsts += "META-INF/*"
-    }
-
-    if(doNotRunLintWhenRunningReleaseBuildTasks == true) {
-      lint {
-        checkReleaseBuilds = false
-      }
-    }
-
-    coreLibraryDesugaringDependency?.let { desugaringDependency ->
-      dependencies.add("coreLibraryDesugaring", desugaringDependency)
     }
   }
 }
