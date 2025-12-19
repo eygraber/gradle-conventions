@@ -48,27 +48,6 @@ ext.awaitAndroidConfigured { isAndroidUserConfigured ->
   androidLibrary {
     compileSdk = androidCompileSdk
 
-    val kmpManifestFilePath = "src/androidMain/AndroidManifest.xml"
-    if(layout.projectDirectory.file(kmpManifestFilePath).asFile.exists()) {
-      sourceSets.named("main") {
-        manifest.srcFile(kmpManifestFilePath)
-      }
-    }
-
-    val kmpResPath = "src/androidMain/res"
-    if(layout.projectDirectory.file(kmpResPath).asFile.exists()) {
-      sourceSets.named("main") {
-        res.srcDir(kmpResPath)
-      }
-    }
-
-    val kmpResourcesPath = "src/commonMain/resources"
-    if(layout.projectDirectory.file(kmpResourcesPath).asFile.exists()) {
-      sourceSets.named("main") {
-        res.srcDir(kmpResourcesPath)
-      }
-    }
-
     defaultConfig {
       val consumerRulesProFile = layout.projectDirectory.file("consumer-rules.pro")
       if(consumerRulesProFile.asFile.exists()) {
