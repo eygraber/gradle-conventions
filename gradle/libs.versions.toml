@@ -15,7 +15,7 @@ ejson = "1.0.9"
 
 gradleConventions = "0.0.92"
 
-kotlin = "2.2.21"
+kotlin = "2.3.0"
 
 ktlint = "1.8.0"
 
