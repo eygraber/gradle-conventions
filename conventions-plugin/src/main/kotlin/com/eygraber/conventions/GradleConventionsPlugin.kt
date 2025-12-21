@@ -64,6 +64,7 @@ abstract class GradleConventionsPlugin : Plugin<Project> {
 
         awaitProjectCommonConfigured {
           projectCommon.resolutionVersionSelector = resolutionVersionSelector
+          projectCommon.kmpSourceSetProjectDependencies = kmpSourceSetProjectDependencies
           projectCommon.projectDependencies = projectDependencies
         }
 
