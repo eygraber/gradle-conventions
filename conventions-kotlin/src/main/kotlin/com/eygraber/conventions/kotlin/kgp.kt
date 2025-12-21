@@ -2,7 +2,6 @@ package com.eygraber.conventions.kotlin
 
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.toolchain.JavaLanguageVersion
@@ -121,20 +120,16 @@ public fun Project.configureKgp(
 
       if(jdkToolchainVersion == null) {
         if(JavaVersion.current() != buildJavaVersion) {
-          plugins.withType(JavaBasePlugin::class.java) {
-            jvmToolchain { toolchain ->
-              toolchain.languageVersion.set(JavaLanguageVersion.of(buildJavaVersion.majorVersion.toInt()))
-            }
+          jvmToolchain { toolchain ->
+            toolchain.languageVersion.set(JavaLanguageVersion.of(buildJavaVersion.majorVersion.toInt()))
           }
         }
       }
       else {
-        plugins.withType(JavaBasePlugin::class.java) {
-          jvmToolchain { toolchain ->
-            toolchain.languageVersion.set(jdkToolchainVersion)
-            if(jvmDistribution != null) {
-              toolchain.vendor.set(jvmDistribution)
-            }
+        jvmToolchain { toolchain ->
+          toolchain.languageVersion.set(jdkToolchainVersion)
+          if(jvmDistribution != null) {
+            toolchain.vendor.set(jvmDistribution)
           }
         }
       }

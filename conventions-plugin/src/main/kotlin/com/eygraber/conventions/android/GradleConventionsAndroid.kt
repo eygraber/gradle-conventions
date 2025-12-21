@@ -16,9 +16,19 @@ class GradleConventionsAndroid {
   var targetSdk: Int = 0
   var minSdk: Int = 0
 
+  /**
+   * This does not have any effect in the android-kmp-library plugin.
+   */
   var sourceCompatibility: JavaVersion? = null
+
+  /**
+   * This does not have any effect in the android-kmp-library plugin.
+   */
   var targetCompatibility: JavaVersion? = null
 
+  /**
+   * This does not have any effect in the android-kmp-library plugin.
+   */
   var publishEverything: Boolean = true
 
   /**
@@ -33,7 +43,9 @@ class GradleConventionsAndroid {
   var doNotRunLintWhenRunningReleaseBuildTasks: Boolean? = null
 
   /**
-   * If this is `true` then there will be test sources even if there are no tests, which will cause an error in Gradle 9
+   * If this is `true` then there will be test sources even if there are no tests, which will cause an error in Gradle 9.
+   *
+   * This does not have any effect in the android-kmp-library plugin.
    */
   var isIncludeAndroidResources: Boolean = false
 
@@ -74,6 +86,9 @@ class GradleConventionsAndroid {
     coreLibraryDesugaringDependency = dependency
   }
 
+  /**
+   * This does not have any effect in the android-kmp-library plugin.
+   */
   fun addProductFlavors(
     dimension: String,
     flavors: List<ProductFlavor>,
@@ -81,6 +96,9 @@ class GradleConventionsAndroid {
     this.flavors += dimension to flavors
   }
 
+  /**
+   * This does not have any effect in the android-kmp-library plugin.
+   */
   fun addOptInsIfDependencyIsPresent(
     optIns: List<KotlinOptIn>,
     predicate: Dependency.() -> Boolean,
@@ -88,6 +106,9 @@ class GradleConventionsAndroid {
     optInsToDependencyPredicate += optIns to predicate
   }
 
+  /**
+   * This does not have any effect in the android-kmp-library plugin.
+   */
   fun javaVersionCompatibility(
     sourceCompatibility: Provider<String>,
     targetCompatibility: Provider<String> = sourceCompatibility,
