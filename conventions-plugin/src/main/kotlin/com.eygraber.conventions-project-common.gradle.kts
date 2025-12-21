@@ -91,4 +91,15 @@ ext.awaitProjectCommonConfigured {
       }
     }
   }
+
+  plugins.withId("org.jetbrains.kotlin.android") {
+    if(projectDependencies.isNotEmpty()) {
+      dependencies {
+        val handler = JvmConventionDependencyHandler(this, project)
+        projectDependencies.forEach { block ->
+          block(handler)
+        }
+      }
+    }
+  }
 }
