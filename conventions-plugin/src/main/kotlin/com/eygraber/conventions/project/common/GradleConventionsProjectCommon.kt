@@ -42,7 +42,7 @@ interface ConventionDependencyHandler {
 }
 
 class JvmConventionDependencyHandler(
-  dependencyHandler: DependencyHandler,
+  private val dependencyHandler: DependencyHandler,
   val project: Project,
 ) : ConventionDependencyHandler, DependencyHandler by dependencyHandler {
   override fun add(
@@ -81,13 +81,15 @@ class JvmConventionDependencyHandler(
     add("testRuntimeOnly", dependencyNotation, closureOf<Dependency> { action.execute(this) })
   }
 
+  override fun platform(dependencyNotation: Any) = dependencyHandler.platform(dependencyNotation)
+
   override fun platform(
     dependencyNotation: Provider<MinimalExternalModuleDependency>,
-  ) = super.platform(dependencyNotation)
+  ) = dependencyHandler.platform(dependencyNotation)
 
   override fun platform(
     dependencyNotation: ProviderConvertible<MinimalExternalModuleDependency>,
-  ) = super.platform(dependencyNotation)
+  ) = dependencyHandler.platform(dependencyNotation)
 }
 
 @OptIn(ExperimentalKotlinGradlePluginApi::class)
