@@ -37,34 +37,36 @@ ext.awaitAndroidConfigured { isAndroidUserConfigured ->
   val androidMinSdk = minSdk
 
   plugins.withId("com.android.kotlin.multiplatform.library") {
-    extensions.getByType<KotlinMultiplatformExtension>().apply {
-      androidLibrary {
-        compileSdk = androidCompileSdk
-        minSdk = androidMinSdk
+    plugins.withId("org.jetbrains.kotlin.multiplatform") {
+      extensions.getByType<KotlinMultiplatformExtension>().apply {
+        androidLibrary {
+          compileSdk = androidCompileSdk
+          minSdk = androidMinSdk
 
-        optimization {
-          val consumerRulesProFile = layout.projectDirectory.file("consumer-rules.pro").asFile
-          if(consumerRulesProFile.exists()) {
-            consumerKeepRules.files += consumerRulesProFile
+          optimization {
+            val consumerRulesProFile = layout.projectDirectory.file("consumer-rules.pro").asFile
+            if(consumerRulesProFile.exists()) {
+              consumerKeepRules.files += consumerRulesProFile
+            }
           }
-        }
 
-        if(coreLibraryDesugaringDependency != null) {
-          enableCoreLibraryDesugaring = true
-        }
-
-        packaging {
-          resources.pickFirsts += "META-INF/*"
-        }
-
-        if(doNotRunLintWhenRunningReleaseBuildTasks == true) {
-          lint {
-            checkReleaseBuilds = false
+          if(coreLibraryDesugaringDependency != null) {
+            enableCoreLibraryDesugaring = true
           }
-        }
 
-        coreLibraryDesugaringDependency?.let { desugaringDependency ->
-          dependencies.add("coreLibraryDesugaring", desugaringDependency)
+          packaging {
+            resources.pickFirsts += "META-INF/*"
+          }
+
+          if(doNotRunLintWhenRunningReleaseBuildTasks == true) {
+            lint {
+              checkReleaseBuilds = false
+            }
+          }
+
+          coreLibraryDesugaringDependency?.let { desugaringDependency ->
+            dependencies.add("coreLibraryDesugaring", desugaringDependency)
+          }
         }
       }
     }
