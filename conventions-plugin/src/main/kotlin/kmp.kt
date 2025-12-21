@@ -43,6 +43,7 @@ fun KotlinMultiplatformExtension.defaultKmpTargets(
   webOptions: KmpTarget.WebOptions = project.gradleConventionsKmpDefaultsService.webOptions,
   binaryType: BinaryType = project.gradleConventionsKmpDefaultsService.binaryType,
   applyDefaultHierarchy: Boolean = true,
+  androidNamespace: String? = null,
 ) {
   val defaultTargets = project.gradleConventionsKmpDefaultsService.targets
   require(defaultTargets.isNotEmpty()) {
@@ -56,6 +57,7 @@ fun KotlinMultiplatformExtension.defaultKmpTargets(
     binaryType = binaryType,
     ignoreDefaultTargets = false,
     applyDefaultHierarchy = applyDefaultHierarchy,
+    androidNamespace = androidNamespace,
   )
 }
 
@@ -64,6 +66,7 @@ fun KotlinMultiplatformExtension.allKmpTargets(
   webOptions: KmpTarget.WebOptions = project.gradleConventionsKmpDefaultsService.webOptions,
   binaryType: BinaryType = project.gradleConventionsKmpDefaultsService.binaryType,
   applyDefaultHierarchy: Boolean = true,
+  androidNamespace: String? = null,
 ) {
   val isBrowserEnabled = when(binaryType) {
     BinaryType.Executable -> webOptions.isBrowserEnabled || webOptions.isBrowserEnabledForExecutables
@@ -80,6 +83,7 @@ fun KotlinMultiplatformExtension.allKmpTargets(
     wasmJsNode = webOptions.isNodeEnabled,
     binaryType = binaryType,
     applyDefaultHierarchy = applyDefaultHierarchy,
+    androidNamespace = androidNamespace,
   )
 }
 
@@ -91,6 +95,7 @@ fun KotlinMultiplatformExtension.kmpTargets(
   binaryType: BinaryType = project.gradleConventionsKmpDefaultsService.binaryType,
   ignoreDefaultTargets: Boolean = false,
   applyDefaultHierarchy: Boolean = true,
+  androidNamespace: String? = null,
 ) {
   val finalTargets = when {
     ignoreDefaultTargets -> setOf(target) + setOf(*targets)
@@ -125,6 +130,7 @@ fun KotlinMultiplatformExtension.kmpTargets(
       watchos = KmpTarget.Watchos in finalTargets,
       binaryType = binaryType,
       applyDefaultHierarchy = applyDefaultHierarchy,
+      androidNamespace = androidNamespace,
     )
   }
 }
@@ -139,6 +145,7 @@ fun KotlinMultiplatformExtension.configureAllKmpTargets(
   wasmJsModuleName: String? = null,
   binaryType: BinaryType = BinaryType.Library,
   applyDefaultHierarchy: Boolean = true,
+  androidNamespace: String? = null,
 ) {
   configureKmpTargets(
     project = project,
@@ -163,6 +170,7 @@ fun KotlinMultiplatformExtension.configureAllKmpTargets(
     binaryType = binaryType,
     requireAtLeastOneTarget = true,
     applyDefaultHierarchy = applyDefaultHierarchy,
+    androidNamespace = androidNamespace,
   )
 }
 
@@ -189,6 +197,7 @@ fun KotlinMultiplatformExtension.configureKmpTargets(
   binaryType: BinaryType = BinaryType.Library,
   requireAtLeastOneTarget: Boolean = true,
   applyDefaultHierarchy: Boolean = true,
+  androidNamespace: String? = null,
 ) {
   require(project.kotlinToolingVersion.toKotlinVersion().isAtLeast(major = 1, minor = 9, patch = 20)) {
     "A minimum Kotlin version of 1.9.20 is required to use kmpTargets"
@@ -218,7 +227,11 @@ fun KotlinMultiplatformExtension.configureKmpTargets(
 
     project.plugins.withId("com.android.kotlin.multiplatform.library") {
       @Suppress("UnstableApiUsage")
-      androidLibrary {}
+      androidLibrary {
+        if(androidNamespace != null) {
+          namespace = androidNamespace
+        }
+      }
     }
   }
 

@@ -23,22 +23,14 @@ public fun Project.configureDetekt2ForMultiplatform(
   }
   detektAll.dependsOn("detektMetadataTest")
 
-  val hasAndroidTarget = targets.any { it.platformType == KotlinPlatformType.androidJvm }
-  val hasJvmTarget = targets.any { it.platformType == KotlinPlatformType.jvm }
-
-  if(hasAndroidTarget) {
-    detektAll.dependsOn("detektDebugAndroidTestAndroid")
-    detektAll.dependsOn("detektDebugUnitTestAndroid")
-    detektAll.dependsOn("detektDebugAndroid")
-    detektAll.dependsOn("detektReleaseUnitTestAndroid")
-    detektAll.dependsOn("detektReleaseAndroid")
-  }
-
-  if(hasJvmTarget) {
-    detektAll.dependsOn("detektDevJvm")
-    detektAll.dependsOn("detektMainJvm")
-    detektAll.dependsOn("detektTestJvm")
-  }
+  // targets that support type resolution
+  targets
+    .filter { target -> target.platformType == KotlinPlatformType.jvm }
+    .forEach { target ->
+      target.compilations.configureEach { compilation ->
+        detektAll.dependsOn("detekt${compilation.name.capitalize()}${target.name.capitalize()}")
+      }
+    }
 }
 
 // borrowed from:
