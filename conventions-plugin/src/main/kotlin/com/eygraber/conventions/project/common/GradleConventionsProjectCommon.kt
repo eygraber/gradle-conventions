@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 interface ResolutionVersionSelector {
   val configurationName: String
   val useVersion: (Any) -> Unit
+  val useTarget: (Any) -> Unit
 }
 
 interface ConventionDependencyHandler {

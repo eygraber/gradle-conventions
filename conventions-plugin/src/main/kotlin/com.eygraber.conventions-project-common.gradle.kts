@@ -43,6 +43,24 @@ ext.awaitProjectCommonConfigured {
                       else -> versionError()
                     }
                   }
+                  override val useTarget = { target: Any ->
+                    useTarget(
+                      when(target) {
+                        is String -> target
+                        is Provider<*> -> when(val providedTarget = target.get()) {
+                          is String -> providedTarget
+                          is ModuleVersionSelector -> providedTarget
+                          else -> error(
+                            "Target notation must be provided as a String or a ModuleVersionSelector (was ${version.javaClass.canonicalName})",
+                          )
+                        }
+                        is Map<*, *> -> target
+                        else -> error(
+                          "Target notation must be a Map, String or a ModuleVersionSelector (was ${version.javaClass.canonicalName})",
+                        )
+                      },
+                    )
+                  }
                 },
               )
             }
