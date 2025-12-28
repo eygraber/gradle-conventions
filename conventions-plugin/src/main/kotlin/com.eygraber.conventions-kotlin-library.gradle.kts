@@ -17,6 +17,7 @@ with(gradleConventionsExtension) {
     apiVersion = kotlinDefaults.apiVersion
     isProgressiveModeEnabled = kotlinDefaults.isProgressiveModeEnabled
     freeCompilerArgs = kotlinDefaults.freeCompilerArgs
+    testArgs = kotlinDefaults.testArgs
     optIns = kotlinDefaults.optIns
   }
 
@@ -29,6 +30,7 @@ with(gradleConventionsExtension) {
       explicitApiMode = explicitApiMode,
       configureJavaTargetVersion = configureJavaTargetVersion,
       freeCompilerArgs = freeCompilerArgs.toList(),
+      testArgs = testArgs,
       optIns = optIns.toTypedArray(),
     )
 

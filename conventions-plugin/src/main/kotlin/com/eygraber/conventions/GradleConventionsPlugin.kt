@@ -98,6 +98,7 @@ abstract class GradleConventionsPlugin : Plugin<Project> {
           kotlin.apiVersion = apiVersion
           kotlin.isProgressiveModeEnabled = isProgressiveModeEnabled
           kotlin.freeCompilerArgs = freeCompilerArgs
+          kotlin.testArgs = testArgs
           kotlin.optIns = optIns
         }
 
