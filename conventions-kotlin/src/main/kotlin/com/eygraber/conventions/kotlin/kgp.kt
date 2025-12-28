@@ -4,6 +4,7 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JvmVendorSpec
 import org.gradle.util.GradleVersion
@@ -20,6 +21,16 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.tooling.core.toKotlinVersion
 
+public class KgpTestArgs {
+  var minHeapSize: String? = null
+  var maxHeapSize: String? = null
+
+  var forkEvery: Long? = null
+  var maxParallelForks: Int? = null
+
+  var jvmArgs: List<String>? = null
+}
+
 public fun Project.configureKgp(
   jvmTargetVersion: Provider<JvmTarget>,
   jdkToolchainVersion: Provider<JavaLanguageVersion>,
@@ -31,6 +42,7 @@ public fun Project.configureKgp(
   kotlinApiVersion: KotlinVersion? = null,
   isProgressiveModeEnabled: Boolean = false,
   freeCompilerArgs: List<KotlinFreeCompilerArg> = emptyList(),
+  testArgs: KgpTestArgs? = null,
   vararg optIns: KotlinOptIn,
 ): JavaVersion = configureKgp(
   jvmTargetVersion = jvmTargetVersion.orNull,
@@ -43,6 +55,7 @@ public fun Project.configureKgp(
   kotlinApiVersion = kotlinApiVersion,
   isProgressiveModeEnabled = isProgressiveModeEnabled,
   freeCompilerArgs = freeCompilerArgs,
+  testArgs = testArgs,
   optIns = optIns,
 )
 
@@ -57,6 +70,7 @@ public fun Project.configureKgp(
   kotlinApiVersion: KotlinVersion? = null,
   isProgressiveModeEnabled: Boolean = false,
   freeCompilerArgs: List<KotlinFreeCompilerArg> = emptyList(),
+  testArgs: KgpTestArgs? = null,
   vararg optIns: KotlinOptIn,
 ): JavaVersion {
   val lowestSupportedJava = JavaVersion.VERSION_17
@@ -182,6 +196,16 @@ public fun Project.configureKgp(
             )
           }
         }
+      }
+    }
+
+    if(testArgs != null) {
+      tasks.withType(Test::class.java).configureEach { testTask ->
+        testArgs.minHeapSize?.let { testTask.minHeapSize = it }
+        testArgs.maxHeapSize?.let { testTask.maxHeapSize = it }
+        testArgs.forkEvery?.let { testTask.forkEvery = it }
+        testArgs.maxParallelForks?.let { testTask.maxParallelForks = it }
+        testArgs.jvmArgs?.let { testTask.jvmArgs = it }
       }
     }
   }

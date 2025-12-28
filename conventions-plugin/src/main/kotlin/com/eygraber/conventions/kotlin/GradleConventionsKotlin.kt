@@ -17,6 +17,7 @@ class GradleConventionsKotlin {
   var apiVersion: KotlinVersion? = null
   var isProgressiveModeEnabled: Boolean = false
   var freeCompilerArgs: Set<KotlinFreeCompilerArg> = emptySet()
+  var testArgs: KgpTestArgs? = null
   var optIns: Set<KotlinOptIn> = emptySet()
 
   var kotlinVersion: KotlinVersion = KotlinVersion.CURRENT
@@ -27,4 +28,8 @@ class GradleConventionsKotlin {
     }
 
   fun Provider<String>.toJvmTarget() = JvmTarget.fromTarget(get())
+
+  fun testArgs(block: KgpTestArgs.() -> Unit) {
+    testArgs = KgpTestArgs().apply(block)
+  }
 }
