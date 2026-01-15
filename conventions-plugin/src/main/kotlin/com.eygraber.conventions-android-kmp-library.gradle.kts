@@ -1,6 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
-import com.android.build.api.dsl.androidLibrary
 import com.eygraber.conventions.gradleConventionsDefaultsService
 import com.eygraber.conventions.gradleConventionsExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -39,10 +36,11 @@ ext.awaitAndroidConfigured { isAndroidUserConfigured ->
   plugins.withId("com.android.kotlin.multiplatform.library") {
     plugins.withId("org.jetbrains.kotlin.multiplatform") {
       extensions.getByType<KotlinMultiplatformExtension>().apply {
-        androidLibrary {
+        androidKmpLibrary {
           compileSdk = androidCompileSdk
           minSdk = androidMinSdk
 
+          @Suppress("UnstableApiUsage")
           optimization {
             val consumerRulesProFile = layout.projectDirectory.file("consumer-rules.pro").asFile
             if(consumerRulesProFile.exists()) {

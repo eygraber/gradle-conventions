@@ -1,6 +1,5 @@
 @file:Suppress("MissingPackageDeclaration")
 
-import com.android.build.api.dsl.androidLibrary
 import com.eygraber.conventions.detekt.configureDetekt2ForMultiplatform
 import com.eygraber.conventions.detekt.configureDetektForMultiplatform
 import com.eygraber.conventions.gradleConventionsKmpDefaultsService
@@ -226,8 +225,7 @@ fun KotlinMultiplatformExtension.configureKmpTargets(
     }
 
     project.plugins.withId("com.android.kotlin.multiplatform.library") {
-      @Suppress("UnstableApiUsage")
-      androidLibrary {
+      project.androidKmpLibrary {
         if(androidNamespace != null) {
           namespace = androidNamespace
         }

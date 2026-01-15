@@ -1,5 +1,7 @@
+import com.android.build.api.AndroidPluginVersion
 import com.eygraber.conventions.gradleConventionsDefaultsService
 import com.eygraber.conventions.gradleConventionsExtension
+import com.eygraber.conventions.project.common.ConventionDependencyHandler
 import com.eygraber.conventions.project.common.JvmConventionDependencyHandler
 import com.eygraber.conventions.project.common.KmpSourceSetConventionDependencyHandler
 import com.eygraber.conventions.project.common.KmpTopLevelConventionDependencyHandler
@@ -100,23 +102,34 @@ ext.awaitProjectCommonConfigured {
   }
 
   plugins.withId("org.jetbrains.kotlin.jvm") {
-    if(projectDependencies.isNotEmpty()) {
-      dependencies {
-        val handler = JvmConventionDependencyHandler(this, project)
-        projectDependencies.forEach { block ->
-          block(handler)
-        }
-      }
-    }
+    jvmBasedDependencies(projectDependencies)
   }
 
   plugins.withId("org.jetbrains.kotlin.android") {
-    if(projectDependencies.isNotEmpty()) {
-      dependencies {
-        val handler = JvmConventionDependencyHandler(this, project)
-        projectDependencies.forEach { block ->
-          block(handler)
-        }
+    jvmBasedDependencies(projectDependencies)
+  }
+
+  plugins.withId("com.android.application") {
+    // previous versions rely on org.jetbrains.kotlin.android plugin
+    if(AndroidPluginVersion.getCurrent().major >= 9) {
+      jvmBasedDependencies(projectDependencies)
+    }
+  }
+
+  plugins.withId("com.android.library") {
+    // previous versions rely on org.jetbrains.kotlin.android plugin
+    if(AndroidPluginVersion.getCurrent().major >= 9) {
+      jvmBasedDependencies(projectDependencies)
+    }
+  }
+}
+
+private fun Project.jvmBasedDependencies(projectDependencies: List<ConventionDependencyHandler.() -> Unit>) {
+  if(projectDependencies.isNotEmpty()) {
+    dependencies {
+      val handler = JvmConventionDependencyHandler(this, project)
+      projectDependencies.forEach { block ->
+        block(handler)
       }
     }
   }
