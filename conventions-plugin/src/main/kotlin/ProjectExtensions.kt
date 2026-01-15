@@ -1,7 +1,7 @@
 @file:Suppress("NOTHING_TO_INLINE", "MissingPackageDeclaration")
 
 import com.android.build.api.dsl.ApplicationExtension
-import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryExtension
 import com.android.build.api.dsl.LibraryExtension
 import com.android.build.api.variant.LibraryAndroidComponentsExtension
 import com.vanniktech.maven.publish.MavenPublishBaseExtension
@@ -26,8 +26,8 @@ internal inline fun Project.androidLibrary(action: Action<LibraryExtension>) {
   action.execute(extensions.getByType(LibraryExtension::class.java))
 }
 
-internal inline fun Project.androidKmpLibrary(action: Action<KotlinMultiplatformAndroidLibraryTarget>) {
-  action.execute(extensions.getByType(KotlinMultiplatformAndroidLibraryTarget::class.java))
+internal inline fun Project.androidKmpLibrary(action: Action<KotlinMultiplatformAndroidLibraryExtension>) {
+  action.execute(extensions.getByType(KotlinMultiplatformAndroidLibraryExtension::class.java))
 }
 
 internal val Project.compose: ComposeExtension

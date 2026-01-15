@@ -1,5 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
+import com.android.build.api.AndroidPluginVersion
 import com.eygraber.conventions.gradleConventionsDefaultsService
 import com.eygraber.conventions.gradleConventionsExtension
 import com.eygraber.conventions.kotlin.doOnFirstMatchingIncomingDependencyBeforeResolution
@@ -56,7 +57,9 @@ ext.awaitAndroidConfigured { isAndroidUserConfigured ->
 
       minSdk = androidMinSdk
 
-      testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+      if(AndroidPluginVersion.getCurrent().major < 9) {
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+      }
     }
 
     val androidSourceCompatibility = sourceCompatibility

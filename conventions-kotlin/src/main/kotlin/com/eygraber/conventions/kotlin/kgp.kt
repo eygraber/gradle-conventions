@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
+import org.jetbrains.kotlin.gradle.plugin.DefaultKotlinBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
@@ -123,7 +123,7 @@ public fun Project.configureKgp(
     }
   }
 
-  plugins.withType(KotlinBasePluginWrapper::class.java) {
+  plugins.withType(DefaultKotlinBasePlugin::class.java) {
     val isKmp = this is KotlinMultiplatformPluginWrapper
     with(extensions.getByType(KotlinProjectExtension::class.java)) {
       when(explicitApiMode) {
