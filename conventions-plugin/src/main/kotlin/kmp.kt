@@ -216,6 +216,7 @@ fun KotlinMultiplatformExtension.configureKmpTargets(
   }
 
   if(android) {
+    // TODO: remove this once projects are working with AGP9 + Kotlin 2.3.0
     project.plugins.withId("com.android.library") {
       @Suppress("DEPRECATION")
       androidTarget {
@@ -224,11 +225,9 @@ fun KotlinMultiplatformExtension.configureKmpTargets(
       }
     }
 
-    project.plugins.withId("com.android.kotlin.multiplatform.library") {
-      project.androidKmpLibrary {
-        if(androidNamespace != null) {
-          namespace = androidNamespace
-        }
+    project.androidKmpLibrary {
+      if(androidNamespace != null) {
+        namespace = androidNamespace
       }
     }
   }

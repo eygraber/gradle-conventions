@@ -1,6 +1,5 @@
 import com.eygraber.conventions.gradleConventionsDefaultsService
 import com.eygraber.conventions.gradleConventionsExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 plugins {
   id("com.android.kotlin.multiplatform.library")
@@ -33,40 +32,34 @@ ext.awaitAndroidConfigured { isAndroidUserConfigured ->
   val androidCompileSdk = compileSdk
   val androidMinSdk = minSdk
 
-  plugins.withId("com.android.kotlin.multiplatform.library") {
-    plugins.withId("org.jetbrains.kotlin.multiplatform") {
-      extensions.getByType<KotlinMultiplatformExtension>().apply {
-        androidKmpLibrary {
-          compileSdk = androidCompileSdk
-          minSdk = androidMinSdk
+  androidKmpLibrary {
+    compileSdk = androidCompileSdk
+    minSdk = androidMinSdk
 
-          @Suppress("UnstableApiUsage")
-          optimization {
-            val consumerRulesProFile = layout.projectDirectory.file("consumer-rules.pro").asFile
-            if(consumerRulesProFile.exists()) {
-              consumerKeepRules.files += consumerRulesProFile
-            }
-          }
-
-          if(coreLibraryDesugaringDependency != null) {
-            enableCoreLibraryDesugaring = true
-          }
-
-          packaging {
-            resources.pickFirsts += "META-INF/*"
-          }
-
-          if(doNotRunLintWhenRunningReleaseBuildTasks == true) {
-            lint {
-              checkReleaseBuilds = false
-            }
-          }
-
-          coreLibraryDesugaringDependency?.let { desugaringDependency ->
-            dependencies.add("coreLibraryDesugaring", desugaringDependency)
-          }
-        }
+    @Suppress("UnstableApiUsage")
+    optimization {
+      val consumerRulesProFile = layout.projectDirectory.file("consumer-rules.pro").asFile
+      if(consumerRulesProFile.exists()) {
+        consumerKeepRules.files += consumerRulesProFile
       }
+    }
+
+    if(coreLibraryDesugaringDependency != null) {
+      enableCoreLibraryDesugaring = true
+    }
+
+    packaging {
+      resources.pickFirsts += "META-INF/*"
+    }
+
+    if(doNotRunLintWhenRunningReleaseBuildTasks == true) {
+      lint {
+        checkReleaseBuilds = false
+      }
+    }
+
+    coreLibraryDesugaringDependency?.let { desugaringDependency ->
+      dependencies.add("coreLibraryDesugaring", desugaringDependency)
     }
   }
 }
