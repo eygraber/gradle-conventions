@@ -1,7 +1,9 @@
 @file:Suppress("NOTHING_TO_INLINE", "MissingPackageDeclaration")
 
+import com.android.build.api.AndroidPluginVersion
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryExtension
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import com.android.build.api.dsl.LibraryExtension
 import com.android.build.api.variant.LibraryAndroidComponentsExtension
 import com.vanniktech.maven.publish.MavenPublishBaseExtension
@@ -11,7 +13,9 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.publish.PublishingExtension
+import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.compose.ComposeExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
 internal inline fun Project.androidApp(action: Action<ApplicationExtension>) {
@@ -27,7 +31,21 @@ internal inline fun Project.androidLibrary(action: Action<LibraryExtension>) {
 }
 
 internal inline fun Project.androidKmpLibrary(action: Action<KotlinMultiplatformAndroidLibraryExtension>) {
-  action.execute(extensions.getByType(KotlinMultiplatformAndroidLibraryExtension::class.java))
+  project.plugins.withId("com.android.kotlin.multiplatform.library") {
+    plugins.withId("org.jetbrains.kotlin.multiplatform") {
+      if(AndroidPluginVersion.getCurrent().major < 9) {
+        action.execute(extensions.getByType(KotlinMultiplatformAndroidLibraryExtension::class.java))
+      }
+      else {
+        extensions.getByType<KotlinMultiplatformExtension>()
+          .targets
+          .mapNotNull { target -> target as? KotlinMultiplatformAndroidLibraryTarget }
+          .forEach { target ->
+            action.execute(target)
+          }
+      }
+    }
+  }
 }
 
 internal val Project.compose: ComposeExtension
