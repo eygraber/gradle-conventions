@@ -19,7 +19,7 @@ kotlin = "2.3.0"
 
 ktlint = "1.8.0"
 
-publish = "0.35.0"
+publish = "0.36.0"
 
 [plugins]
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
