@@ -1,6 +1,7 @@
 package com.eygraber.conventions.kotlin
 
 import org.gradle.api.JavaVersion
+import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.compile.JavaCompile
@@ -15,6 +16,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.DefaultKotlinBasePlugin
+import org.jetbrains.kotlin.gradle.plugin.KotlinBaseApiPlugin
+import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
@@ -123,9 +126,9 @@ public fun Project.configureKgp(
     }
   }
 
-  plugins.withType(DefaultKotlinBasePlugin::class.java) {
-    val isKmp = this is KotlinMultiplatformPluginWrapper
-    with(extensions.getByType(KotlinProjectExtension::class.java)) {
+  withKotlinExtension { plugin, kotlinExtension ->
+    val isKmp = plugin is KotlinMultiplatformPluginWrapper
+    with(kotlinExtension) {
       when(explicitApiMode) {
         ExplicitApiMode.Strict -> explicitApi()
         ExplicitApiMode.Warning -> explicitApiWarning()
@@ -215,3 +218,20 @@ public fun Project.configureKgp(
 
 public val Project.kotlinMultiplatform: KotlinMultiplatformExtension
   get() = extensions.getByType(KotlinMultiplatformExtension::class.java)
+
+fun Project.withKotlinExtension(block: (Plugin<*>, KotlinProjectExtension) -> Unit) {
+  plugins.withType(DefaultKotlinBasePlugin::class.java) { plugin ->
+    if(plugin is KotlinBasePluginWrapper) {
+      block(plugin, extensions.getByType(KotlinProjectExtension::class.java))
+    }
+    else if(plugin is KotlinBaseApiPlugin) {
+      plugins.withId("com.android.application") {
+        block(plugin, extensions.getByType(KotlinProjectExtension::class.java))
+      }
+
+      plugins.withId("com.android.library") {
+        block(plugin, extensions.getByType(KotlinProjectExtension::class.java))
+      }
+    }
+  }
+}
