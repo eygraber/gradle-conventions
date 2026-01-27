@@ -182,7 +182,8 @@ public fun Project.configureKgp(
 
           if(project.kotlinToolingVersion.toKotlinVersion().isAtLeast(major = 1, minor = 9)) {
             compilerOptions.progressiveMode.set(isProgressiveModeEnabled)
-          } else {
+          }
+          else {
             if(isProgressiveModeEnabled) {
               compilerOptions.freeCompilerArgs.addAll(
                 "-progressive",
@@ -193,7 +194,8 @@ public fun Project.configureKgp(
         if(!isKmp) {
           if(project.kotlinToolingVersion.toKotlinVersion().isAtLeast(major = 1, minor = 9)) {
             compilerOptions.optIn.addAll(optIns.map(KotlinOptIn::value))
-          } else {
+          }
+          else {
             compilerOptions.freeCompilerArgs.addAll(
               optIns.map { optIn -> "-opt-in=${optIn.value}" },
             )
