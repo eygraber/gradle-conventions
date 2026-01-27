@@ -32,15 +32,6 @@ for arg in "$@"; do
   fi
 done
 
-check_support=false
-for arg in "$@"; do
-  if [ "$arg" == "--check-support" ]; then
-    check_support=true
-    set -- "${@//--check-support/}"
-    break
-  fi
-done
-
 args=()
 
 if [ "$should_format" = true ]; then
@@ -49,10 +40,5 @@ fi
 
 args+=("$@")
 
-if [ "$check_support" = true ]; then
-  cd .support
-  java -jar "$ktlint" --ruleset="$ktlint_custom_rules" **/*.kt **/*.kts \!**/build/** \!Dangerfile.df.kts --color --color-name=YELLOW "${args[@]}"
-else
-  java -jar "$ktlint" --ruleset="$ktlint_custom_rules" **/*.kt **/*.kts \!**/build/** \!Dangerfile.df.kts --color --color-name=YELLOW "${args[@]}"
-fi
+java -jar "$ktlint" --ruleset="$ktlint_custom_rules" **/*.kt **/*.kts \!**/build/** \!Dangerfile.df.kts --color --color-name=YELLOW "${args[@]}"
 
