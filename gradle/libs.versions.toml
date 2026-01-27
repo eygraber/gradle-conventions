@@ -7,7 +7,7 @@ compose-jetbrains = "1.10.0"
 
 detekt = "1.23.8"
 detekt2 = "2.0.0-alpha.2"
-detektEygraber = "1.0.14"
+detektEygraber = "1.0.15"
 
 dokka = "2.1.0"
 
