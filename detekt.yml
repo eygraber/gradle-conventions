@@ -637,7 +637,7 @@ style:
   UnnecessaryFilter:
     active: true
   UnnecessaryFullyQualifiedName:
-    active: false
+    active: true
   UnnecessaryInheritance:
     active: true
   UnnecessaryInnerClass:
