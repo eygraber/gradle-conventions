@@ -260,12 +260,6 @@ fun KotlinMultiplatformExtension.configureKmpTargets(
 
   if(apple) {
     if(ios) {
-      iosX64 {
-        if(binaryType == BinaryType.Executable) {
-          binaries.executable()
-        }
-      }
-
       iosArm64 {
         if(binaryType == BinaryType.Executable) {
           binaries.executable()
@@ -280,12 +274,6 @@ fun KotlinMultiplatformExtension.configureKmpTargets(
     }
 
     if(macos) {
-      macosX64 {
-        if(binaryType == BinaryType.Executable) {
-          binaries.executable()
-        }
-      }
-
       macosArm64 {
         if(binaryType == BinaryType.Executable) {
           binaries.executable()
@@ -294,12 +282,6 @@ fun KotlinMultiplatformExtension.configureKmpTargets(
     }
 
     if(tvos) {
-      tvosX64 {
-        if(binaryType == BinaryType.Executable) {
-          binaries.executable()
-        }
-      }
-
       tvosArm64 {
         if(binaryType == BinaryType.Executable) {
           binaries.executable()
@@ -314,12 +296,6 @@ fun KotlinMultiplatformExtension.configureKmpTargets(
     }
 
     if(watchos) {
-      watchosX64 {
-        if(binaryType == BinaryType.Executable) {
-          binaries.executable()
-        }
-      }
-
       watchosArm32 {
         if(binaryType == BinaryType.Executable) {
           binaries.executable()
