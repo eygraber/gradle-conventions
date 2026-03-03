@@ -1,7 +1,7 @@
 [versions]
 android-cacheFix = "3.0.3"
 
-android-plugin = "9.0.1"
+android-plugin = "9.1.0"
 
 compose-jetbrains = "1.10.1"
 
