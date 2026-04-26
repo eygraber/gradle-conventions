@@ -19,13 +19,18 @@ public fun Project.configureDetekt2ForMultiplatform(
 ) {
   val detektAll = tasks.register("detektAll")
   sourceSets.forEach { sourceSet ->
-    detektAll.dependsOn("detekt${sourceSet.name.capitalize()}SourceSet")
+    // jvm and android support type resolution
+    if(!sourceSet.name.startsWith("jvm") && !sourceSet.name.startsWith("android")) {
+      detektAll.dependsOn("detekt${sourceSet.name.capitalize()}SourceSet")
+    }
   }
   detektAll.dependsOn("detektMetadataTest")
 
   // targets that support type resolution
   targets
-    .filter { target -> target.platformType == KotlinPlatformType.jvm }
+    .filter { target ->
+      target.platformType == KotlinPlatformType.jvm || target.platformType == KotlinPlatformType.androidJvm
+    }
     .forEach { target ->
       target.compilations.configureEach { compilation ->
         detektAll.dependsOn("detekt${compilation.name.capitalize()}${target.name.capitalize()}")
