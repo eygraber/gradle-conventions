@@ -74,6 +74,7 @@ abstract class GradleConventionsPluginExtension {
   internal fun awaitKotlinConfigured(
     configure: GradleConventionsKotlin.(isConfigured: Boolean) -> Unit,
   ) {
+    @Suppress("UnnecessaryFullyQualifiedName") // https://github.com/detekt/detekt/issues/9282
     kotlin.configure(isKotlinConfigured)
     configureListeners += object : GradleConventionsConfigurableListener {
       override fun GradleConventionsKotlin.onKotlinConfigured(isUserConfigured: Boolean) {
