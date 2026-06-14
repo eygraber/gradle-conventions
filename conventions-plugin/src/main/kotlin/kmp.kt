@@ -383,7 +383,7 @@ fun KotlinMultiplatformExtension.configureKmpTargets(
   }
 
   if(js) {
-    js(IR) {
+    js {
       if(jsModuleName != null) {
         outputModuleName.set(jsModuleName)
       }
