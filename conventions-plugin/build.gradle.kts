@@ -24,7 +24,10 @@ dependencies {
   compileOnly(libs.buildscript.compose.compiler)
   compileOnly(libs.buildscript.compose.jetbrains)
   compileOnly(libs.buildscript.detekt)
-  compileOnly(libs.buildscript.detekt2)
+  compileOnly(libs.buildscript.detekt2) {
+    // The Gradle API is already provided by the kotlin-dsl plugin via gradleApi()
+    exclude(group = "org.gradle.experimental", module = "gradle-public-api")
+  }
   compileOnly(libs.buildscript.dokka)
   compileOnly(libs.buildscript.kotlin)
   compileOnly(libs.buildscript.publish)
