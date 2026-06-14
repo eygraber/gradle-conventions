@@ -6,7 +6,7 @@ android-plugin = "9.2.1"
 compose-jetbrains = "1.11.1"
 
 detekt = "1.23.8"
-detekt2 = "2.0.0-alpha.3"
+detekt2 = "2.0.0-alpha.4"
 
 dokka = "2.2.0"
 
