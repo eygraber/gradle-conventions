@@ -5,7 +5,7 @@ import org.gradle.api.Project
 import java.io.File
 
 internal fun Project.findSpmChecksum(zipFile: File): String {
-  val packageSwiftFile = rootProject.file("Package.swift")
+  val packageSwiftFile = isolated.rootProject.projectDirectory.file("Package.swift").asFile
   val hasPackageSwift = packageSwiftFile.exists()
 
   if(!hasPackageSwift) {

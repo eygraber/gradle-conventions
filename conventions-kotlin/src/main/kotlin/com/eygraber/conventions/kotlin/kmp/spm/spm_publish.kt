@@ -25,7 +25,7 @@ public fun Project.registerPublishSpm(
   targetPredicate: (KotlinNativeTarget) -> Boolean = { true },
 ) {
   val assembleTaskHolder = registerAssembleXCFrameworkTasksFromFrameworks(frameworkName, targetPredicate)
-  val packageDotSwiftFile = rootProject.file("Package.swift")
+  val packageDotSwiftFile = isolated.rootProject.projectDirectory.file("Package.swift").asFile
 
   registerPublishDebugSpm(
     frameworkName = frameworkName,
