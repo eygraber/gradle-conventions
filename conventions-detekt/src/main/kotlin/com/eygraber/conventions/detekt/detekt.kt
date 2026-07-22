@@ -49,7 +49,7 @@ public fun Project.configureDetekt(
 
     buildUponDefaultConfig = true
 
-    val rootConfig = rootProject.file("detekt.yml")
+    val rootConfig = isolated.rootProject.projectDirectory.file("detekt.yml").asFile
     if(useRootConfigFile && rootConfig.exists()) {
       configFiles.from(rootConfig)
     }

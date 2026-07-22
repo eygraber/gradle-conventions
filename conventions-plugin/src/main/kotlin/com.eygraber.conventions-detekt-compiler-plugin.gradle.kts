@@ -34,7 +34,7 @@ ext.awaitKotlinConfigured { isKotlinUserConfigured ->
 
       val configFiles = files()
 
-      val rootConfig = rootProject.file("detekt.yml")
+      val rootConfig = isolated.rootProject.projectDirectory.file("detekt.yml").asFile
       if(rootConfig.exists()) {
         configFiles.from(rootConfig)
       }

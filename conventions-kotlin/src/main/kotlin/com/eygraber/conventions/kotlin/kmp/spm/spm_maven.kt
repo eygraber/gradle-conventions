@@ -38,7 +38,8 @@ public fun Project.registerPublishSpmToMavenTasks(
 
         task.publishedUrl.set(
           publishTask.map { t ->
-            "${t.repository.url}/${rootProject.name}/$artifactName/$artifactVersion/$artifactName-$artifactVersion.zip"
+            val rootProjectName = isolated.rootProject.name
+            "${t.repository.url}/$rootProjectName/$artifactName/$artifactVersion/$artifactName-$artifactVersion.zip"
           },
         )
       }

@@ -65,7 +65,7 @@ public fun Project.configureDetekt2(
     this.enableCompilerPlugin.set(enableCompilerPlugin)
     this.buildUponDefaultConfig.set(buildUponDefaultConfig)
 
-    val rootConfig = rootProject.file("detekt.yml")
+    val rootConfig = isolated.rootProject.projectDirectory.file("detekt.yml").asFile
     if(useRootConfigFile && rootConfig.exists()) {
       configFiles.from(rootConfig)
     }
