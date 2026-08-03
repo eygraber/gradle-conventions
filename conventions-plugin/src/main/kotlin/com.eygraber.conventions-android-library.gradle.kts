@@ -1,6 +1,8 @@
 @file:Suppress("UnstableApiUsage")
 
 import com.android.build.api.AndroidPluginVersion
+import com.android.build.api.variant.DeviceTestBuilder
+import com.android.build.api.variant.HostTestBuilder
 import com.eygraber.conventions.gradleConventionsDefaultsService
 import com.eygraber.conventions.gradleConventionsExtension
 import com.eygraber.conventions.kotlin.doOnFirstMatchingIncomingDependencyBeforeResolution
@@ -20,6 +22,8 @@ ext.android.targetSdk = androidDefaults.targetSdk
 ext.android.minSdk = androidDefaults.minSdk
 ext.android.doNotRunLintWhenRunningReleaseBuildTasks = androidDefaults.doNotRunLintWhenRunningReleaseBuildTasks
 ext.android.isIncludeAndroidResources = androidDefaults.isIncludeAndroidResources
+ext.android.disableTestsWithoutSources = androidDefaults.disableTestsWithoutSources
+ext.android.ignoreTestSourcesInLint = androidDefaults.ignoreTestSourcesInLint
 ext.android.sourceCompatibility = androidDefaults.sourceCompatibility
 ext.android.targetCompatibility = androidDefaults.targetCompatibility
 ext.android.publishEverything = androidDefaults.publishEverything
@@ -107,6 +111,12 @@ ext.awaitAndroidConfigured { isAndroidUserConfigured ->
       }
     }
 
+    if(ignoreTestSourcesInLint) {
+      lint {
+        ignoreTestSources = true
+      }
+    }
+
     testOptions {
       val isIncludeAndroidResourceConvention = isIncludeAndroidResources
 
@@ -138,6 +148,29 @@ ext.awaitAndroidConfigured { isAndroidUserConfigured ->
   }
 
   androidLibraryComponents {
+    if(disableTestsWithoutSources) {
+      val srcDirNames = layout.projectDirectory.dir("src").asFile
+        .listFiles()
+        .orEmpty()
+        .filter { it.isDirectory }
+        .map { it.name }
+
+      val hasUnitTestSources = srcDirNames.any { it.startsWith("test") }
+      val hasAndroidTestSources = srcDirNames.any { it.startsWith("androidTest") }
+
+      if(!hasUnitTestSources || !hasAndroidTestSources) {
+        beforeVariants { variant ->
+          if(!hasUnitTestSources) {
+            variant.hostTests[HostTestBuilder.UNIT_TEST_TYPE]?.enable = false
+          }
+
+          if(!hasAndroidTestSources) {
+            variant.deviceTests[DeviceTestBuilder.ANDROID_TEST_TYPE]?.enable = false
+          }
+        }
+      }
+    }
+
     val disabledFlavors = flavors.mapNotNull { (dimension, flavorsToRegister) ->
       val disabledFlavors = flavorsToRegister.filterNot { it.enabled }
       (dimension to disabledFlavors).takeIf { disabledFlavors.isNotEmpty() }
