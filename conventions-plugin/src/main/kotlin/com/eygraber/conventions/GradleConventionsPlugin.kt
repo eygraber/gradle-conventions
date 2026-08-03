@@ -44,6 +44,8 @@ abstract class GradleConventionsPlugin : Plugin<Project> {
           android.minSdk = minSdk
           android.doNotRunLintWhenRunningReleaseBuildTasks = doNotRunLintWhenRunningReleaseBuildTasks
           android.isIncludeAndroidResources = isIncludeAndroidResources
+          android.disableTestsWithoutSources = disableTestsWithoutSources
+          android.ignoreTestSourcesInLint = ignoreTestSourcesInLint
           android.sourceCompatibility = sourceCompatibility
           android.targetCompatibility = targetCompatibility
           android.publishEverything = publishEverything

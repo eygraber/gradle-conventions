@@ -49,6 +49,27 @@ class GradleConventionsAndroid {
    */
   var isIncludeAndroidResources: Boolean = false
 
+  /**
+   * If this is `true`, the unitTest and androidTest components are disabled in modules that don't have
+   * matching sources under `src/` (`src/test*` for unitTest, `src/androidTest*` for androidTest).
+   *
+   * AGP creates both components for every module. Tooling that runs per component (lint,
+   * dependency analysis, resource merging) pays for the empty ones. A module that adds test
+   * sources is picked up automatically on the next configuration.
+   *
+   * This does not have any effect in the android-kmp-library plugin.
+   */
+  var disableTestsWithoutSources: Boolean = true
+
+  /**
+   * If this is `true`, lint ignores test sources.
+   *
+   * [See Lint#ignoreTestSources](https://developer.android.com/reference/tools/gradle-api/8.2/com/android/build/api/dsl/Lint#ignoreTestSources())
+   *
+   * This does not have any effect in the android-kmp-library plugin.
+   */
+  var ignoreTestSourcesInLint: Boolean = false
+
   internal var coreLibraryDesugaringDependency: Any? = null
 
   internal var flavors: MutableList<Pair<String, List<ProductFlavor>>> = mutableListOf()
