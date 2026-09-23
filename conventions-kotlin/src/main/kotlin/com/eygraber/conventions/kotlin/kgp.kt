@@ -77,7 +77,7 @@ public fun Project.configureKgp(
   vararg optIns: KotlinOptIn,
 ): JavaVersion {
   val lowestSupportedJava = JavaVersion.VERSION_17
-  val gradleVersion = GradleVersion.current()
+  val gradleVersion = GradleVersion.current().baseVersion
   val highestSupportedJava: JavaVersion = when {
     gradleVersion >= GradleVersion.version("9.8.0") -> JavaVersion.VERSION_27
     gradleVersion >= GradleVersion.version("9.4.0") -> JavaVersion.VERSION_26
