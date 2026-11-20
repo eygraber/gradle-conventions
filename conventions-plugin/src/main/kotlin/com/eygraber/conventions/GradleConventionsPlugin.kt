@@ -40,6 +40,7 @@ abstract class GradleConventionsPlugin : Plugin<Project> {
       with(target.gradleConventionsDefaultsService) {
         awaitAndroidConfigured {
           android.compileSdk = compileSdk
+          android.compileSdkMinor = compileSdkMinor
           android.targetSdk = targetSdk
           android.minSdk = minSdk
           android.doNotRunLintWhenRunningReleaseBuildTasks = doNotRunLintWhenRunningReleaseBuildTasks
