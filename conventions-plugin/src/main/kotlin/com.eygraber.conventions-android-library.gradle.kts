@@ -18,6 +18,7 @@ val androidDefaults = gradleConventionsDefaultsService.android
 val kotlinDefaults = gradleConventionsDefaultsService.kotlin
 
 ext.android.compileSdk = androidDefaults.compileSdk
+ext.android.compileSdkMinor = androidDefaults.compileSdkMinor
 ext.android.targetSdk = androidDefaults.targetSdk
 ext.android.minSdk = androidDefaults.minSdk
 ext.android.doNotRunLintWhenRunningReleaseBuildTasks = androidDefaults.doNotRunLintWhenRunningReleaseBuildTasks
@@ -48,10 +49,20 @@ ext.awaitAndroidConfigured { isAndroidUserConfigured ->
   }
 
   val androidCompileSdk = compileSdk
+  val androidCompileSdkMinor = compileSdkMinor
   val androidMinSdk = minSdk
 
   androidLibrary {
-    compileSdk = androidCompileSdk
+    if(androidCompileSdkMinor == null) {
+      compileSdk = androidCompileSdk
+    }
+    else {
+      compileSdk {
+        version = release(androidCompileSdk) {
+          minorApiLevel = androidCompileSdkMinor
+        }
+      }
+    }
 
     defaultConfig {
       val consumerRulesProFile = layout.projectDirectory.file("consumer-rules.pro")

@@ -13,6 +13,7 @@ data class ProductFlavor(
 
 class GradleConventionsAndroid {
   var compileSdk: Int = 0
+  var compileSdkMinor: Int? = null
   var targetSdk: Int = 0
   var minSdk: Int = 0
 
@@ -89,8 +90,10 @@ class GradleConventionsAndroid {
     compileSdk: Provider<String>,
     targetSdk: Provider<String>,
     minSdk: Provider<String>,
+    compileSdkMinor: Provider<String>? = null,
   ) {
     this.compileSdk = compileSdk.get().toInt()
+    this.compileSdkMinor = compileSdkMinor?.get()?.toInt()
     this.targetSdk = targetSdk.get().toInt()
     this.minSdk = minSdk.get().toInt()
   }
